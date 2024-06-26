@@ -1,21 +1,38 @@
 package org.example.mapreservation.customer.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.mapreservation.customer.domain.Customer;
 import org.example.mapreservation.customer.dto.CustomerCreateRequest;
 import org.example.mapreservation.customer.repository.CustomerRepository;
+import org.example.mapreservation.exception.CustomException;
+import org.example.mapreservation.exception.ErrorCode;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class CustomerService {
 
     private final PasswordEncoder passwordEncoder;
     private final CustomerRepository customerRepository;
 
+    /**
+     * 계정을 생성한다.
+     *
+     * @param customerCreateRequest - 계정 생성 요청 정보
+     * @return 생성된 계정의 고유 아이디 리턴
+     * @throws CustomException 이미 등록된 이메일로 계정 생성 요청 시
+     */
     public Long createCustomer(CustomerCreateRequest customerCreateRequest) {
         Customer customer = customerCreateRequest.toEntity(passwordEncoder);
-        return customerRepository.save(customer).getId();
+        try {
+            return customerRepository.save(customer).getId();
+        } catch (Exception ex) {
+            // 안 잡힌다.. 왜..?
+            throw new CustomException(ErrorCode.CUST_ALREADY_TAKEN_EMAIL, ex);
+        }
     }
 }

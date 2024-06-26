@@ -1,7 +1,9 @@
 package org.example.mapreservation.customer.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.mapreservation.customer.dto.CustomerCreateRequest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,6 +28,7 @@ class CustomerControllerIntegrationTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @DisplayName("고객은 계정을 만들 수 있다.")
     @Test
     void createCustomer() throws Exception {
         // given
@@ -42,5 +45,28 @@ class CustomerControllerIntegrationTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
+    }
+
+    @DisplayName("동일한 이메일 주소로 계정을 만들 수 없다.")
+    @Test
+    void givenDuplicateEmail_thenNotAllowed() throws Exception {
+        // given - 최초 가입
+        String email = "abc@gmail.com";
+        String password = "12345678";
+        CustomerCreateRequest customerCreateRequest = new CustomerCreateRequest(email, password);
+        mockMvc.perform(post(requestURL)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsBytes(customerCreateRequest))
+                .with(csrf())
+        );
+
+        // when - 이미 가입된 이메일로 계정 생성 요청
+        mockMvc.perform(post(requestURL)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsBytes(customerCreateRequest))
+                        .with(csrf())
+                )
+                .andDo(print());
+
     }
 }
