@@ -29,9 +29,10 @@ public class CustomerService {
     public Long createCustomer(CustomerCreateRequest customerCreateRequest) {
         Customer customer = customerCreateRequest.toEntity(passwordEncoder);
         try {
-            return customerRepository.save(customer).getId();
-        } catch (Exception ex) {
-            // 안 잡힌다.. 왜..?
+            // save 대신 saveAndFlush 하여 바로 쓰기 쿼리를 날리도록 하였다.
+            // 이 시점에 DataIntegrityViolationException 을 잡을 수 있도록 하기 위해서이다.
+            return customerRepository.saveAndFlush(customer).getId();
+        } catch (DataIntegrityViolationException ex) {
             throw new CustomException(ErrorCode.CUST_ALREADY_TAKEN_EMAIL, ex);
         }
     }
