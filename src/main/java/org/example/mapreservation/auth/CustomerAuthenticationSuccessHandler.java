@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 /**
- * Login 성공 시, Form login의 Redirect 응답 행동 대신 결과 데이터를 API로 보내도록 하기 위해 작성된 클래스
+ * 고객 로그인 성공 시 커스텀 응답 생성
  */
 @RequiredArgsConstructor
 @Component
