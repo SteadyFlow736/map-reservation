@@ -3,7 +3,9 @@ package org.example.mapreservation.customer.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.mapreservation.customer.dto.CustomerCreateRequest;
+import org.example.mapreservation.customer.repository.CustomerRepository;
 import org.example.mapreservation.exception.ErrorCode;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,13 @@ class CustomerControllerIntegrationTest {
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @AfterEach
+    void clean() {
+        customerRepository.deleteAll();
+    }
 
     @DisplayName("고객은 계정을 만들 수 있다.")
     @Test
