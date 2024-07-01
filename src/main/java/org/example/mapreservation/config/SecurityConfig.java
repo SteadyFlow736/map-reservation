@@ -25,10 +25,16 @@ public class SecurityConfig {
     private final LogoutSuccessHandler logoutSuccessHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
 
+    // SpringDocConfig의 Bean으로부터 받아오는 값
+    private final String swaggerPath;
+    private final String apiDocPath;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(customizer -> customizer
+                        .requestMatchers(swaggerPath).permitAll()
+                        .requestMatchers(apiDocPath).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/customers").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/csrf-token").permitAll()
                         .anyRequest().authenticated()
