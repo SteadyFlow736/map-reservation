@@ -38,6 +38,6 @@ public class LogoutTest {
                         .with(csrf())
                 )
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().isUnauthorized());
     }
 }
