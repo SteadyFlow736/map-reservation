@@ -8,9 +8,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.example.mapreservation.common.Address;
 import org.example.mapreservation.owner.domain.Owner;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class HairShop {
 
@@ -25,6 +30,12 @@ public class HairShop {
     private Address address;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "owner_id")
+    @JoinColumn(name = "owner_id", nullable = false)
     private Owner owner;
+
+    public HairShop(String name, Address address, Owner owner) {
+        this.name = name;
+        this.address = address;
+        this.owner = owner;
+    }
 }
