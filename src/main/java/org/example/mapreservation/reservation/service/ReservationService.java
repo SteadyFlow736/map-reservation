@@ -1,5 +1,7 @@
 package org.example.mapreservation.reservation.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.mapreservation.customer.domain.Customer;
@@ -24,28 +26,29 @@ public class ReservationService {
     private final HairShopReservationRepository hairShopReservationRepository;
     private final HairShopRepository hairShopRepository;
     private final CustomerRepository customerRepository;
+    private final EntityManager em;
 
     public Long createHairShopReservation(Long shopId, String username, LocalDateTime currentTime,
                                           HairShopReservationCreateRequest request) {
         isValidReservationTime(currentTime, request.reservationTime());
-
-        HairShop hairShop = hairShopRepository.findById(shopId)
-                .orElseThrow(() -> new CustomException(ErrorCode.HS_NOT_FOUND));
         Customer customer = customerRepository.findByEmail(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.CUST_NOT_FOUND));
+
+        // OPTIMISTIC_FORCE_INCREMENT를 통해 HairShop의 논리적 versioning.
+        // HairShop에 예약이 늘어나는 것은 HairShop의 논리적 변경
+        // 같은 헤어샵, 같은 시간에 예약 유무 조회 결과(전제)가 이 트랜잭션이 끝나기 전까지 변경되게 하지 않도록 막아주는 역할을 한다.
+        HairShop hairShop = em.find(HairShop.class, shopId, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+        if (hairShop == null) throw new CustomException(ErrorCode.HS_NOT_FOUND);
 
         HairShopReservation hairShopReservation =
                 new HairShopReservation(customer, hairShop, request.reservationTime());
 
-        // 이 부분에서 두 가지가 마음에 걸린다.
-        // 1. 이것만으로 중복 체크가 될까? 동시성도 문제는 없을까?
-        //    harishopId + reservationTime 복합 인덱스? mysql repeatable read, select for update gap locking
-        // 2. 예약을 찾는 메서드가 findByHairShopAndReservationTime 인데, 인덱스 없인 느리지 않을까?
-        //    LocalDateTime에도 인덱스 가능한가?
         hairShopReservationRepository.findByHairShopAndReservationTime(hairShop, request.reservationTime())
                 .ifPresent(r -> {
                     throw new CustomException(ErrorCode.HSR_ALREADY_TAKEN_RESERVATION_TIME);
                 });
+        // 이 단계에서 다른 트랜잭션이 같은 헤어샵, 같은 시간으로 예약하는 것을 막아야 한다.
+        // 이것을 위의 HairShop의 논리적 versioning을 통해 해결하려한다.
 
         return hairShopReservationRepository.save(hairShopReservation).getId();
     }
