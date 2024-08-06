@@ -47,6 +47,19 @@ class ReservationServiceTest {
     @BeforeEach
     void beforeEach() {
         log.info("beforeEach 시작");
+        cleanUp();
+        setInitData();
+        log.info("beforeEach 끝");
+    }
+
+    private void cleanUp() {
+        reservationRepository.deleteAll();
+        customerRepository.deleteAll();
+        hairShopRepository.deleteAll();
+        ownerRepository.deleteAll();
+    }
+
+    private void setInitData() {
         Owner owner = new Owner("주인1");
         ownerRepository.save(owner);
         HairShop hairShop = new HairShop("샵1", new Address("거리1", "101호"), owner);
@@ -55,7 +68,6 @@ class ReservationServiceTest {
         Customer customer = new Customer("abc@gmail.com", "12345678");
         customerRepository.save(customer);
         this.customer = customer;
-        log.info("beforeEach 끝");
     }
 
     @Test
