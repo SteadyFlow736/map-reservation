@@ -2,7 +2,6 @@ package org.example.mapreservation.reservation.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.mapreservation.customer.domain.Customer;
 import org.example.mapreservation.customer.repository.CustomerRepository;
@@ -14,6 +13,7 @@ import org.example.mapreservation.reservation.domain.HairShopReservation;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
 import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,7 +26,6 @@ public class ReservationService {
     private final HairShopReservationRepository hairShopReservationRepository;
     private final HairShopRepository hairShopRepository;
     private final CustomerRepository customerRepository;
-    private final EntityManager em;
 
     public Long createHairShopReservationOptimistic(Long shopId, String username, LocalDateTime currentTime,
                                                     HairShopReservationCreateRequest request) {
@@ -37,8 +36,8 @@ public class ReservationService {
         // OPTIMISTIC_FORCE_INCREMENT를 통해 HairShop의 논리적 versioning.
         // HairShop에 예약이 늘어나는 것은 HairShop의 논리적 변경
         // 같은 헤어샵, 같은 시간에 예약 유무 조회 결과(전제)가 이 트랜잭션이 끝나기 전까지 변경되게 하지 않도록 막아주는 역할을 한다.
-        HairShop hairShop = em.find(HairShop.class, shopId, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-        if (hairShop == null) throw new CustomException(ErrorCode.HS_NOT_FOUND);
+        HairShop hairShop = hairShopRepository.findByIdOptimisticForceIncrement(shopId)
+                .orElseThrow(() -> new CustomException(ErrorCode.HS_NOT_FOUND));
 
         HairShopReservation hairShopReservation =
                 new HairShopReservation(customer, hairShop, request.reservationTime());
