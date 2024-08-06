@@ -28,8 +28,8 @@ public class ReservationService {
     private final CustomerRepository customerRepository;
     private final EntityManager em;
 
-    public Long createHairShopReservation(Long shopId, String username, LocalDateTime currentTime,
-                                          HairShopReservationCreateRequest request) {
+    public Long createHairShopReservationOptimistic(Long shopId, String username, LocalDateTime currentTime,
+                                                    HairShopReservationCreateRequest request) {
         isValidReservationTime(currentTime, request.reservationTime());
         Customer customer = customerRepository.findByEmail(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.CUST_NOT_FOUND));

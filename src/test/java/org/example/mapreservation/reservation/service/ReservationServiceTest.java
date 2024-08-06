@@ -66,7 +66,7 @@ class ReservationServiceTest {
         HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
 
         // when
-        Long reservationId = reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), currentTime, request);
+        Long reservationId = reservationService.createHairShopReservationOptimistic(hairShop.getId(), customer.getEmail(), currentTime, request);
 
         // then
         Optional<HairShopReservation> foundReservation = reservationRepository.findById(reservationId);
@@ -87,7 +87,7 @@ class ReservationServiceTest {
 
 
         // when
-        reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), currentTime, request);
+        reservationService.createHairShopReservationOptimistic(hairShop.getId(), customer.getEmail(), currentTime, request);
 
         // then
         HairShop updatedHairShop = hairShopRepository.findById(hairShop.getId()).orElseThrow();
@@ -108,7 +108,7 @@ class ReservationServiceTest {
         for (int i = 0; i < threadCount; i++) {
             es.submit(() -> {
                 try {
-                    reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), currentTime, request);
+                    reservationService.createHairShopReservationOptimistic(hairShop.getId(), customer.getEmail(), currentTime, request);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
