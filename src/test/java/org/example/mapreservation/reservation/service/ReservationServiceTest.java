@@ -16,13 +16,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -78,7 +81,7 @@ class ReservationServiceTest {
         HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
 
         // when
-        Long reservationId = reservationService.createHairShopReservationOptimistic(hairShop.getId(), customer.getEmail(), currentTime, request);
+        Long reservationId = reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), currentTime, request);
 
         // then
         Optional<HairShopReservation> foundReservation = reservationRepository.findById(reservationId);
@@ -88,47 +91,43 @@ class ReservationServiceTest {
         assertThat(foundReservation.get().getReservationTime()).isEqualTo(reservationTime);
     }
 
-    @DisplayName("예약 성공하면 헤어샵의 version이 1 증가한다.")
+    @DisplayName("같은 헤어샵, 같은 날짜로 예약을 중복 시도하면 한 건만 예약된다.")
     @Test
-    void givenReservationSucceeds_thenHairShopVersionIncreases() {
-        // given
-        int version = hairShop.getVersion();
-        LocalDateTime reservationTime = LocalDateTime.of(2024, Month.APRIL, 10, 13, 30);
-        LocalDateTime currentTime = reservationTime.minusHours(2);
-        HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
-
-
-        // when
-        reservationService.createHairShopReservationOptimistic(hairShop.getId(), customer.getEmail(), currentTime, request);
-
-        // then
-        HairShop updatedHairShop = hairShopRepository.findById(hairShop.getId()).orElseThrow();
-        assertThat(updatedHairShop.getVersion()).isEqualTo(version + 1);
-    }
-
-    // TODO: 데드락 발생! 원인 찾고 해결하기!
-    @Test
-    void test() throws InterruptedException {
+    void givenMultipleSameReservation_thenOnlyOneSucceeds() throws InterruptedException {
         // given
         LocalDateTime reservationTime = LocalDateTime.of(2024, Month.APRIL, 10, 13, 30);
         LocalDateTime currentTime = reservationTime.minusHours(2);
         HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
 
-        int threadCount = 3;
+        // when - 동일한 예약 정보로 동시에 예약 시도
+        int threadCount = 5;
         CountDownLatch latch = new CountDownLatch(threadCount);
         ExecutorService es = Executors.newFixedThreadPool(threadCount);
+        AtomicReference<Long> reservationId = new AtomicReference<>();
+        CopyOnWriteArrayList<Exception> exceptions = new CopyOnWriteArrayList<>();
         for (int i = 0; i < threadCount; i++) {
             es.submit(() -> {
                 try {
-                    reservationService.createHairShopReservationOptimistic(hairShop.getId(), customer.getEmail(), currentTime, request);
+                    reservationId.set(reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), currentTime, request));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    exceptions.add(e);
                 } finally {
                     latch.countDown();
                 }
             });
         }
         latch.await();
+
+        // then - 실패한 예약 검증
+        assertThat(exceptions.size()).isEqualTo(threadCount - 1);
+        assertThat(exceptions).allMatch(e -> e.getClass().equals(DataIntegrityViolationException.class));
+        // then - 성공된 예약 검증
+        Long id = reservationId.get();
+        Optional<HairShopReservation> foundReservation = reservationRepository.findById(id);
+        assertThat(foundReservation).isNotEmpty();
+        assertThat(foundReservation.get().getHairShop().getId()).isEqualTo(hairShop.getId());
+        assertThat(foundReservation.get().getCustomer().getId()).isEqualTo(customer.getId());
+        assertThat(foundReservation.get().getReservationTime()).isEqualTo(reservationTime);
     }
 
 }

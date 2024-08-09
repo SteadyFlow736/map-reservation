@@ -26,7 +26,7 @@ public class ReservationController {
             @AuthenticationPrincipal User user,
             @RequestBody HairShopReservationCreateRequest request
     ) {
-        Long reservationId = reservationService.createHairShopReservationOptimistic(shopId, user.getUsername(), LocalDateTime.now(), request);
+        Long reservationId = reservationService.createHairShopReservation(shopId, user.getUsername(), LocalDateTime.now(), request);
         String uri = String.format("/api/hairshops/%s/reservations/%s", shopId, reservationId);
         return ResponseEntity.created(URI.create(uri)).build();
     }
