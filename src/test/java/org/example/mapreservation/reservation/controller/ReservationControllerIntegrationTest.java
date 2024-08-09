@@ -18,12 +18,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static org.example.mapreservation.exception.ErrorCode.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -88,4 +95,37 @@ class ReservationControllerIntegrationTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
     }
+
+    @DisplayName("고객은 한 헤어샵의 누군가가 이미 예약한 시간과 동일한 시간에 중복 예약할 수 없다.")
+    @WithMockUser(username = "abc@gmail.com")
+    @Test
+    void givenDuplicateReservationTime_thenReturnsFailMessage() throws Exception {
+        // given - 이미 예약된 시간
+        LocalDateTime reservationTime = LocalDateTime.now().plusDays(1)
+                .withMinute(30).withSecond(0).withNano(0);
+        HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
+        mockMvc.perform(post("/api/hairshops/{shopId}/reservations", hairShopId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsBytes(request))
+                )
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"));
+
+        // when, then - 동일한 헤어샵, 시간으로 예약 시도 시 실패 응답 수신
+        mockMvc.perform(post("/api/hairshops/{shopId}/reservations", hairShopId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsBytes(request))
+                )
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value(HSR_ALREADY_TAKEN_RESERVATION_TIME.name()))
+                .andExpect(jsonPath("$.message").value(HSR_ALREADY_TAKEN_RESERVATION_TIME.getMessage()))
+                .andExpect(jsonPath("$.errors").isEmpty());
+    }
+
+    // TODO: 예약 동시 요청 테스트
+
+
 }

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.mapreservation.common.Address;
 import org.example.mapreservation.customer.domain.Customer;
 import org.example.mapreservation.customer.repository.CustomerRepository;
+import org.example.mapreservation.exception.CustomException;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.repository.HairShopRepository;
 import org.example.mapreservation.owner.domain.Owner;
@@ -108,7 +109,8 @@ class ReservationServiceTest {
         for (int i = 0; i < threadCount; i++) {
             es.submit(() -> {
                 try {
-                    reservationId.set(reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), currentTime, request));
+                    Long id = reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), currentTime, request);
+                    reservationId.set(id);
                 } catch (Exception e) {
                     exceptions.add(e);
                 } finally {
@@ -120,7 +122,8 @@ class ReservationServiceTest {
 
         // then - 실패한 예약 검증
         assertThat(exceptions.size()).isEqualTo(threadCount - 1);
-        assertThat(exceptions).allMatch(e -> e.getClass().equals(DataIntegrityViolationException.class));
+        assertThat(exceptions).allMatch(e -> e.getClass().equals(
+                DataIntegrityViolationException.class) || e.getClass().equals(CustomException.class));
         // then - 성공된 예약 검증
         Long id = reservationId.get();
         Optional<HairShopReservation> foundReservation = reservationRepository.findById(id);

@@ -1,6 +1,7 @@
 package org.example.mapreservation.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +19,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<CustomErrorResponse<Object>> handleCustomException(CustomException ex) {
+        logError(ex);
+        ErrorCode errorCode = ex.getErrorCode();
+        return createResponseEntity(errorCode, null);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<CustomErrorResponse<Object>> handleCustomException(DataIntegrityViolationException exception) {
+        CustomException ex = new CustomException(ErrorCode.HSR_ALREADY_TAKEN_RESERVATION_TIME);
         logError(ex);
         ErrorCode errorCode = ex.getErrorCode();
         return createResponseEntity(errorCode, null);
