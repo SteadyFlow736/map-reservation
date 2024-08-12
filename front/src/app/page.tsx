@@ -1,10 +1,12 @@
+'use client'
+
 import SearchColumn from "@/components/SearchColumn";
 import MainMap from "@/components/MainMap";
 
 function Home() {
     return (
         <div>
-            {/*<SearchColumn/>*/}
+            <SearchColumn/>
             <MainMap/>
         </div>
     );

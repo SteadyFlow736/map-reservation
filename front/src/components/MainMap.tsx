@@ -1,13 +1,10 @@
-'use client'
-
 import Script from "next/script";
-import {useState} from "react";
 
 function MainMap() {
 
     return (
         <>
-            <div id="map" style={{width: '100%', height: '400px'}}/>
+            <div id="map" className="w-full h-screen"/>
             <Script
                 type="text/javascript"
                 src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}`}
