@@ -1,4 +1,4 @@
-import Search from "@/components/Search";
+import SearchBar from "@/components/SearchBar";
 import SearchResultList from "@/components/SearchResultList";
 
 function SearchColumn() {
@@ -6,9 +6,9 @@ function SearchColumn() {
         <div className="absolute z-20
         h-screen w-96
         grid grid-cols-1 grid-rows-[auto_1fr]
-        bg-green-300"
+        bg-white"
         >
-            <Search/>
+            <SearchBar/>
             <SearchResultList/>
         </div>
     )
