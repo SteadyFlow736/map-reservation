@@ -6,4 +6,4 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: map-reservation
     ports:
-      - "3310:3306"
+      - "3312:3306"
