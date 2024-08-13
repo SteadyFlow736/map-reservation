@@ -16,7 +16,6 @@ import java.util.List;
  */
 public record GeocodeResponse(String status, Meta meta, List<Address> addresses, String errorMessage) {
 
-    @ToString
     @Getter
     static public class Meta {
         private Integer totalCount;
@@ -24,7 +23,6 @@ public record GeocodeResponse(String status, Meta meta, List<Address> addresses,
         private Integer count;
     }
 
-    @ToString
     @Getter
     static public class Address {
         private String roadAddress;
@@ -36,7 +34,6 @@ public record GeocodeResponse(String status, Meta meta, List<Address> addresses,
         private Double distance;
     }
 
-    @ToString
     @Getter
     static public class AddressElement {
         private List<String> types;

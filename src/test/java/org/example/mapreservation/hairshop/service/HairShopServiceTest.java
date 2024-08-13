@@ -1,11 +1,14 @@
 package org.example.mapreservation.hairshop.service;
 
 import org.example.mapreservation.common.Address;
+import org.example.mapreservation.customer.repository.CustomerRepository;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.dto.CreateHairShopRequest;
 import org.example.mapreservation.hairshop.repository.HairShopRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
+import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +24,22 @@ class HairShopServiceTest {
     OwnerRepository ownerRepository;
     @Autowired
     HairShopRepository hairShopRepository;
+    @Autowired
+    HairShopReservationRepository hairShopReservationRepository;
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @BeforeEach
+    void beforeEach() {
+        cleanUp();
+    }
+
+    private void cleanUp() {
+        hairShopReservationRepository.deleteAll();
+        customerRepository.deleteAll();
+        hairShopRepository.deleteAll();
+        ownerRepository.deleteAll();
+    }
 
     @Test
     void saveHairShop() {

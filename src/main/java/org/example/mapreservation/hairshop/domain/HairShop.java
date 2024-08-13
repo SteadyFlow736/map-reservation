@@ -33,9 +33,26 @@ public class HairShop {
     @JoinColumn(name = "owner_id", nullable = false)
     private Owner owner;
 
+    // x 좌표
+    private String x;
+
+    // y 좌표
+    private String y;
+
+    public HairShop(String name, Address address, Owner owner, String x, String y) {
+        this.name = name;
+        this.address = address;
+        this.owner = owner;
+        this.x = x;
+        this.y = y;
+    }
+
     public HairShop(String name, Address address, Owner owner) {
         this.name = name;
         this.address = address;
         this.owner = owner;
+        this.x = null;
+        this.y = null;
     }
+
 }
