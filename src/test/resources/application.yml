@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: optional:classpath:application-naver-maps.yml
   jpa:
     show-sql: true
     properties:
