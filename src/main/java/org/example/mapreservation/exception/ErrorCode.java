@@ -14,6 +14,10 @@ public enum ErrorCode {
     AUTH_INVALID_USERNAME_OR_PASSWORD("존재하지 않는 사용자거나 패스워드가 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
     AUTH_NEED_AUTHENTICATION("로그인이 필요합니다.", HttpStatus.UNAUTHORIZED),
 
+    // OWNER
+    OWNER_NOT_FOUND("일치하는 고객이 없습니다.", HttpStatus.NOT_FOUND),
+
+
     // Hair Shop
     HS_NOT_FOUND("찾을 수 없는 헤어샵입니다.", HttpStatus.NOT_FOUND),
 

@@ -1,6 +1,5 @@
 package org.example.mapreservation.customer.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.mapreservation.customer.domain.Customer;
 import org.example.mapreservation.customer.dto.CustomerCreateRequest;
@@ -10,6 +9,7 @@ import org.example.mapreservation.exception.ErrorCode;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Transactional
