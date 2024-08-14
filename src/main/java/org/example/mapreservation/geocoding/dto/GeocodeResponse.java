@@ -29,8 +29,8 @@ public record GeocodeResponse(String status, Meta meta, List<Address> addresses,
         private String jibunAddress;
         private String englishAddress;
         private List<AddressElement> addressElements;
-        private String x;
-        private String y;
+        private String x; // 경도(longitude)
+        private String y; // 위도(latitude)
         private Double distance;
     }
 

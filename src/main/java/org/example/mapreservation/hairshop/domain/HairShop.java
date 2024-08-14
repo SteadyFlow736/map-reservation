@@ -33,26 +33,25 @@ public class HairShop {
     @JoinColumn(name = "owner_id", nullable = false)
     private Owner owner;
 
-    // x 좌표
-    private String x;
+    // 경도
+    private String longitude;
+    // 위도
+    private String latitude;
 
-    // y 좌표
-    private String y;
-
-    public HairShop(String name, Address address, Owner owner, String x, String y) {
+    public HairShop(String name, Address address, Owner owner, String longitude, String latitude) {
         this.name = name;
         this.address = address;
         this.owner = owner;
-        this.x = x;
-        this.y = y;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public HairShop(String name, Address address, Owner owner) {
         this.name = name;
         this.address = address;
         this.owner = owner;
-        this.x = null;
-        this.y = null;
+        this.longitude = null;
+        this.latitude = null;
     }
 
 }

@@ -32,9 +32,9 @@ public class HairShopService {
         GeocodeResponse geocodeResponse = geocodeService.geocode(geocodeRequest);
 
         if (!geocodeResponse.addresses().isEmpty()) {
-            String x = geocodeResponse.addresses().get(0).getX();
-            String y = geocodeResponse.addresses().get(0).getY();
-            hairShop = new HairShop(request.name(), request.address(), owner, x, y);
+            String longitude = geocodeResponse.addresses().get(0).getX(); // 경도
+            String latitude = geocodeResponse.addresses().get(0).getY(); // 위도
+            hairShop = new HairShop(request.name(), request.address(), owner, longitude, latitude);
         } else {
             hairShop = new HairShop(request.name(), request.address(), owner);
         }
