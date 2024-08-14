@@ -8,9 +8,14 @@ import org.example.mapreservation.geocoding.dto.GeocodeResponse;
 import org.example.mapreservation.geocoding.service.GeocodeService;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.dto.CreateHairShopRequest;
+import org.example.mapreservation.hairshop.dto.HairShopDto;
+import org.example.mapreservation.hairshop.dto.HairShopSearchCondition;
+import org.example.mapreservation.hairshop.repository.HairShopQueryRepository;
 import org.example.mapreservation.hairshop.repository.HairShopRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +27,7 @@ public class HairShopService {
     private final HairShopRepository hairShopRepository;
     private final OwnerRepository ownerRepository;
     private final GeocodeService geocodeService;
+    private final HairShopQueryRepository hairShopQueryRepository;
 
     public Long createHairShop(CreateHairShopRequest request) {
         Owner owner = ownerRepository.findById(request.ownerId())
@@ -40,5 +46,9 @@ public class HairShopService {
         }
 
         return hairShopRepository.save(hairShop).getId();
+    }
+
+    public Page<HairShopDto> searchHairShop(HairShopSearchCondition searchCondition, Pageable pageable) {
+        return hairShopQueryRepository.search(searchCondition, pageable);
     }
 }
