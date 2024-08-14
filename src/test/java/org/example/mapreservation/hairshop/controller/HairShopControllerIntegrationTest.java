@@ -14,11 +14,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @AutoConfigureMockMvc
@@ -67,11 +67,17 @@ class HairShopControllerIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/hairshop")
                         .queryParam("searchTerm", "헤어")
                         .queryParam("page", "1")
-                        .queryParam("size", "2")
+                        .queryParam("size", "3")
                         .queryParam("sort", "name,desc")
                         .with(csrf())
                 )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(jsonPath("$.totalElements").value(5));
+                .andDo(print())
+                .andExpect(jsonPath("$.totalElements").value(5))
+                .andExpect(jsonPath("$.totalPages").value(2))
+                .andExpect(jsonPath("$.size").value(3))
+                .andExpect(jsonPath("$.numberOfElements").value(2))
+                .andExpect(jsonPath("$.content.size()").value(2))
+                .andExpect(jsonPath("$.content[0].shopName").value("헤어샵2"))
+                .andExpect(jsonPath("$.content[1].shopName").value("헤어샵1"));
     }
 }
