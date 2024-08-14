@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: local
   config:
     import: optional:classpath:application-naver-maps.yml
   jpa:
