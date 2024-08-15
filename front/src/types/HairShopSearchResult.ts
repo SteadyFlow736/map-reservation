@@ -1,0 +1,1 @@
+type HairShopSearchResult = Page<HairShopDto>

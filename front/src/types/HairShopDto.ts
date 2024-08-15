@@ -1,0 +1,3 @@
+type HairShopDto = {
+    shopName: string
+}
