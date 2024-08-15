@@ -14,6 +14,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -28,6 +33,16 @@ public class SecurityConfig {
     // SpringDocConfig의 Bean으로부터 받아오는 값
     private final String swaggerPath;
     private final String apiDocPath;
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedMethods(List.of("*"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -47,6 +62,7 @@ public class SecurityConfig {
                         .successHandler(authenticationSuccessHandler)
                         .failureHandler(authenticationFailureHandler)
                 )
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .logout(customizer -> customizer
                         // LogoutFilter에서 로그아웃 진행
                         .logoutUrl("/api/logout")
