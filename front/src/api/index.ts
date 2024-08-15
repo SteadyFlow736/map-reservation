@@ -6,7 +6,11 @@ const instance = axios.create({
 })
 
 // 검색어 질의 API
-async function fetchSearchResult(searchTerm: string, pageable: Pageable): Promise<HairShopSearchResult> {
+async function fetchSearchResult(
+    searchTerm: string,
+    pageable: Pageable = {size: 10, page: 0, sort: ['name,asc']}):
+    Promise<HairShopSearchResult> {
+
     const {data} = await instance.get("/api/hairshop", {
         params: {
             searchTerm,

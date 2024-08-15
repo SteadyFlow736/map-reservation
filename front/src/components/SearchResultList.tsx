@@ -1,6 +1,11 @@
 import StoreSummaryCard from "@/components/StoreSummaryCard";
+import {hairShopSearchResultAtom} from "@/atoms";
+import {useAtomValue} from "jotai";
 
 function SearchResultList() {
+    const searchResult = useAtomValue(hairShopSearchResultAtom)
+    const data = searchResult?.content
+
     const searchResultList: SearchResultDto[] = [
         {
             storeId: 1,
@@ -84,7 +89,8 @@ function SearchResultList() {
 
     return (
         <div className="overflow-y-auto divide-y">
-            {searchResultList.map(s => <StoreSummaryCard key={s.storeId} storeSummary={s}/>)}
+            {/*{searchResultList.map(s => <StoreSummaryCard key={s.storeId} storeSummary={s}/>)}*/}
+            {data?.map(s => <StoreSummaryCard key={s.shopName} storeSummary={s}/>)}
         </div>
     )
 }

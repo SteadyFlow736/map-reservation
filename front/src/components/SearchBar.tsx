@@ -1,7 +1,21 @@
-import {useState} from "react";
+import React, {useState} from "react";
+import {hairShopSearchResultAtom} from "@/atoms";
+import {fetchSearchResult} from "@/api";
+import {useSetAtom} from "jotai";
 
 function SearchBar() {
     const [searchTerm, setSearchTerm] = useState("");
+    const setSearchResult = useSetAtom(hairShopSearchResultAtom)
+
+    const handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key !== 'Enter') return
+        await search()
+    }
+
+    const search = async () => {
+        const data = await fetchSearchResult(searchTerm)
+        setSearchResult(data)
+    }
 
     return (
         <input
@@ -9,6 +23,7 @@ function SearchBar() {
             type="text"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
+            onKeyDown={handleOnKeyDown}
         />
     )
 }
