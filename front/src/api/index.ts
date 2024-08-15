@@ -1,14 +1,17 @@
 import axios from "axios";
+import Pageable from "@/types/Pageable";
 
 const instance = axios.create({
     baseURL: "http://localhost:8080"
 })
 
 // 검색어 질의 API
-async function fetchSearchResult(keyword: string) {
-    const {data} = await instance.get("/api/search", {
+async function fetchSearchResult(searchTerm: string, pageable: Pageable) {
+    const {data} = await instance.get("/api/hairshop", {
         params: {
-            keyword
+            searchTerm,
+            ...pageable,
+            sort: pageable.sort.join(',')
         }
     })
     return data;
