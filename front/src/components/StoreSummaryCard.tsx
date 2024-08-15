@@ -1,4 +1,4 @@
-function StoreSummaryCard({storeSummary}: { storeSummary: StoreSummary }) {
+function StoreSummaryCard({storeSummary}: { storeSummary: HairShopDto }) {
 
     return (
         <div className="p-4 hover:cursor-pointer hover:bg-gray-200">
