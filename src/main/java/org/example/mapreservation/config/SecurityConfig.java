@@ -53,6 +53,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/customers").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/csrf-token").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/hairshop").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/hairshops/{hairShopId}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(Customizer.withDefaults()) // TODO: CSRF 인증 실패 응답 커스터마이징 하기

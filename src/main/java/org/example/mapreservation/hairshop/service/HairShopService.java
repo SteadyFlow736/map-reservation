@@ -8,6 +8,7 @@ import org.example.mapreservation.geocoding.dto.GeocodeResponse;
 import org.example.mapreservation.geocoding.service.GeocodeService;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.dto.CreateHairShopRequest;
+import org.example.mapreservation.hairshop.dto.HairShopDetail;
 import org.example.mapreservation.hairshop.dto.HairShopDto;
 import org.example.mapreservation.hairshop.dto.HairShopSearchCondition;
 import org.example.mapreservation.hairshop.repository.HairShopQueryRepository;
@@ -51,4 +52,11 @@ public class HairShopService {
     public Page<HairShopDto> searchHairShop(HairShopSearchCondition searchCondition, Pageable pageable) {
         return hairShopQueryRepository.search(searchCondition, pageable);
     }
+
+    public HairShopDetail getHairShopDetail(Long hairShopId) {
+        HairShop hairShop = hairShopRepository.findById(hairShopId)
+                .orElseThrow(() -> new CustomException(ErrorCode.HS_NOT_FOUND));
+        return HairShopDetail.from(hairShop);
+    }
+
 }

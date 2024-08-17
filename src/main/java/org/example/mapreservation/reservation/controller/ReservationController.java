@@ -20,6 +20,14 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
+    /**
+     * 헤어샵 예약 API
+     *
+     * @param shopId  헤어샵 id
+     * @param user    예약자
+     * @param request 예약 내용
+     * @return 예약 결과
+     */
     @PostMapping("/api/hairshops/{shopId}/reservations")
     public ResponseEntity<Void> createHairShopReservation(
             @PathVariable("shopId") Long shopId,

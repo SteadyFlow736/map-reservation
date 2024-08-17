@@ -13,11 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -64,7 +64,7 @@ class HairShopControllerIntegrationTest {
         ));
 
         // when, then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/hairshop")
+        mockMvc.perform(get("/api/hairshop")
                         .queryParam("searchTerm", "헤어")
                         .queryParam("page", "1")
                         .queryParam("size", "3")
@@ -79,5 +79,22 @@ class HairShopControllerIntegrationTest {
                 .andExpect(jsonPath("$.content.size()").value(2))
                 .andExpect(jsonPath("$.content[0].shopName").value("헤어샵2"))
                 .andExpect(jsonPath("$.content[1].shopName").value("헤어샵1"));
+    }
+
+    @Test
+    void getHairShopDetail() throws Exception {
+        // given - 데이터 준비
+        Owner owner = new Owner("사장1");
+        ownerRepository.save(owner);
+        Address address = new Address("도로명 주소", "101호");
+        HairShop hairShop = hairShopRepository.save(new HairShop("헤어샵1", address, owner));
+
+        // when, then
+        mockMvc.perform(get("/api/hairshops/{hairShopId}", hairShop.getId())
+                        .with(csrf())
+                )
+                .andDo(print())
+                .andExpect(jsonPath("$.shopId").value(hairShop.getId()))
+                .andExpect(jsonPath("$.shopName").value(hairShop.getName()));
     }
 }
