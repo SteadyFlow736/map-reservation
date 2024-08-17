@@ -2,7 +2,7 @@ import {naver_map_client_id} from "@/config/map";
 import Script from "next/script";
 import {useAtomValue} from "jotai";
 import {hairShopSearchResultAtom, selectedHairShopIdAtom} from "@/atoms";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
 
 const markerMap = new Map<number, naver.maps.Marker>()
@@ -12,32 +12,36 @@ function MainMap() {
     const hairShopSearchResult = useAtomValue(hairShopSearchResultAtom);
     const [selectedHairShopId] = useAtom(selectedHairShopIdAtom)
 
-    // marker 표시
-    markerMap.forEach(m => m.setMap(null))
-    markerMap.clear()
-    if (map && hairShopSearchResult) {
-        hairShopSearchResult.content.forEach(dto => {
-            const latitude = parseFloat(dto.latitude)
-            const longitude = parseFloat(dto.longitude)
-            const marker = new naver.maps.Marker({
-                position: new naver.maps.LatLng(latitude, longitude),
-                clickable: true,
-                map
+    // 검색된 헤어샵 리스트의 marker 생성
+    useEffect(() => {
+        markerMap.forEach(m => m.setMap(null))
+        markerMap.clear()
+        if (map && hairShopSearchResult) {
+            hairShopSearchResult.content.forEach(dto => {
+                const latitude = parseFloat(dto.latitude)
+                const longitude = parseFloat(dto.longitude)
+                const marker = new naver.maps.Marker({
+                    position: new naver.maps.LatLng(latitude, longitude),
+                    clickable: true,
+                    map
+                })
+                markerMap.set(dto.shopId, marker)
             })
-            markerMap.set(dto.shopId, marker)
-        })
-    }
+        }
+    }, [map, hairShopSearchResult])
 
     // 선택된 marker로 지도 중심 변경
-    if (selectedHairShopId) {
-        const marker = markerMap.get(selectedHairShopId)
-        if (marker && map) {
-            const position = marker.getPosition()
-            map.panTo(position)
-            //const widthPixel = window.innerWidth
-            //const point = map.getProjection().fromCoordToPoint(position)
+    useEffect(() => {
+        if (selectedHairShopId) {
+            const marker = markerMap.get(selectedHairShopId)
+            if (marker && map) {
+                const position = marker.getPosition()
+                map.panTo(position)
+                //const widthPixel = window.innerWidth
+                //const point = map.getProjection().fromCoordToPoint(position)
+            }
         }
-    }
+    }, [selectedHairShopId, map]);
 
     return (
         <>
