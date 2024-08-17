@@ -21,4 +21,10 @@ async function fetchSearchResult(
     return data;
 }
 
-export {fetchSearchResult}
+// 상점 상세 정보 질의 API
+async function fetchShopDetail(id: number): Promise<HairShopDetail> {
+    const {data} = await instance.get(`/api/hairshops/${id}`)
+    return data
+}
+
+export {fetchSearchResult, fetchShopDetail}
