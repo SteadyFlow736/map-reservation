@@ -4,7 +4,7 @@ import SearchResultList from "@/components/SearchResultList";
 function SearchColumn() {
     return (
         <div className="
-        h-screen w-96
+        h-screen w-96 z-20
         grid grid-cols-1 grid-rows-[auto_1fr]
         bg-white"
         >

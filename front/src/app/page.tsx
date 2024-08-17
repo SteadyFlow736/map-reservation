@@ -7,7 +7,7 @@ import ShopDetailColumn from "@/components/ShopDetailColumn";
 function Home() {
     return (
         <div>
-            <div className="absolute z-20 flex">
+            <div className="absolute flex gap-3">
                 <SearchColumn/>
                 <ShopDetailColumn/>
             </div>
