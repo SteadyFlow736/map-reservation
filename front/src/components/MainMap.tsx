@@ -1,28 +1,42 @@
 import {naver_map_client_id} from "@/config/map";
 import Script from "next/script";
 import {useAtomValue} from "jotai";
-import {hairShopSearchResultAtom} from "@/atoms";
+import {hairShopSearchResultAtom, selectedHairShopIdAtom} from "@/atoms";
 import {useState} from "react";
+import {useAtom} from "jotai/index";
 
-const markers: naver.maps.Marker[] = []
+const markerMap = new Map<number, naver.maps.Marker>()
 
 function MainMap() {
     const [map, setMap] = useState<naver.maps.Map>()
     const hairShopSearchResult = useAtomValue(hairShopSearchResultAtom);
+    const [selectedHairShopId] = useAtom(selectedHairShopIdAtom)
 
     // marker 표시
-    markers.forEach(m => m.setMap(null))
-    markers.length = 0
+    markerMap.forEach(m => m.setMap(null))
+    markerMap.clear()
     if (map && hairShopSearchResult) {
         hairShopSearchResult.content.forEach(dto => {
             const latitude = parseFloat(dto.latitude)
             const longitude = parseFloat(dto.longitude)
             const marker = new naver.maps.Marker({
                 position: new naver.maps.LatLng(latitude, longitude),
+                clickable: true,
                 map
             })
-            markers.push(marker)
+            markerMap.set(dto.shopId, marker)
         })
+    }
+
+    // 선택된 marker로 지도 중심 변경
+    if (selectedHairShopId) {
+        const marker = markerMap.get(selectedHairShopId)
+        if (marker && map) {
+            const position = marker.getPosition()
+            map.panTo(position)
+            //const widthPixel = window.innerWidth
+            //const point = map.getProjection().fromCoordToPoint(position)
+        }
     }
 
     return (
