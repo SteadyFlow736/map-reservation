@@ -1,5 +1,9 @@
 import {QueryClient} from "@tanstack/query-core";
 
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient()
 
-export default queryClient
+type QueryKey = "shopDetail" | "anotherKey"
+export const QueryKeys: Record<QueryKey, QueryKey> = {
+    shopDetail: "shopDetail",
+    anotherKey: "anotherKey"
+};
