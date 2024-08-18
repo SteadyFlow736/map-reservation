@@ -12,7 +12,7 @@ function ShopDetailColumn() {
 
     useEffect(() => {
         if (!selectedHairShopId) return
-        fetchShopDetail(selectedHairShopId).then(response => setShopDetail(response))
+        fetchShopDetail(selectedHairShopId.shopId).then(response => setShopDetail(response))
     }, [selectedHairShopId])
 
     if (!shopDetail) return <div>Loading</div>

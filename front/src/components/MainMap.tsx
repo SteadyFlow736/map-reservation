@@ -5,7 +5,9 @@ import {hairShopSearchResultAtom, selectedHairShopIdAtom} from "@/atoms";
 import {useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
 
+// 보존될 필요가 있는 상태지만, 그 변화가 화면 렌더링을 트리거 하지 않음
 const markerMap = new Map<number, naver.maps.Marker>()
+let prevMarker: naver.maps.Marker | undefined = undefined
 
 function MainMap() {
     const [map, setMap] = useState<naver.maps.Map>()
@@ -24,7 +26,7 @@ function MainMap() {
     <p class="">${shopName}</p>
     `
 
-    // 검색된 헤어샵 리스트의 marker 생성
+    // marker 생성을 위한 useEffect: 검색된 헤어샵 리스트의 marker 생성
     useEffect(() => {
         markerMap.forEach(m => m.setMap(null))
         markerMap.clear()
@@ -40,19 +42,21 @@ function MainMap() {
                         content: getMarker(dto.shopName)
                     }
                 })
-                naver.maps.Event.addListener(marker, 'click', (event) => {
-                    setSelectedHairShopId(dto.shopId)
-                    marker.setAnimation(1)
+                naver.maps.Event.addListener(marker, 'click', (_) => {
+                    setSelectedHairShopId({
+                        shopId: dto.shopId,
+                        needPan: false
+                    })
                 })
                 markerMap.set(dto.shopId, marker)
             })
         }
     }, [map, hairShopSearchResult, setSelectedHairShopId])
 
-    // 선택된 marker로 지도 중심 변경
+    // 지도 중심 변경을 위한 useEffect: 선택된 marker로 지도 중심 변경
     useEffect(() => {
-        if (selectedHairShopId) {
-            const marker = markerMap.get(selectedHairShopId)
+        if (selectedHairShopId?.needPan) {
+            const marker = markerMap.get(selectedHairShopId.shopId)
             if (marker && map) {
                 const position = marker.getPosition()
                 map.panTo(position)
@@ -61,6 +65,16 @@ function MainMap() {
             }
         }
     }, [selectedHairShopId, map]);
+
+    // marker animation 전환을 위한 useEffect: 선택된 marker animation on, 이전 marker animation off
+    useEffect(() => {
+        prevMarker?.setAnimation(null)
+        if (selectedHairShopId) {
+            const marker = markerMap.get(selectedHairShopId.shopId)
+            marker?.setAnimation(1)
+            prevMarker = marker
+        }
+    }, [selectedHairShopId]);
 
     return (
         <>

@@ -5,7 +5,10 @@ function StoreSummaryCard({storeSummary}: { storeSummary: HairShopDto }) {
     const setSelectedHairShopId = useSetAtom(selectedHairShopIdAtom)
 
     const selectShop = () => {
-        setSelectedHairShopId(storeSummary.shopId)
+        setSelectedHairShopId({
+            shopId: storeSummary.shopId,
+            needPan: true
+        })
     }
 
     return (
