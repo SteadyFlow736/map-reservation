@@ -1,9 +1,8 @@
 import {useAtom, useSetAtom} from "jotai";
 import {selectedHairShopIdAtom} from "@/atoms";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
 import {useEffect, useState} from "react";
 import {fetchShopDetail} from "@/api";
+import {XMarkIcon} from "@heroicons/react/16/solid";
 
 function ShopDetailColumn() {
     const [selectedHairShopId] = useAtom(selectedHairShopIdAtom)
@@ -39,7 +38,7 @@ function ShopHead({shopDetail}: { shopDetail: HairShopDetail }) {
 
     return (
         <div>
-            <FontAwesomeIcon icon={faXmark} onClick={close} className="absolute right-3 text-2xl mt-5"/>
+            <XMarkIcon onClick={close} className="absolute right-3 mt-5 size-6 hover:cursor-pointer"/>
             <p>{shopDetail.shopName}</p>
         </div>
     )
