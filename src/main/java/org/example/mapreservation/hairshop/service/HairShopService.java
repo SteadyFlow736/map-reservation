@@ -41,9 +41,9 @@ public class HairShopService {
         if (!geocodeResponse.addresses().isEmpty()) {
             String longitude = geocodeResponse.addresses().get(0).getX(); // 경도
             String latitude = geocodeResponse.addresses().get(0).getY(); // 위도
-            hairShop = new HairShop(request.name(), request.address(), owner, longitude, latitude);
+            hairShop = new HairShop(request.name(), request.address(), owner, longitude, latitude, request.imageUrls());
         } else {
-            hairShop = new HairShop(request.name(), request.address(), owner);
+            hairShop = new HairShop(request.name(), request.address(), owner, request.imageUrls());
         }
 
         return hairShopRepository.save(hairShop).getId();

@@ -47,6 +47,7 @@ public class HairShop {
     private String latitude;
 
     @Convert(converter = UrlListConverter.class)
+    @Column(columnDefinition = "TEXT")
     private List<String> imageUrls = new ArrayList<>();
 
     public HairShop(String name, Address address, Owner owner, String longitude, String latitude, List<String> imageUrls) {
@@ -55,7 +56,9 @@ public class HairShop {
         this.owner = owner;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.imageUrls = imageUrls;
+        if (imageUrls != null) {
+            this.imageUrls = imageUrls;
+        }
     }
 
     public HairShop(String name, Address address, Owner owner, String longitude, String latitude) {
@@ -64,6 +67,17 @@ public class HairShop {
         this.owner = owner;
         this.longitude = longitude;
         this.latitude = latitude;
+    }
+
+    public HairShop(String name, Address address, Owner owner, List<String> imageUrls) {
+        this.name = name;
+        this.address = address;
+        this.owner = owner;
+        this.longitude = null;
+        this.latitude = null;
+        if (imageUrls != null) {
+            this.imageUrls = imageUrls;
+        }
     }
 
     public HairShop(String name, Address address, Owner owner) {
