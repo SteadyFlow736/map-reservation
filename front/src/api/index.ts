@@ -1,5 +1,5 @@
 import axios from "axios";
-import Pageable from "@/types/Pageable";
+import Pageable from "@/dto/Pageable";
 
 const instance = axios.create({
     baseURL: "http://localhost:8080"
