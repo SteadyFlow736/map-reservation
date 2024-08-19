@@ -4,8 +4,7 @@ import {useEffect, useState} from "react";
 import {fetchShopDetail} from "@/api";
 import {XMarkIcon} from "@heroicons/react/16/solid";
 import Image from "next/image";
-import {useRouter} from "next/navigation";
-import ShopMenu from "@/components/ShopMenu";
+import ShopNav from "@/components/ShopNav";
 
 function ShopDetailColumn() {
     const [selectedHairShopId] = useAtom(selectedHairShopIdAtom)
@@ -31,7 +30,7 @@ function ShopDetailColumn() {
         >
             <StickyNavBar/>
             <ShopHead shopDetail={shopDetail}/>
-            <ShopMenu/>
+            <ShopNav/>
         </div>
     )
 }
