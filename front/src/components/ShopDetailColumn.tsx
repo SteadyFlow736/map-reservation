@@ -3,6 +3,9 @@ import {selectedHairShopIdAtom} from "@/atoms";
 import {useEffect, useState} from "react";
 import {fetchShopDetail} from "@/api";
 import {XMarkIcon} from "@heroicons/react/16/solid";
+import Image from "next/image";
+import {useRouter} from "next/navigation";
+import ShopMenu from "@/components/ShopMenu";
 
 function ShopDetailColumn() {
     const [selectedHairShopId] = useAtom(selectedHairShopIdAtom)
@@ -20,16 +23,20 @@ function ShopDetailColumn() {
     return (
         <div className={`
             max-h-screen w-96 z-10 my-3 rounded-2xl shadow-2xl
-            bg-white
+            bg-gray-100
             ${showOrHidden}
             transition
-            `}>
+            overflow-hidden
+            `}
+        >
+            <StickyNavBar/>
             <ShopHead shopDetail={shopDetail}/>
+            <ShopMenu/>
         </div>
     )
 }
 
-function ShopHead({shopDetail}: { shopDetail: HairShopDetail }) {
+function StickyNavBar() {
     const setSelectedHairShopId = useSetAtom(selectedHairShopIdAtom)
 
     const close = () => {
@@ -37,9 +44,43 @@ function ShopHead({shopDetail}: { shopDetail: HairShopDetail }) {
     }
 
     return (
-        <div>
-            <XMarkIcon onClick={close} className="absolute right-3 mt-5 size-6 hover:cursor-pointer"/>
+        <div className="sticky top-0 bg-neutral-300 p-3">
+            <XMarkIcon onClick={close} className="text-white size-6 hover:cursor-pointer"/>
+        </div>
+    )
+}
+
+function ShopHead({shopDetail}: { shopDetail: HairShopDetail }) {
+    return (
+        <div className="bg-white mb-2">
+            {/* 대표 이미지 */}
+            <div className="flex flex-row">
+                {shopDetail.imageUrls.map((url, index) =>
+                    <Image
+                        className="flex-auto"
+                        key={index + url}
+                        src={url}
+                        alt={'haircut image'}
+                        width={10}
+                        height={10}
+                    />
+                )}
+            </div>
+
+            {/* 상점 이름 */}
             <p>{shopDetail.shopName}</p>
+
+            {/* 예약 버튼 */}
+            <div className="p-3">
+                <div
+                    className="p-2 border-2 border-gray-100 rounded
+                    flex justify-center
+                    hover:cursor-pointer
+                    "
+                >
+                    예약
+                </div>
+            </div>
         </div>
     )
 }

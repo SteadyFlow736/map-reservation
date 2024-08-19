@@ -3,4 +3,5 @@ type HairShopDetail = {
     shopName: string
     latitude: string
     longitude: string
+    imageUrls: string[]
 }
