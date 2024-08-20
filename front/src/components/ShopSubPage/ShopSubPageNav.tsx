@@ -26,7 +26,7 @@ function NavButton({subPage, setSubPage, on}: {
 
     return (
         <div
-            className={`hover:cursor-pointer py-3 ${style}`}
+            className={`text-lg hover:cursor-pointer py-3 ${style}`}
             onClick={changeSubPage}
         >
             {subPage}

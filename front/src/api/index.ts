@@ -27,4 +27,10 @@ async function fetchShopDetail(id: number): Promise<HairShopDetail> {
     return data
 }
 
+// 상점 예약 현황 질의 API
+// async function fetchReservationStatus(id: number, date: Date): Promise<HairShopReservationStatus> {
+//     const {data} = await instance.get(`/api/hairshops/${id}/reservations`)
+//     return data
+// }
+
 export {fetchSearchResult, fetchShopDetail}
