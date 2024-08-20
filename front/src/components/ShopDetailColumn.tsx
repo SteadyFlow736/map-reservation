@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {fetchShopDetail} from "@/api";
 import {XMarkIcon} from "@heroicons/react/16/solid";
 import Image from "next/image";
-import ShopSubPage from "@/components/ShopSubPage";
+import ShopSubPage from "@/components/ShopSubPage/ShopSubPage";
 
 function ShopDetailColumn() {
     const [selectedHairShopId] = useAtom(selectedHairShopIdAtom)
@@ -69,7 +69,10 @@ function ShopHead({shopDetail}: { shopDetail: HairShopDetail }) {
             </div>
 
             {/* 상점 이름 */}
-            <p>{shopDetail.shopName}</p>
+            <p className="p-3 pb-1 text-xl">{shopDetail.shopName}</p>
+
+            {/* 방문자 리뷰 */}
+            <p className="px-3 text-sm text-gray-800">방문자 리뷰 100건</p>
 
             {/* 예약 버튼 */}
             <div className="p-3">

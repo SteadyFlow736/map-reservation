@@ -7,7 +7,7 @@ function ShopSubPageNav(
     {subPage, setSubPage}: { subPage: SubPage, setSubPage: Dispatch<SetStateAction<SubPage>> }) {
 
     return (
-        <div className="flex flex-row gap-3 p-3 bg-white">
+        <div className="flex flex-row gap-3 px-3 bg-white border-b border-b-gray-200">
             {subPages.map((page, index) =>
                 <NavButton key={index} subPage={page} setSubPage={setSubPage} on={subPage == page}/>)}
         </div>
@@ -19,14 +19,14 @@ function NavButton({subPage, setSubPage, on}: {
     setSubPage: Dispatch<SetStateAction<SubPage>>,
     on: boolean
 }) {
-    const style = on ? 'text-black' : 'text-gray-400'
+    const style = on ? 'text-black border-b-2 border-b-black' : 'text-gray-400'
     const changeSubPage = () => {
         setSubPage(subPage)
     }
 
     return (
         <div
-            className={`hover:cursor-pointer ${style}`}
+            className={`hover:cursor-pointer py-3 ${style}`}
             onClick={changeSubPage}
         >
             {subPage}
