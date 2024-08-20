@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {fetchShopDetail} from "@/api";
 import {XMarkIcon} from "@heroicons/react/16/solid";
 import Image from "next/image";
-import ShopNav from "@/components/ShopNav";
+import ShopSubPage from "@/components/ShopSubPage";
 
 function ShopDetailColumn() {
     const [selectedHairShopId] = useAtom(selectedHairShopIdAtom)
@@ -30,7 +30,9 @@ function ShopDetailColumn() {
         >
             <StickyNavBar/>
             <ShopHead shopDetail={shopDetail}/>
-            <ShopNav/>
+            {/* key를 전달함으로써 shopId가 변경될 때마다(다른 샵을 선택) ShopSubPage의 서브 페이지 상태를 리셋(홈)하도록 했다.
+            https://react.dev/learn/managing-state#preserving-and-resetting-state */}
+            <ShopSubPage key={selectedHairShopId?.shopId}/>
         </div>
     )
 }
