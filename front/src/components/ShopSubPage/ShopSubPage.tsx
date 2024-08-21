@@ -1,16 +1,16 @@
 import ShopSubPageNav from "@/components/ShopSubPage/ShopSubPageNav";
-import {useState} from "react";
-import {SubPage} from "@/properties/SubPage";
+import {useContext} from "react";
 import ShopSubPageHome from "@/components/ShopSubPage/ShopSubPageHome";
 import ShopSubPageReview from "@/components/ShopSubPage/ShopSubPageReview";
 import ShopSubPageReservation from "@/components/ShopSubPage/ShopSubPageReservation";
 import ShopSubPageNews from "@/components/ShopSubPage/ShopSubPageNews";
+import {ShopSubPageContext} from "@/contexts";
 
 function ShopSubPage() {
-    const [subPage, setSubPage] = useState<SubPage>('홈')
+    const {shopSubPage} = useContext(ShopSubPageContext)
 
     let pageToRender
-    switch (subPage) {
+    switch (shopSubPage) {
         case "홈":
             pageToRender = <ShopSubPageHome/>
             break
@@ -29,7 +29,7 @@ function ShopSubPage() {
 
     return (
         <div>
-            <ShopSubPageNav subPage={subPage} setSubPage={setSubPage}/>
+            <ShopSubPageNav/>
             {pageToRender}
         </div>
     )

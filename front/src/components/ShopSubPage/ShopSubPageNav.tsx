@@ -1,27 +1,23 @@
 import {SubPage} from "@/properties/SubPage";
-import {Dispatch, SetStateAction} from "react";
+import {useContext} from "react";
+import {ShopSubPageContext} from "@/contexts";
 
 const subPages: SubPage[] = ['홈', '소식', '예약', '리뷰'];
 
-function ShopSubPageNav(
-    {subPage, setSubPage}: { subPage: SubPage, setSubPage: Dispatch<SetStateAction<SubPage>> }) {
-
+function ShopSubPageNav() {
     return (
         <div className="flex flex-row gap-3 px-3 bg-white border-b border-b-gray-200">
             {subPages.map((page, index) =>
-                <NavButton key={index} subPage={page} setSubPage={setSubPage} on={subPage == page}/>)}
+                <NavButton subPage={page} key={index}/>)}
         </div>
     )
 }
 
-function NavButton({subPage, setSubPage, on}: {
-    subPage: SubPage,
-    setSubPage: Dispatch<SetStateAction<SubPage>>,
-    on: boolean
-}) {
-    const style = on ? 'text-black border-b-2 border-b-black' : 'text-gray-400'
+function NavButton({subPage}: { subPage: SubPage }) {
+    const {shopSubPage: currentShopSubPage, setShopSubPage} = useContext(ShopSubPageContext)
+    const style = currentShopSubPage == subPage ? 'text-black border-b-2 border-b-black' : 'text-gray-400'
     const changeSubPage = () => {
-        setSubPage(subPage)
+        setShopSubPage(subPage)
     }
 
     return (

@@ -15,7 +15,7 @@ function ShopDetailColumn() {
             overflow-hidden
             `}
         >
-            {selectedHairShopId && <ShopDetailPage />}
+            {selectedHairShopId && <ShopDetailPage key={selectedHairShopId.shopId}/>}
         </div>
     )
 }
