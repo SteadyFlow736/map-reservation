@@ -9,11 +9,14 @@ import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.repository.HairShopRepository;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
+import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
+import org.example.mapreservation.reservation.dto.ReservationStatus;
 import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -58,5 +61,21 @@ public class ReservationService {
         if (reservationTime.getSecond() != 0 || reservationTime.getNano() != 0) {
             throw new CustomException(ErrorCode.HSR_INVALID_RESERVATION_TIME);
         }
+    }
+
+    public ReservationStatus getHairShopReservationStatus(Long shopId, HairShopReservationStatusGetRequest request) {
+        LocalDateTime searchStartDateTime = request.getStartDateTime();
+        LocalDateTime searchEndDateTime = request.getEndDateTime();
+
+        HairShop hairShop = hairShopRepository.findById(shopId)
+                .orElseThrow(() -> new CustomException(ErrorCode.HS_NOT_FOUND));
+
+        List<HairShopReservation> reservations = hairShopReservationRepository
+                .findByHairShopAndReservationTimeBetween(hairShop, searchStartDateTime, searchEndDateTime);
+
+        // TODO: 영업 시작, 종료 시간은 헤어샵 마다, 기준 날짜마다 다르게 가져갈 수 있도록 기능 넣기. 일단 고정된 값으로 전달.
+        LocalTime openingTime = LocalTime.of(10, 0);
+        LocalTime closingTime = LocalTime.of(20, 0);
+        return ReservationStatus.from(request.targetDate(), openingTime, closingTime, reservations);
     }
 }

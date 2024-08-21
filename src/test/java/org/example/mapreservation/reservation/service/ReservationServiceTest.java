@@ -11,6 +11,8 @@ import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
+import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
+import org.example.mapreservation.reservation.dto.ReservationStatus;
 import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,8 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -131,6 +135,33 @@ class ReservationServiceTest {
         assertThat(foundReservation.get().getHairShop().getId()).isEqualTo(hairShop.getId());
         assertThat(foundReservation.get().getCustomer().getId()).isEqualTo(customer.getId());
         assertThat(foundReservation.get().getReservationTime()).isEqualTo(reservationTime);
+    }
+
+    @Test
+    void getHairShopReservationStatus() {
+        // given
+        List<LocalDateTime> reservationTimes = List.of(
+                LocalDateTime.of(2024, Month.AUGUST, 3, 13, 30),
+                LocalDateTime.of(2024, Month.AUGUST, 4, 13, 30),
+                LocalDateTime.of(2024, Month.AUGUST, 4, 15, 30),
+                LocalDateTime.of(2024, Month.AUGUST, 5, 15, 30)
+        );
+        List<HairShopReservationCreateRequest> requests = reservationTimes.stream()
+                .map(HairShopReservationCreateRequest::new).toList();
+        LocalDateTime now = reservationTimes.get(0).minusHours(1);
+        requests.forEach(r -> reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), now, r));
+
+        // when
+        LocalDate targetDate = reservationTimes.get(1).toLocalDate();
+        HairShopReservationStatusGetRequest statusGetRequest =
+                new HairShopReservationStatusGetRequest(targetDate);
+        ReservationStatus status = reservationService.getHairShopReservationStatus(hairShop.getId(), statusGetRequest);
+
+        // then
+        assertThat(status.date()).isEqualTo(targetDate);
+        assertThat(status.reservedTimes().size()).isEqualTo(2);
+        assertThat(status.reservedTimes()).isEqualTo(
+                List.of(reservationTimes.get(1).toLocalTime(), reservationTimes.get(2).toLocalTime()));
     }
 
 }

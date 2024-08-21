@@ -2,13 +2,17 @@ package org.example.mapreservation.reservation.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
+import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
+import org.example.mapreservation.reservation.dto.ReservationStatus;
 import org.example.mapreservation.reservation.service.ReservationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
@@ -37,5 +41,14 @@ public class ReservationController {
         Long reservationId = reservationService.createHairShopReservation(shopId, user.getUsername(), LocalDateTime.now(), request);
         String uri = String.format("/api/hairshops/%s/reservations/%s", shopId, reservationId);
         return ResponseEntity.created(URI.create(uri)).build();
+    }
+
+    @GetMapping("/api/hairshops/{shopId}/reservations/status")
+    public ResponseEntity<ReservationStatus> getHairShopReservationStatus(
+            @PathVariable("shopId") Long shopId,
+            @RequestBody HairShopReservationStatusGetRequest request
+    ) {
+        ReservationStatus status = reservationService.getHairShopReservationStatus(shopId, request);
+        return ResponseEntity.ok(status);
     }
 }
