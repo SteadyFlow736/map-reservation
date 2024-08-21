@@ -32,7 +32,6 @@ function ShopSubPage() {
             <ShopSubPageNav subPage={subPage} setSubPage={setSubPage}/>
             {pageToRender}
         </div>
-
     )
 }
 
