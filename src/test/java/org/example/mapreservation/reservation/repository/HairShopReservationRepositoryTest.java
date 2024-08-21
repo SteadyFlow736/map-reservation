@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -70,6 +71,36 @@ class HairShopReservationRepositoryTest {
         assertThat(reservation.get().getReservationTime()).isEqualTo(reservationTime);
         assertThat(reservation.get().getHairShop().getId()).isEqualTo(hairShop.getId());
         assertThat(reservation.get().getCustomer().getId()).isEqualTo(customer.getId());
+    }
+
+    @Transactional
+    @Test
+    void findByHairShopAndReservationTimeBetween() {
+        // given
+        List<LocalDateTime> reservationTimes = List.of(
+                LocalDateTime.of(2024, Month.APRIL, 10, 13, 30),
+                LocalDateTime.of(2024, Month.APRIL, 11, 13, 30),
+                LocalDateTime.of(2024, Month.APRIL, 11, 14, 0),
+                LocalDateTime.of(2024, Month.APRIL, 11, 14, 30),
+                LocalDateTime.of(2024, Month.APRIL, 12, 14, 30)
+        );
+        for (LocalDateTime reservationTime : reservationTimes) {
+            HairShopReservation hairShopReservation = new HairShopReservation(customer, hairShop, reservationTime);
+            hairShopReservationRepository.save(hairShopReservation);
+        }
+        em.flush();
+        em.clear();
+
+        // when
+        LocalDateTime start = reservationTimes.get(1);
+        LocalDateTime end = reservationTimes.get(3);
+        List<HairShopReservation> result = hairShopReservationRepository.findByHairShopAndReservationTimeBetween(hairShop, start, end);
+
+        // then
+        assertThat(result.size()).isEqualTo(3);
+        assertThat(result).extracting("reservationTime").containsAll(
+                List.of(reservationTimes.get(1), reservationTimes.get(2), reservationTimes.get(3))
+        );
     }
 
 }
