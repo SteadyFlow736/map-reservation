@@ -5,6 +5,7 @@ import org.example.mapreservation.reservation.dto.HairShopReservationCreateReque
 import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.dto.ReservationStatus;
 import org.example.mapreservation.reservation.service.ReservationService;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -45,7 +46,7 @@ public class ReservationController {
     @GetMapping("/api/hairshops/{shopId}/reservations/status")
     public ResponseEntity<ReservationStatus> getHairShopReservationStatus(
             @PathVariable("shopId") Long shopId,
-            @RequestBody HairShopReservationStatusGetRequest request
+            @Param("targetDate") HairShopReservationStatusGetRequest request
     ) {
         ReservationStatus status = reservationService.getHairShopReservationStatus(shopId, request);
         return ResponseEntity.ok(status);

@@ -139,12 +139,9 @@ class ReservationControllerIntegrationTest {
                 .andExpect(header().exists("Location"));
 
         // when, then - 예약 현황 조회. 예약된 시간이 조회되어야 한다.
-        HairShopReservationStatusGetRequest statusGetRequest =
-                new HairShopReservationStatusGetRequest(reservationTime.toLocalDate());
         mockMvc.perform(get("/api/hairshops/{shopId}/reservations/status", hairShopId)
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .queryParam("targetDate", reservationTime.toLocalDate().toString())
                         .with(csrf())
-                        .content(objectMapper.writeValueAsBytes(statusGetRequest))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
