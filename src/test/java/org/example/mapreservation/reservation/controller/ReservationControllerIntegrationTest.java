@@ -9,6 +9,7 @@ import org.example.mapreservation.hairshop.repository.HairShopRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
+import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,20 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.example.mapreservation.exception.ErrorCode.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -125,7 +120,38 @@ class ReservationControllerIntegrationTest {
                 .andExpect(jsonPath("$.errors").isEmpty());
     }
 
-    // TODO: 예약 동시 요청 테스트
+    // TODO: 예약 동시 요청 테스트 추가
 
+    @DisplayName("고객은 한 헤어샵의 특정 날짜의 예약이 이미 잡힌 시간과 예약 가능한 시간을 조회할 수 있다.")
+    @WithMockUser(username = "abc@gmail.com")
+    @Test
+    void getHairShopReservationStatus() throws Exception {
+        // given - 예약 진행
+        LocalDateTime reservationTime = LocalDateTime.now().plusDays(1)
+                .withHour(11).withMinute(30).withSecond(0).withNano(0);
+        HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
+        mockMvc.perform(post("/api/hairshops/{shopId}/reservations", hairShopId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsBytes(request))
+                )
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"));
 
+        // when, then - 예약 현황 조회. 예약된 시간이 조회되어야 한다.
+        HairShopReservationStatusGetRequest statusGetRequest =
+                new HairShopReservationStatusGetRequest(reservationTime.toLocalDate());
+        mockMvc.perform(get("/api/hairshops/{shopId}/reservations/status", hairShopId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsBytes(statusGetRequest))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.date").value(reservationTime.toLocalDate().toString()))
+                .andExpect(jsonPath("$.openingTime").value("10:00"))
+                .andExpect(jsonPath("$.closingTime").value("20:00"))
+                .andExpect(jsonPath("$.reservedTimes.size()").value(1))
+                .andExpect(jsonPath("$.reservedTimes.[0]").value(reservationTime.toLocalTime().toString()));
+    }
 }

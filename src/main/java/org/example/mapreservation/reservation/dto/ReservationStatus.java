@@ -1,5 +1,6 @@
 package org.example.mapreservation.reservation.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
 
 import java.time.LocalDate;
@@ -16,8 +17,14 @@ import java.util.List;
  */
 public record ReservationStatus(
         LocalDate date,
+
+        @JsonFormat(pattern = "HH:mm")
         LocalTime openingTime,
+
+        @JsonFormat(pattern = "HH:mm")
         LocalTime closingTime,
+
+        @JsonFormat(pattern = "HH:mm")
         List<LocalTime> reservedTimes) {
 
     public static ReservationStatus from(
