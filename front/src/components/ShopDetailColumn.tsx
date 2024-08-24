@@ -8,11 +8,12 @@ function ShopDetailColumn() {
 
     return (
         <div className={`
-            max-h-screen w-96 z-10 my-3 rounded-2xl shadow-2xl
+            w-96 z-10 my-3 rounded-2xl shadow-2xl
             bg-gray-100
             ${showOrHidden}
             transition
             overflow-hidden
+            overflow-y-auto
             `}
         >
             {selectedHairShopId && <ShopDetailPage key={selectedHairShopId.shopId}/>}

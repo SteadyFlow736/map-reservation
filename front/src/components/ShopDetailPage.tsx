@@ -7,6 +7,7 @@ import {useContext, useEffect, useState} from "react";
 import {fetchShopDetail} from "@/api";
 import {SubPage} from "@/properties/SubPage";
 import {ShopSubPageContext} from "@/contexts";
+import Button from "@/components/Button";
 
 function ShopDetailPage() {
     const [selectedHairShopId] = useAtom(selectedHairShopIdAtom)
@@ -81,15 +82,7 @@ function ShopHead({shopDetail}: { shopDetail: HairShopDetail }) {
 
             {/* 예약 버튼 */}
             <div className="p-3">
-                <div
-                    className="p-2 border-2 border-gray-100 rounded
-                    flex justify-center
-                    hover:cursor-pointer
-                    "
-                    onClick={() => navigateTo("예약")}
-                >
-                    예약
-                </div>
+                <Button onClick={() => navigateTo("예약")} label="예약"/>
             </div>
         </div>
     )

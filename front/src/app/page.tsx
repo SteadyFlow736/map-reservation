@@ -9,7 +9,7 @@ import {queryClient} from "@/config/queryClient";
 function Home() {
     return (
         <QueryClientProvider client={queryClient}>
-            <div className="absolute flex gap-3">
+            <div className="absolute flex gap-3 h-screen">
                 <SearchColumn/>
                 <ShopDetailColumn/>
             </div>
