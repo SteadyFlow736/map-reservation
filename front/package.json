@@ -16,7 +16,8 @@
     "next": "14.2.5",
     "react": "^18",
     "react-calendar": "^5.0.0",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-hook-form": "^7.53.0"
   },
   "devDependencies": {
     "@types/navermaps": "^3.7.5",
