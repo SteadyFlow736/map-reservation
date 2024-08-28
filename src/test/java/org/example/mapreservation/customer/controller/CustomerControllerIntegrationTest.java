@@ -1,6 +1,5 @@
 package org.example.mapreservation.customer.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.mapreservation.customer.dto.CustomerCreateRequest;
 import org.example.mapreservation.customer.repository.CustomerRepository;
@@ -12,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -24,7 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 class CustomerControllerIntegrationTest {
 
-    final String requestURL = "/api/customers";
+    final String registerURL = "/api/customers";
+    final String meURL = "/api/customers/me";
 
     @Autowired
     MockMvc mockMvc;
@@ -43,11 +43,11 @@ class CustomerControllerIntegrationTest {
     void createCustomer() throws Exception {
         // given
         String email = "abc@gmail.com";
-        String password = "12345678";
+        String password = "Password1!";
         CustomerCreateRequest customerCreateRequest = new CustomerCreateRequest(email, password);
 
         // when, then
-        mockMvc.perform(post(requestURL)
+        mockMvc.perform(post(registerURL)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsBytes(customerCreateRequest))
                         .with(csrf())
@@ -62,9 +62,9 @@ class CustomerControllerIntegrationTest {
     void givenDuplicateEmail_thenNotAllowed() throws Exception {
         // given - 최초 가입
         String email = "abc@gmail.com";
-        String password = "12345678";
+        String password = "Password1!";
         CustomerCreateRequest customerCreateRequest = new CustomerCreateRequest(email, password);
-        mockMvc.perform(post(requestURL)
+        mockMvc.perform(post(registerURL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsBytes(customerCreateRequest))
                 .with(csrf())
@@ -72,7 +72,7 @@ class CustomerControllerIntegrationTest {
 
         // when - 이미 가입된 이메일로 계정 생성 요청
         // then - 에러 메시지 출력
-        mockMvc.perform(post(requestURL)
+        mockMvc.perform(post(registerURL)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsBytes(customerCreateRequest))
                         .with(csrf())
@@ -82,5 +82,18 @@ class CustomerControllerIntegrationTest {
                 .andExpect(jsonPath("$.code").value(ErrorCode.CUST_ALREADY_TAKEN_EMAIL.name()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.CUST_ALREADY_TAKEN_EMAIL.getMessage()))
                 .andExpect(jsonPath("$.errors").isEmpty());
+    }
+
+    @DisplayName("고객은 자신의 정보를 읽을 수 있다.")
+    @WithMockUser(username = "abc@gmail.com", roles = {"USER"})
+    @Test
+    void givenLoggedIn_thenGetCustomerInfo() throws Exception {
+        mockMvc.perform(get(meURL)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                )
+                .andDo(print())
+                .andExpect(jsonPath("$.username").value("abc@gmail.com"))
+                .andExpect(jsonPath("$.authorities.size()").value(1))
+                .andExpect(jsonPath("$.authorities[0]").value("ROLE_USER"));
     }
 }

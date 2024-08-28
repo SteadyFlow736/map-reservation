@@ -17,5 +17,13 @@ X-CSRF-TOKEN: {{csrfToken}}
 
 {
   "email": "abc@gmail.com",
-  "password": "123456789"
+  "password": "Password1!"
 }
+
+### 로그인
+POST http://{{host}}/api/login
+Content-Type: application/x-www-form-urlencoded
+X-CSRF-TOKEN: {{csrfToken}}
+
+username = abc@gmail.com &
+password = Password1!
