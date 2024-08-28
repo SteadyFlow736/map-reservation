@@ -1,7 +1,21 @@
-POST http://localhost:8080/api/customers
+@localhost = localhost:8080
+@awshost =
+@host = {{localhost}}
+
+### CSRF Token 발급
+GET http://{{host}}/api/csrf-token
+Accept: application/json
+
+> {%
+    client.global.set("csrfToken", response.body.csrfToken.token)
+%}
+
+### 회원가입
+POST http://{{host}}/api/customers
 Content-Type: application/json
+X-CSRF-TOKEN: {{csrfToken}}
 
 {
   "email": "abc@gmail.com",
-  "password": "1234"
+  "password": "123456789"
 }

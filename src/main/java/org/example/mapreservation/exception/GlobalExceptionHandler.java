@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
@@ -16,6 +16,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    /**
+     * 컨트롤러의 bean validation 적용된 ModelAttribute, RequestBody 객체 검증 실패 핸들러
+     * 타입 변환 실패, 검증 실패 모두 다룬다.
+     *
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CustomErrorResponse<Object>> handleException(MethodArgumentNotValidException ex) {
+        // TODO
+        return null;
+    }
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<CustomErrorResponse<Object>> handleCustomException(CustomException ex) {

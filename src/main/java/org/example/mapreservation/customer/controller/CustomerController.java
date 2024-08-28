@@ -1,5 +1,6 @@
 package org.example.mapreservation.customer.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.mapreservation.customer.dto.CustomerCreateRequest;
 import org.example.mapreservation.customer.service.CustomerService;
@@ -17,7 +18,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping("/api/customers")
-    public ResponseEntity<Void> createCustomer(@RequestBody CustomerCreateRequest customerCreateRequest) {
+    public ResponseEntity<Void> createCustomer(@RequestBody @Valid CustomerCreateRequest customerCreateRequest) {
         Long id = customerService.createCustomer(customerCreateRequest);
         return ResponseEntity.created(URI.create("/api/customers/" + id)).build();
     }
