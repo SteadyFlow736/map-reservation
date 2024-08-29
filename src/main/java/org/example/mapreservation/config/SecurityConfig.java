@@ -1,6 +1,7 @@
 package org.example.mapreservation.config;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mapreservation.auth.CustomAccessDeniedHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,6 +30,7 @@ public class SecurityConfig {
     private final AuthenticationFailureHandler authenticationFailureHandler;
     private final LogoutSuccessHandler logoutSuccessHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     // SpringDocConfig의 Bean으로부터 받아오는 값
     private final String swaggerPath;
@@ -89,7 +91,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .csrf(
-                        // TODO: CSRF 인증 실패 응답 커스터마이징 추가
                         customizer -> customizer.csrfTokenRepository(sessionCsrfTokenRepository())
                 )
                 .formLogin(customizer -> customizer
@@ -106,6 +107,7 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(customizer -> customizer
                         .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler)
                 )
         ;
         return http.build();
