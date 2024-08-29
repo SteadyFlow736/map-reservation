@@ -67,7 +67,6 @@ async function signup(email: string, password: string) {
     )
 }
 
-
 // 로그인 API
 async function login(username: string, password: string): Promise<CustomerInfo> {
     const csrfToken = await fetchCsrfToken()
@@ -88,4 +87,14 @@ async function fetchSession(): Promise<CustomerInfo> {
     return data
 }
 
-export {fetchSearchResult, fetchShopDetail, fetchReservationStatus, signup, login, fetchSession}
+// 로그아웃 API
+async function logout() {
+    const csrfToken = await fetchCsrfToken()
+    return await instance.post('/api/logout', null, {
+        headers: {
+            [csrfToken.headerName]: csrfToken.token
+        }
+    })
+}
+
+export {fetchSearchResult, fetchShopDetail, fetchReservationStatus, signup, login, fetchSession, logout}
