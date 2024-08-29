@@ -9,7 +9,7 @@ function UserPage() {
     const {status, user} = useAuth()
     if (status === 'loading') return <div>Loading</div>
     if (status === 'unauthenticated') {
-        router.push('/login')
+        router.replace('/login')
         return
     }
 

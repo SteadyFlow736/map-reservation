@@ -1,5 +1,6 @@
-import {MapIcon, UserCircleIcon} from "@heroicons/react/24/outline";
+import {MapIcon, UserCircleIcon, UserIcon} from "@heroicons/react/24/outline";
 import Link from "next/link";
+import useAuth from "@/hooks/useAuth";
 
 function Logo() {
     return (
@@ -12,9 +13,11 @@ function Navs() {
 }
 
 function Auth() {
+    const {status} = useAuth()
+
     return (
         <Link href="/user">
-            <UserCircleIcon/>
+            <UserCircleIcon className={`${status === 'authenticated' ? 'bg-green-100' : ''}`}/>
         </Link>
     );
 }
