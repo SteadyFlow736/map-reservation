@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -34,11 +34,42 @@ public class SecurityConfig {
     private final String swaggerPath;
     private final String apiDocPath;
 
-    @Bean
+    /**
+     * HttpSession에 CsrfToken을 저장하는 CsrfTokenRepository 리턴
+     * HttpSessionTokenRepository를 선택하여 세션과 CsrfToken이 연관되도록 하였다.
+     * <a href="https://binchoo.tistory.com/46">자세한 사유는 이 글을 참조</a>
+     *
+     * @return 사용할 HttpSessionCsrfTokenRepository
+     */
+    private HttpSessionCsrfTokenRepository sessionCsrfTokenRepository() {
+        HttpSessionCsrfTokenRepository csrfTokenRepository = new HttpSessionCsrfTokenRepository();
+        csrfTokenRepository.setHeaderName(CsrfConst.headerName);
+        csrfTokenRepository.setParameterName(CsrfConst.parameterName);
+        csrfTokenRepository.setSessionAttributeName(CsrfConst.sessionAttributeName);
+        return csrfTokenRepository;
+    }
+
+    /**
+     * 브라우저의 preflight 요청의 Access-Control-Request-* 에 대한 Access-Control-Allow-* 응답 설정 객체 리턴
+     *
+     * @return cors 응답 설정 객체
+     */
     CorsConfigurationSource corsConfigurationSource() {
+        List<String> allowedOrigins = List.of("http://localhost:3000");
+        List<String> allowedMethods = List.of("*");
+        List<String> allowedHeaders = List.of("*");
+
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-        configuration.setAllowedMethods(List.of("*"));
+        // preflight 요청에 대한 응답 헤더의 Access-Control-Allow-Origin 값 설정
+        configuration.setAllowedOrigins(allowedOrigins);
+        // preflight 요청에 대한 응답 헤더의 Access-Control-Allow-Credentials 값을 true 로 설정
+        configuration.setAllowCredentials(true);
+        // preflight 요청에 대한 응답 헤더의 Access-Control-Allow-Methods 값 설정
+        configuration.setAllowedMethods(allowedMethods);
+        // preflight 요청에 대한 응답 헤더의 Access-Control-Allow-Headers 값 설졍
+        configuration.setAllowedHeaders(allowedHeaders);
+
+        // 설정이 적용될 Url 설정
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -57,7 +88,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/hairshops/{hairShopId}/reservations/status").permitAll()
                         .anyRequest().authenticated()
                 )
-                .csrf(Customizer.withDefaults()) // TODO: CSRF 인증 실패 응답 커스터마이징 하기
+                .csrf(
+                        // TODO: CSRF 인증 실패 응답 커스터마이징 추가
+                        customizer -> customizer.csrfTokenRepository(sessionCsrfTokenRepository())
+                )
                 .formLogin(customizer -> customizer
                         // UsernamePasswordAuthenticationFilter에서 로그인 진행
                         .loginProcessingUrl("/api/login")
