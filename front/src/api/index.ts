@@ -82,4 +82,10 @@ async function login(username: string, password: string): Promise<CustomerInfo> 
     return data
 }
 
-export {fetchSearchResult, fetchShopDetail, fetchReservationStatus, signup, login}
+// 세션 정보 API
+async function fetchSession(): Promise<CustomerInfo> {
+    const {data} = await instance.get('/api/customers/me')
+    return data
+}
+
+export {fetchSearchResult, fetchShopDetail, fetchReservationStatus, signup, login, fetchSession}

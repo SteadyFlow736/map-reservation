@@ -13,7 +13,7 @@ function Navs() {
 
 function Auth() {
     return (
-        <Link href="/register">
+        <Link href="/user">
             <UserCircleIcon/>
         </Link>
     );
