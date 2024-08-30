@@ -4,6 +4,8 @@ import useAuth from "@/hooks/useAuth";
 import {useRouter} from "next/navigation";
 import {logout} from "@/api";
 import {useEffect} from "react";
+import {MapIcon} from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 function UserPage() {
     const router = useRouter()
@@ -43,6 +45,9 @@ function Bar({user}: { user: CustomerInfo }) {
 
     return (
         <div className="absolute top-0 h-14 bg-gray-200 w-full flex justify-between p-3">
+            <Link href='/'>
+                <MapIcon className="h-8 w-8"/>
+            </Link>
             <p className="flex justify-center items-center">{user.username}님 환영합니다.</p>
             <div
                 className="flex justify-center items-center bg-white rounded p-3 hover:cursor-pointer"
