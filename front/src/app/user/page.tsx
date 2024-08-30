@@ -3,17 +3,22 @@
 import useAuth from "@/hooks/useAuth";
 import {useRouter} from "next/navigation";
 import {logout} from "@/api";
+import {useEffect} from "react";
 
 function UserPage() {
     const router = useRouter()
     const {status, user} = useAuth()
-    if (status === 'loading') return <div>Loading</div>
-    if (status === 'unauthenticated') {
-        // 페이지 히스토리 최상단을 user에서 login으로 변경하고 login으로 이동.
-        // login 페이지에서 로그인 포기하고 뒤로 가기 누르면 user 페이지가 아니라 전 화면(대표적으로 메인 화면)으로 돌아가기 위해서임
-        router.replace('/login')
-        return
-    }
+
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            // 페이지 히스토리 최상단을 user에서 login으로 변경하고 login으로 이동.
+            // login 페이지에서 로그인 포기하고 뒤로 가기 누르면 user 페이지가 아니라 전 화면(대표적으로 메인 화면)으로 돌아가기 위해서임
+            router.replace('/login')
+            return
+        }
+    }, [router, status]);
+
+    if (status === 'loading' || status === 'unauthenticated') return <div>Loading</div>
 
     return (
         <>
