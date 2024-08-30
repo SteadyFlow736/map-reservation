@@ -2,6 +2,19 @@
     border: 0;
 }
 
+/* 타일 스타일 */
 .react-calendar__tile {
     font-size: 1em;
+}
+
+/* 선택된 타일 스타일 */
+.react-calendar__tile--active {
+    background: rgb(74 222 128 / var(--tw-bg-opacity)) !important;
+    color: white !important;
+}
+
+/* 오늘 날짜 타일 스타일 */
+.react-calendar__tile--now {
+    background: white !important;
+    color: rgb(74 222 128 / var(--tw-bg-opacity)) !important;
 }

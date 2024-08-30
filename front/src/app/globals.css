@@ -18,6 +18,12 @@
     background: #555;
 }
 
+/* button 태그에 적용될 기본 스타일 */
+/* TODO: Button 컴포넌트 대신 이 스타일 사용*/
+.btn {
+    @apply p-2 border-2 border-gray-100 rounded flex justify-center
+}
+
 /*:root {*/
 /*  --foreground-rgb: 0, 0, 0;*/
 /*  --background-start-rgb: 214, 219, 220;*/

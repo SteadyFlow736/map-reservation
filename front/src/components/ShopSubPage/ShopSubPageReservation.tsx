@@ -1,5 +1,5 @@
+import {createContext, Dispatch, SetStateAction, useContext, useState} from "react";
 import Calendar from "react-calendar";
-import {useState} from "react";
 import 'react-calendar/dist/Calendar.css';
 import './react-calendar-custom.css'
 import {skipToken, useQuery} from "@tanstack/react-query";
@@ -7,17 +7,31 @@ import {QueryKeys} from "@/config/queryClient";
 import {fetchReservationStatus} from "@/api";
 import {useAtomValue} from "jotai";
 import {selectedHairShopIdAtom} from "@/atoms";
-import Button from "@/components/Button";
 import Time from "@/utils/Time";
 
 type ValuePiece = Date | null
 type Value = ValuePiece | [ValuePiece, ValuePiece]
 
+type TimeSlotContextType = {
+    selectedTimeSlot: TimeSlot | undefined,
+    setSelectedTimeSlot: Dispatch<SetStateAction<TimeSlot | undefined>>
+}
+const defaultValue: TimeSlotContextType = {
+    selectedTimeSlot: undefined, setSelectedTimeSlot: () => {
+    }
+}
+export const TimeSlotContext = createContext<TimeSlotContextType>(defaultValue)
+
+/**
+ * 샵 예약 서브 페이지
+ * 예약 가능한 날짜와 시간을 달력에서 조회하고 예약 진행할 수 있다.
+ */
 function ShopSubPageReservation() {
     const today = new Date()
     const [value, onChange] = useState<Value>(today) // 자동으로 달력에서 오늘 선택
     const minDate = today // 달력에서 오늘부터 선택가능
     const selectedHairShopId = useAtomValue(selectedHairShopIdAtom)
+    const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot>()
 
     const {data, status} = useQuery({
         queryKey: [QueryKeys.reservationStatus, value],
@@ -25,29 +39,51 @@ function ShopSubPageReservation() {
             () => fetchReservationStatus(selectedHairShopId.shopId, value) : skipToken
     })
 
+    const banner = selectedTimeSlot ? selectedTimeSlot.dateTime.toLocaleString() : '날짜와 시간을 선택해 주세요'
+
     return (
-        <div className="bg-white p-3">
-            <p className="text-xl my-3">날짜와 시간을 선택해 주세요</p>
+        <TimeSlotContext.Provider value={{selectedTimeSlot, setSelectedTimeSlot}}>
+            <div className="bg-white p-3">
+                <p className="text-xl my-3">{banner}</p>
 
-            {/* 달력 */}
-            <Calendar defaultView="month" minDate={minDate}
-                      onChange={onChange} value={value}
-                      formatDay={(_, date) => date.getDate().toString()}
-            />
+                {/* 달력 */}
+                <Calendar defaultView="month" minDate={minDate}
+                          onChange={onChange} value={value}
+                          formatDay={(_, date) => date.getDate().toString()}
+                />
 
-            {/* divider */}
-            <div className="border border-b-gray-100 my-3"></div>
+                {/* divider */}
+                <div className="border border-b-gray-100 my-3"></div>
 
-            {/* 예약 시간 선택 버튼 */}
-            {status == 'pending' ? <div>Loading</div> : null}
-            {status == 'error' ? <div>에러가 발생했습니다. 잠시 후 다시 시도해 주세요.</div> : null}
-            {status == 'success' ? <ReservationSelectButtons reservationStatus={data}/> : null}
+                {/* 예약 시간 선택 버튼 */}
+                {status == 'pending' ? <div>Loading</div> : null}
+                {status == 'error' ? <div>에러가 발생했습니다. 잠시 후 다시 시도해 주세요.</div> : null}
+                {status == 'success' ? <ReservationSelectButtons reservationStatus={data}/> : null}
 
-            {/* 다음 단계 버튼 */}
-            <div className="mt-3">
-                <Button onClick={undefined} label="다음 단계"/>
+                {/* 다음 단계 버튼 */}
+                <NextButton/>
             </div>
-        </div>
+        </TimeSlotContext.Provider>
+    )
+}
+
+/**
+ * 다음 단계(예약 확정 페이지)로 넘어가는 버튼 component
+ * 예약 시간이 선택되었을 때만 누를 수 있다.
+ */
+function NextButton() {
+    const {selectedTimeSlot} = useContext(TimeSlotContext)
+
+    return (
+        <button
+            className={`
+            btn w-full mt-3 
+            ${selectedTimeSlot ? 'bg-green-400 text-white' : ''}
+            `}
+            disabled={!selectedTimeSlot}
+        >
+            다음 단계
+        </button>
     )
 }
 
@@ -58,7 +94,7 @@ function ReservationSelectButtons(
     {reservationStatus}: { reservationStatus: HairShopReservationStatus }) {
 
     const {date, openingTime, closingTime, reservedTimes} = reservationStatus
-    const slots: ReservationSlot[] = getTimeSlots(date, openingTime, closingTime, reservedTimes)
+    const slots: TimeSlot[] = getTimeSlots(date, openingTime, closingTime, reservedTimes)
 
     return (
         <div className="grid grid-cols-4 gap-2">
@@ -70,21 +106,43 @@ function ReservationSelectButtons(
 /**
  * 예약 시간 선택 버튼 component
  */
-function TimeSelectButton({slot}: { slot: ReservationSlot }) {
+function TimeSelectButton({slot}: { slot: TimeSlot }) {
+    const {selectedTimeSlot, setSelectedTimeSlot} = useContext(TimeSlotContext)
     const hourString = slot.dateTime.getHours().toString().padStart(2, '0')
     const minutesString = slot.dateTime.getMinutes().toString().padStart(2, '0')
+    const selected = selectedTimeSlot?.dateTime.getTime() === slot.dateTime.getTime()
 
     return (
-        <Button onClick={undefined} label={`${hourString}:${minutesString}`} on={!slot.reserved}/>
+        <button
+            className={`
+            btn
+            ${selected ? 'bg-green-400 text-white' : ''} 
+            `}
+            disabled={slot.reserved}
+            onClick={() => setSelectedTimeSlot(slot)}
+        >
+            {`${hourString}:${minutesString}`}
+        </button>
+        // <Button onClick={undefined} label={`${hourString}:${minutesString}`} on={!slot.reserved}/>
     );
 }
 
+/**
+ * 예약 가능한 시간 리스트를 생성.
+ *
+ * 영업 시작 시간, 영업 종료 시간 사이를 30분씩 나눠 시간 슬롯 리스트를 생성하고, 각 시간이 이미 예약되었는지 여부도 표시한다.
+ * @param date 기준 날짜
+ * @param openingTime 영업 시작 시간
+ * @param closingTime 영업 종료 시간
+ * @param reservedTimes 예약된 시간 리스트
+ * @return 기준 날짜의 예약 가능한 시간 슬롯 리스트
+ */
 const getTimeSlots = (date: string, openingTime: string, closingTime: string,
-                      reservedTimes: string[]): ReservationSlot[] => {
+                      reservedTimes: string[]): TimeSlot[] => {
 
     let currentDate = Time.stringToDate(date, openingTime)
     const closingDate = Time.stringToDate(date, closingTime)
-    const slots: ReservationSlot[] = []
+    const slots: TimeSlot[] = []
 
     while (currentDate < closingDate) {
         slots.push({
@@ -102,7 +160,7 @@ const getTimeSlots = (date: string, openingTime: string, closingTime: string,
     return slots
 }
 
-type ReservationSlot = {
+type TimeSlot = {
     dateTime: Date
     reserved: boolean
 }
