@@ -1,26 +1,17 @@
-import {createContext, Dispatch, SetStateAction, useContext, useState} from "react";
+import {useContext, useState} from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import './react-calendar-custom.css'
 import {skipToken, useQuery} from "@tanstack/react-query";
 import {QueryKeys} from "@/config/queryClient";
-import {createReservation, fetchReservationStatus} from "@/api";
+import {fetchReservationStatus} from "@/api";
 import {useAtomValue} from "jotai";
 import {selectedHairShopIdAtom} from "@/atoms";
 import Time from "@/utils/Time";
-import {ShopMainPageContext} from "@/components/ShopDetailPage/ShopDetailWrapperPage";
+import {ShopMainPageContext, TimeSlot, TimeSlotContext} from "@/components/ShopDetailPage/ShopDetailWrapperPage";
 
 type ValuePiece = Date | null
 type Value = ValuePiece | [ValuePiece, ValuePiece]
-
-type TimeSlotContextType = {
-    selectedTimeSlot: TimeSlot | undefined,
-    setSelectedTimeSlot: Dispatch<SetStateAction<TimeSlot | undefined>>
-}
-export const TimeSlotContext = createContext<TimeSlotContextType>({
-    selectedTimeSlot: undefined, setSelectedTimeSlot: () => {
-    }
-})
 
 /**
  * 샵 예약 서브 페이지
@@ -31,7 +22,7 @@ function ShopSubPageReservation() {
     const [value, onChange] = useState<Value>(today) // 자동으로 달력에서 오늘 선택
     const minDate = today // 달력에서 오늘부터 선택가능
     const selectedHairShopId = useAtomValue(selectedHairShopIdAtom)
-    const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot>()
+    const {selectedTimeSlot, setSelectedTimeSlot} = useContext(TimeSlotContext)
 
     const {data, status} = useQuery({
         queryKey: [QueryKeys.reservationStatus, value],
@@ -165,11 +156,6 @@ const getTimeSlots = (date: string, openingTime: string, closingTime: string,
     })
 
     return slots
-}
-
-type TimeSlot = {
-    dateTime: Date
-    reserved: boolean
 }
 
 export default ShopSubPageReservation

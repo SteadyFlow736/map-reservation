@@ -41,6 +41,33 @@ class Time {
         const newTime = dateTime.getTime() + minutes * 60000; // 1분 = 60초 = 60,000 밀리초
         return new Date(newTime)
     }
+
+    /**
+     * Date 객체로부터 사람이 알아보기 쉬운 문자열을 리턴
+     *
+     * @param date 대상 Date 객체
+     */
+    static formatDate(date: Date) {
+        const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+
+        const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더한다
+        const day = date.getDate();
+        const dayOfWeek = daysOfWeek[date.getDay()]; // 요일을 한글로 변환
+        let hour = date.getHours();
+        const minutes = date.getMinutes();
+
+        // 오전/오후 처리
+        const period = hour >= 12 ? '오후' : '오전';
+
+        // 12시간제로 변환 (12시를 기준으로 나머지 계산)
+        hour = hour % 12;
+        hour = hour === 0 ? 12 : hour; // 0시일 때 12시로 표시
+
+        // 분을 2자리 숫자로 표시
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+
+        return `${month}.${day} (${dayOfWeek}) ${period} ${hour}:${formattedMinutes}`;
+    }
 }
 
 export default Time

@@ -7,6 +7,10 @@ import ReservationVerifyPage from "@/components/ShopDetailPage/ReservationVerify
 
 export type MainPage = 'ShopDetail' | 'ReservationVerify'
 export type SubPage = '홈' | '소식' | '예약' | '리뷰'
+export type TimeSlot = {
+    dateTime: Date
+    reserved: boolean
+}
 
 type ShopMainPageContextType = { shopMainPage: MainPage, setShopMainPage: Dispatch<SetStateAction<MainPage>> }
 export const ShopMainPageContext = createContext<ShopMainPageContextType>({
@@ -20,11 +24,21 @@ export const ShopSubPageContext = createContext<ShopSubPageContextType>({
     }
 })
 
+type TimeSlotContextType = {
+    selectedTimeSlot: TimeSlot | undefined,
+    setSelectedTimeSlot: Dispatch<SetStateAction<TimeSlot | undefined>>
+}
+export const TimeSlotContext = createContext<TimeSlotContextType>({
+    selectedTimeSlot: undefined, setSelectedTimeSlot: () => {
+    }
+})
+
 function ShopDetailWrapperPage() {
-    const [mainPage, setMainPage] = useState<MainPage>('ShopDetail')
-    const [subPage, setSubPage] = useState<SubPage>('홈')
+    const [shopMainPage, setShopMainPage] = useState<MainPage>('ShopDetail')
+    const [shopSubPage, setShopSubPage] = useState<SubPage>('홈')
     const [selectedHairShopId] = useAtom(selectedHairShopIdAtom)
     const [shopDetail, setShopDetail] = useState<HairShopDetail>()
+    const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot>()
 
     useEffect(() => {
         if (!selectedHairShopId) return
@@ -32,7 +46,7 @@ function ShopDetailWrapperPage() {
     }, [selectedHairShopId])
 
     let mainPageToRender
-    switch (mainPage) {
+    switch (shopMainPage) {
         case 'ShopDetail':
             mainPageToRender = <ShopDetailPage shopDetail={shopDetail}/>
             break
@@ -45,9 +59,11 @@ function ShopDetailWrapperPage() {
 
     return (
         <>
-            <ShopMainPageContext.Provider value={{shopMainPage: mainPage, setShopMainPage: setMainPage}}>
-                <ShopSubPageContext.Provider value={{shopSubPage: subPage, setShopSubPage: setSubPage}}>
-                    {mainPageToRender}
+            <ShopMainPageContext.Provider value={{shopMainPage, setShopMainPage}}>
+                <ShopSubPageContext.Provider value={{shopSubPage, setShopSubPage}}>
+                    <TimeSlotContext.Provider value={{selectedTimeSlot, setSelectedTimeSlot}}>
+                        {mainPageToRender}
+                    </TimeSlotContext.Provider>
                 </ShopSubPageContext.Provider>
             </ShopMainPageContext.Provider>
         </>
