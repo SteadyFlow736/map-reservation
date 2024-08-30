@@ -1,6 +1,6 @@
 import {useAtom} from "jotai";
 import {selectedHairShopIdAtom} from "@/atoms";
-import ShopDetailPage from "@/components/ShopDetailPage";
+import ShopDetailWrapperPage from "@/components/ShopDetailPage/ShopDetailWrapperPage";
 
 function ShopDetailColumn() {
     const [selectedHairShopId] = useAtom(selectedHairShopIdAtom)
@@ -16,7 +16,7 @@ function ShopDetailColumn() {
             overflow-y-auto
             `}
         >
-            {selectedHairShopId && <ShopDetailPage key={selectedHairShopId.shopId}/>}
+            {selectedHairShopId && <ShopDetailWrapperPage key={selectedHairShopId.shopId}/>}
         </div>
     )
 }

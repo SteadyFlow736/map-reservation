@@ -4,7 +4,7 @@ import ShopSubPageHome from "@/components/ShopSubPage/ShopSubPageHome";
 import ShopSubPageReview from "@/components/ShopSubPage/ShopSubPageReview";
 import ShopSubPageReservation from "@/components/ShopSubPage/ShopSubPageReservation";
 import ShopSubPageNews from "@/components/ShopSubPage/ShopSubPageNews";
-import {ShopSubPageContext} from "@/contexts";
+import {ShopSubPageContext} from "@/components/ShopDetailPage/ShopDetailWrapperPage";
 
 function ShopSubPage() {
     const {shopSubPage} = useContext(ShopSubPageContext)

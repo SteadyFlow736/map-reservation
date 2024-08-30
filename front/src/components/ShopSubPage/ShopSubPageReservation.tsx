@@ -4,10 +4,11 @@ import 'react-calendar/dist/Calendar.css';
 import './react-calendar-custom.css'
 import {skipToken, useQuery} from "@tanstack/react-query";
 import {QueryKeys} from "@/config/queryClient";
-import {fetchReservationStatus} from "@/api";
+import {createReservation, fetchReservationStatus} from "@/api";
 import {useAtomValue} from "jotai";
 import {selectedHairShopIdAtom} from "@/atoms";
 import Time from "@/utils/Time";
+import {ShopMainPageContext} from "@/components/ShopDetailPage/ShopDetailWrapperPage";
 
 type ValuePiece = Date | null
 type Value = ValuePiece | [ValuePiece, ValuePiece]
@@ -16,11 +17,10 @@ type TimeSlotContextType = {
     selectedTimeSlot: TimeSlot | undefined,
     setSelectedTimeSlot: Dispatch<SetStateAction<TimeSlot | undefined>>
 }
-const defaultValue: TimeSlotContextType = {
+export const TimeSlotContext = createContext<TimeSlotContextType>({
     selectedTimeSlot: undefined, setSelectedTimeSlot: () => {
     }
-}
-export const TimeSlotContext = createContext<TimeSlotContextType>(defaultValue)
+})
 
 /**
  * 샵 예약 서브 페이지
@@ -73,6 +73,12 @@ function ShopSubPageReservation() {
  */
 function NextButton() {
     const {selectedTimeSlot} = useContext(TimeSlotContext)
+    const {setShopMainPage} = useContext(ShopMainPageContext)
+    const selectedHairShopId = useAtomValue(selectedHairShopIdAtom)
+
+    const next = async () => {
+        setShopMainPage('ReservationVerify')
+    }
 
     return (
         <button
@@ -81,6 +87,7 @@ function NextButton() {
             ${selectedTimeSlot ? 'bg-green-400 text-white' : ''}
             `}
             disabled={!selectedTimeSlot}
+            onClick={next}
         >
             다음 단계
         </button>

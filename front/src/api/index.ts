@@ -97,4 +97,32 @@ async function logout() {
     })
 }
 
-export {fetchSearchResult, fetchShopDetail, fetchReservationStatus, signup, login, fetchSession, logout}
+/**
+ * 헤어샵 예약 API
+ *
+ * @param shopId 헤어샵 Id
+ * @param reservationDateTime 예약 날짜, 시간
+ */
+async function createReservation(shopId: number | undefined, reservationDateTime: Date | undefined) {
+    if (!shopId || !reservationDateTime) return
+    const request: HairShopReservationCreateRequest = {
+        reservationTime: reservationDateTime.toISOString()
+    }
+    const csrfToken = await fetchCsrfToken()
+    return await instance.post(`/api/hairshops/${shopId}/reservations`, request, {
+        headers: {
+            [csrfToken.headerName]: csrfToken.token
+        }
+    })
+}
+
+export {
+    fetchSearchResult,
+    fetchShopDetail,
+    fetchReservationStatus,
+    signup,
+    login,
+    fetchSession,
+    logout,
+    createReservation
+}

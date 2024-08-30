@@ -1,6 +1,5 @@
-import {SubPage} from "@/properties/SubPage";
 import {useContext} from "react";
-import {ShopSubPageContext} from "@/contexts";
+import {ShopSubPageContext, SubPage} from "@/components/ShopDetailPage/ShopDetailWrapperPage";
 
 const subPages: SubPage[] = ['홈', '소식', '예약', '리뷰'];
 
@@ -14,8 +13,9 @@ function ShopSubPageNav() {
 }
 
 function NavButton({subPage}: { subPage: SubPage }) {
-    const {shopSubPage: currentShopSubPage, setShopSubPage} = useContext(ShopSubPageContext)
-    const style = currentShopSubPage == subPage ? 'text-black border-b-2 border-b-black' : 'text-gray-400'
+    const {shopSubPage, setShopSubPage} = useContext(ShopSubPageContext)
+    const style = shopSubPage === subPage ? 'text-black border-b-2 border-b-black' : 'text-gray-400'
+
     const changeSubPage = () => {
         setShopSubPage(subPage)
     }
