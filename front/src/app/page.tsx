@@ -1,25 +1,16 @@
 'use client'
 
-import SearchColumn from "@/components/SearchColumn";
-import MainMap from "@/components/MainMap";
-import ShopDetailColumn from "@/components/ShopDetailColumn";
-import {QueryClientProvider,} from "@tanstack/react-query";
-import {queryClient} from "@/config/queryClient";
-import MainNav from "@/components/MainNav";
+import {useRouter} from "next/navigation";
+import {useEffect} from "react";
 
-function Home() {
-    return (
-        <QueryClientProvider client={queryClient}>
-            <div className="absolute flex h-screen">
-                <MainNav/>
-                <div className="flex gap-3">
-                    <SearchColumn/>
-                    <ShopDetailColumn/>
-                </div>
-            </div>
-            <MainMap/>
-        </QueryClientProvider>
-    );
+/**
+ * '/' 경로 페이지. 기본 페이지인 '/p'로 redirect 시킨다.
+ */
+export default function HomePage() {
+    const router = useRouter()
+    useEffect(() => {
+        router.replace('p')
+    }, [router]);
+
+    return null
 }
-
-export default Home
