@@ -114,13 +114,13 @@ function TimeSelectButton({slot}: { slot: TimeSlot }) {
             className={`
             btn
             ${selected ? 'bg-green-400 text-white' : ''} 
+            ${slot.reserved ? 'bg-gray-200' : ''}
             `}
             disabled={slot.reserved}
             onClick={() => setSelectedTimeSlot(slot)}
         >
             {`${hourString}:${minutesString}`}
         </button>
-        // <Button onClick={undefined} label={`${hourString}:${minutesString}`} on={!slot.reserved}/>
     );
 }
 
@@ -150,7 +150,7 @@ const getTimeSlots = (date: string, openingTime: string, closingTime: string,
     }
 
     reservedTimes.forEach(reservedTime => {
-        const slot = slots.find(slot => slot.dateTime === Time.stringToDate(date, reservedTime))
+        const slot = slots.find(slot => slot.dateTime.getTime() === Time.stringToDate(date, reservedTime).getTime())
         if (slot) slot.reserved = true
     })
 
