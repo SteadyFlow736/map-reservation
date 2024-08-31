@@ -1,11 +1,11 @@
 import {useAtomValue} from "jotai";
-import {selectedHairShopIdAtom} from "@/atoms";
+import {selectedHairShopAtom} from "@/atoms";
 import {useQuery} from "@tanstack/react-query";
 import {QueryKeys} from "@/config/queryClient";
 import {fetchShopDetail} from "@/api";
 
 function ShopSubPageHome() {
-    const selectHairShopId = useAtomValue(selectedHairShopIdAtom)?.shopId
+    const selectHairShopId = useAtomValue(selectedHairShopAtom)?.shopId
     const {data, isSuccess, isFetching} = useQuery({
         queryKey: [QueryKeys.shopDetail, [selectHairShopId]],
         queryFn: () => fetchShopDetail(selectHairShopId!),

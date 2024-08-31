@@ -1,11 +1,11 @@
 import {useSetAtom} from "jotai";
-import {selectedHairShopIdAtom} from "@/atoms";
+import {selectedHairShopAtom} from "@/atoms";
 
 function StoreSummaryCard({storeSummary}: { storeSummary: HairShopDto }) {
-    const setSelectedHairShopId = useSetAtom(selectedHairShopIdAtom)
+    const setSelectedHairShop = useSetAtom(selectedHairShopAtom)
 
     const selectShop = () => {
-        setSelectedHairShopId({
+        setSelectedHairShop({
             shopId: storeSummary.shopId,
             needPan: true
         })

@@ -1,10 +1,10 @@
 import {useAtom} from "jotai";
-import {selectedHairShopIdAtom} from "@/atoms";
+import {selectedHairShopAtom} from "@/atoms";
 import ShopDetailWrapperPage from "@/components/ShopDetailPage/ShopDetailWrapperPage";
 
 function ShopDetailColumn() {
-    const [selectedHairShopId] = useAtom(selectedHairShopIdAtom)
-    const showOrHidden = selectedHairShopId ? "transform-x-0 opacity-100" : "-translate-x-full opacity-0"
+    const [selectedHairShop] = useAtom(selectedHairShopAtom)
+    const showOrHidden = selectedHairShop ? "transform-x-0 opacity-100" : "-translate-x-full opacity-0"
 
     return (
         <div className={`
@@ -16,7 +16,7 @@ function ShopDetailColumn() {
             overflow-y-auto
             `}
         >
-            {selectedHairShopId && <ShopDetailWrapperPage key={selectedHairShopId.shopId}/>}
+            {selectedHairShop && <ShopDetailWrapperPage key={selectedHairShop.shopId}/>}
         </div>
     )
 }

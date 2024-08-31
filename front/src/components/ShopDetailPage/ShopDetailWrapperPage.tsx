@@ -1,6 +1,6 @@
 import {createContext, Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
-import {selectedHairShopIdAtom} from "@/atoms";
+import {selectedHairShopAtom} from "@/atoms";
 import {fetchShopDetail} from "@/api";
 import ShopDetailPage from "@/components/ShopDetailPage/ShopDetailPage";
 import ReservationVerifyPage from "@/components/ShopDetailPage/ReservationVerifyPage";
@@ -36,14 +36,14 @@ export const TimeSlotContext = createContext<TimeSlotContextType>({
 function ShopDetailWrapperPage() {
     const [shopMainPage, setShopMainPage] = useState<MainPage>('ShopDetail')
     const [shopSubPage, setShopSubPage] = useState<SubPage>('홈')
-    const [selectedHairShopId] = useAtom(selectedHairShopIdAtom)
+    const [selectedHairShop] = useAtom(selectedHairShopAtom)
     const [shopDetail, setShopDetail] = useState<HairShopDetail>()
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot>()
 
     useEffect(() => {
-        if (!selectedHairShopId) return
-        fetchShopDetail(selectedHairShopId.shopId).then(response => setShopDetail(response))
-    }, [selectedHairShopId])
+        if (!selectedHairShop) return
+        fetchShopDetail(selectedHairShop.shopId).then(response => setShopDetail(response))
+    }, [selectedHairShop])
 
     let mainPageToRender
     switch (shopMainPage) {

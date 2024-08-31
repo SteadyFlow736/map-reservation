@@ -1,7 +1,7 @@
 import {naver_map_client_id} from "@/config/map";
 import Script from "next/script";
 import {useAtomValue} from "jotai";
-import {hairShopSearchResultAtom, selectedHairShopIdAtom} from "@/atoms";
+import {hairShopSearchResultAtom, selectedHairShopAtom} from "@/atoms";
 import {useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
 
@@ -12,7 +12,7 @@ let prevMarker: naver.maps.Marker | undefined = undefined
 function MainMap() {
     const [map, setMap] = useState<naver.maps.Map>()
     const hairShopSearchResult = useAtomValue(hairShopSearchResultAtom);
-    const [selectedHairShopId, setSelectedHairShopId] = useAtom(selectedHairShopIdAtom)
+    const [selectedHairShop, setSelectedHairShop] = useAtom(selectedHairShopAtom)
 
     /**
      * shop의 마커 html 리턴
@@ -43,7 +43,7 @@ function MainMap() {
                     }
                 })
                 naver.maps.Event.addListener(marker, 'click', (_) => {
-                    setSelectedHairShopId({
+                    setSelectedHairShop({
                         shopId: dto.shopId,
                         needPan: false
                     })
@@ -51,12 +51,12 @@ function MainMap() {
                 markerMap.set(dto.shopId, marker)
             })
         }
-    }, [map, hairShopSearchResult, setSelectedHairShopId])
+    }, [map, hairShopSearchResult, setSelectedHairShop])
 
     // 지도 중심 변경을 위한 useEffect: 선택된 marker로 지도 중심 변경
     useEffect(() => {
-        if (selectedHairShopId?.needPan) {
-            const marker = markerMap.get(selectedHairShopId.shopId)
+        if (selectedHairShop?.needPan) {
+            const marker = markerMap.get(selectedHairShop.shopId)
             if (marker && map) {
                 const position = marker.getPosition()
                 map.panTo(position)
@@ -64,17 +64,17 @@ function MainMap() {
                 //const point = map.getProjection().fromCoordToPoint(position)
             }
         }
-    }, [selectedHairShopId, map]);
+    }, [selectedHairShop, map]);
 
     // marker animation 전환을 위한 useEffect: 선택된 marker animation on, 이전 marker animation off
     useEffect(() => {
         prevMarker?.setAnimation(null)
-        if (selectedHairShopId) {
-            const marker = markerMap.get(selectedHairShopId.shopId)
+        if (selectedHairShop) {
+            const marker = markerMap.get(selectedHairShop.shopId)
             marker?.setAnimation(1)
             prevMarker = marker
         }
-    }, [selectedHairShopId]);
+    }, [selectedHairShop]);
 
     return (
         <>

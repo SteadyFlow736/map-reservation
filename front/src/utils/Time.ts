@@ -68,6 +68,30 @@ class Time {
 
         return `${month}.${day} (${dayOfWeek}) ${period} ${hour}:${formattedMinutes}`;
     }
+
+    /**
+     * Date 객체에서 로컬 타임을 ISO 형식으로(예:2024-12-03T10:15:30) 변경
+     *
+     * Date 객체는 로컬 타임과 timezone 정보를 가지고 있기에 toISOString 메서드를 호출하면 UTC(+0) 형식으로 출력된다.
+     * 그것은 원하는 바가 아니다.
+     * 예를들어, 로컬(UTC+9) 타임으로 2024-12-03T10:15:30인 Date 객체를
+     * toISOString으로 출력하면 2024-12-03T01:15:30z 로 출력될 것이다.
+     * 원하는 것은 로컬 타임 그대로 즉, "2024-12-03T10:15:30"로 출력되는 것이다.
+     *
+     * @param date 대상 Date 객체
+     */
+    static formatLocalDateToISO(date: Date): string {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1 필요
+        const day = String(date.getDate()).padStart(2, '0');
+
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+    }
+
 }
 
 export default Time

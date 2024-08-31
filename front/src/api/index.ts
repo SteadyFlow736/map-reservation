@@ -103,10 +103,10 @@ async function logout() {
  * @param shopId 헤어샵 Id
  * @param reservationDateTime 예약 날짜, 시간
  */
-async function createReservation(shopId: number | undefined, reservationDateTime: Date | undefined) {
+async function createHairShopReservation({shopId, reservationDateTime}: CreateReservationParams): Promise<void> {
     if (!shopId || !reservationDateTime) return
     const request: HairShopReservationCreateRequest = {
-        reservationTime: reservationDateTime.toISOString()
+        reservationTime: Time.formatLocalDateToISO(reservationDateTime)
     }
     const csrfToken = await fetchCsrfToken()
     return await instance.post(`/api/hairshops/${shopId}/reservations`, request, {
@@ -114,6 +114,15 @@ async function createReservation(shopId: number | undefined, reservationDateTime
             [csrfToken.headerName]: csrfToken.token
         }
     })
+}
+
+type HairShopReservationCreateRequest = {
+    reservationTime: string // 예약 날짜와 시간. 타임존 적용하지 않은 로컬 타임의 ISO-8601 포맷. 예: 2024-12-03T10:15:30.
+}
+
+export type CreateReservationParams = {
+    shopId: number | undefined
+    reservationDateTime: Date | undefined
 }
 
 export {
@@ -124,5 +133,5 @@ export {
     login,
     fetchSession,
     logout,
-    createReservation
+    createHairShopReservation
 }

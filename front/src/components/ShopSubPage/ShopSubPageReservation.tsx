@@ -6,7 +6,7 @@ import {skipToken, useQuery} from "@tanstack/react-query";
 import {QueryKeys} from "@/config/queryClient";
 import {fetchReservationStatus} from "@/api";
 import {useAtomValue} from "jotai";
-import {selectedHairShopIdAtom} from "@/atoms";
+import {selectedHairShopAtom} from "@/atoms";
 import Time from "@/utils/Time";
 import {ShopMainPageContext, TimeSlot, TimeSlotContext} from "@/components/ShopDetailPage/ShopDetailWrapperPage";
 
@@ -21,13 +21,13 @@ function ShopSubPageReservation() {
     const today = new Date()
     const [value, onChange] = useState<Value>(today) // 자동으로 달력에서 오늘 선택
     const minDate = today // 달력에서 오늘부터 선택가능
-    const selectedHairShopId = useAtomValue(selectedHairShopIdAtom)
+    const selectedHairShop = useAtomValue(selectedHairShopAtom)
     const {selectedTimeSlot, setSelectedTimeSlot} = useContext(TimeSlotContext)
 
     const {data, status} = useQuery({
         queryKey: [QueryKeys.reservationStatus, value],
-        queryFn: selectedHairShopId && value && value instanceof Date ?
-            () => fetchReservationStatus(selectedHairShopId.shopId, value) : skipToken
+        queryFn: selectedHairShop && value && value instanceof Date ?
+            () => fetchReservationStatus(selectedHairShop.shopId, value) : skipToken
     })
 
     const banner = selectedTimeSlot ? selectedTimeSlot.dateTime.toLocaleString() : '날짜와 시간을 선택해 주세요'
@@ -65,7 +65,6 @@ function ShopSubPageReservation() {
 function NextButton() {
     const {selectedTimeSlot} = useContext(TimeSlotContext)
     const {setShopMainPage} = useContext(ShopMainPageContext)
-    const selectedHairShopId = useAtomValue(selectedHairShopIdAtom)
 
     const next = async () => {
         setShopMainPage('ReservationVerify')
