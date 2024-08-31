@@ -89,7 +89,7 @@ function StickyNavBar() {
  * 예약 날짜, 시간 등 예약 하려는 정보 표시
  */
 function ReservationInfo() {
-    const {selectedTimeSlot, setSelectedTimeSlot} = useContext(TimeSlotContext)
+    const {selectedTimeSlot} = useContext(TimeSlotContext)
     if (!selectedTimeSlot) return null
 
     return (
