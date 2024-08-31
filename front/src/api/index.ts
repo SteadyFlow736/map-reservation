@@ -109,11 +109,12 @@ async function createHairShopReservation({shopId, reservationDateTime}: CreateRe
         reservationTime: Time.formatLocalDateToISO(reservationDateTime)
     }
     const csrfToken = await fetchCsrfToken()
-    return await instance.post(`/api/hairshops/${shopId}/reservations`, request, {
+    const {data} = await instance.post(`/api/hairshops/${shopId}/reservations`, request, {
         headers: {
             [csrfToken.headerName]: csrfToken.token
         }
     })
+    return data
 }
 
 type HairShopReservationCreateRequest = {

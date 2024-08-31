@@ -2,13 +2,16 @@ import {useSetAtom} from "jotai/index";
 import {selectedHairShopAtom} from "@/atoms";
 import {XMarkIcon} from "@heroicons/react/16/solid";
 import {ArrowLeftIcon} from "@heroicons/react/24/outline";
-import {useContext, useEffect} from "react";
+import {createContext, useContext, useEffect} from "react";
 import {ShopMainPageContext, TimeSlotContext} from "@/components/ShopDetailPage/ShopDetailWrapperPage";
 import Time from "@/utils/Time";
 import {useRouter} from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import useCreateHairShopReservation from "@/hooks/useCreateHairShopReservation";
 import {useAtomValue} from "jotai";
+import {AxiosError} from "axios";
+
+const CreateReservationCallContext = createContext<Function | undefined>(undefined)
 
 /**
  * 고객이 예약 하려는 내용을 확인하고 확정하는 페이지
@@ -17,11 +20,20 @@ function ReservationVerifyPage() {
     // TODO: 로그인을 요구하는 코드를 재활용 가능하게 만들기. user page에서도 같은 로직을 사용중이다.
     const router = useRouter()
     const {status} = useAuth()
-    const selectedHairShop = useAtomValue(selectedHairShopAtom)
-    const {selectedTimeSlot, setSelectedTimeSlot} = useContext(TimeSlotContext)
     const mutation = useCreateHairShopReservation()
-
-    console.log(mutation.data, mutation.error)
+    const selectedHairShop = useAtomValue(selectedHairShopAtom)
+    const {selectedTimeSlot} = useContext(TimeSlotContext)
+    const {setShopMainPage} = useContext(ShopMainPageContext)
+    const createReservation = () => {
+        mutation.mutate({
+            shopId: selectedHairShop?.shopId,
+            reservationDateTime: selectedTimeSlot?.dateTime
+        }, {
+            onSuccess: () => {
+                setShopMainPage('ReservationSuccess')
+            }
+        })
+    }
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -33,12 +45,19 @@ function ReservationVerifyPage() {
     }, [router, status]);
 
     if (status === 'loading' || status === 'unauthenticated') return <div>Loading</div>
+    if (mutation.isPending) return <div>Loading</div>
 
     return (
         <div className="bg-white">
-            <StickyNavBar/>
-            <ReservationInfo/>
-            <Buttons/>
+            <CreateReservationCallContext.Provider value={createReservation}>
+                <StickyNavBar/>
+                <ReservationInfo/>
+                <Buttons/>
+                {
+                    mutation.isError && mutation.error instanceof AxiosError ?
+                        <div>{mutation.error.response?.status}</div> : null
+                }
+            </CreateReservationCallContext.Provider>
         </div>
     )
 }
@@ -116,17 +135,12 @@ function BackButton() {
  * 예약 확정 버튼
  */
 function ConfirmButton() {
-    const mutation = useCreateHairShopReservation()
-    const selectedHairShop = useAtomValue(selectedHairShopAtom)
-    const {selectedTimeSlot} = useContext(TimeSlotContext)
+    const call = useContext(CreateReservationCallContext)
 
     return (
         <button
             className="btn w-full bg-green-400 text-white"
-            onClick={() => mutation.mutate({
-                shopId: selectedHairShop?.shopId,
-                reservationDateTime: selectedTimeSlot?.dateTime
-            })}
+            onClick={call ? () => call() : undefined}
         >
             동의하고 예약하기
         </button>

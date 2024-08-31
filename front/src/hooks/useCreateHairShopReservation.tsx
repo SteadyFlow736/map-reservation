@@ -3,7 +3,15 @@ import {createHairShopReservation, CreateReservationParams} from "@/api";
 
 function useCreateHairShopReservation() {
     return useMutation({
-        mutationFn: (params: CreateReservationParams) => createHairShopReservation(params)
+        mutationKey: ['CreateHairShopReservation'],
+        mutationFn: (params: CreateReservationParams) => createHairShopReservation(params),
+        onError: error => {
+            console.log(error)
+        },
+        onSuccess: data => {
+            console.log(data)
+        }
+
     })
 }
 

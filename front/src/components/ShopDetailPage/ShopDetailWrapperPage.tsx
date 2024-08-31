@@ -4,8 +4,9 @@ import {selectedHairShopAtom} from "@/atoms";
 import {fetchShopDetail} from "@/api";
 import ShopDetailPage from "@/components/ShopDetailPage/ShopDetailPage";
 import ReservationVerifyPage from "@/components/ShopDetailPage/ReservationVerifyPage";
+import ReservationSuccessPage from "@/components/ShopDetailPage/ReservationSuccessPage";
 
-export type MainPage = 'ShopDetail' | 'ReservationVerify'
+export type MainPage = 'ShopDetail' | 'ReservationVerify' | 'ReservationSuccess'
 export type SubPage = '홈' | '소식' | '예약' | '리뷰'
 export type TimeSlot = {
     dateTime: Date
@@ -52,6 +53,9 @@ function ShopDetailWrapperPage() {
             break
         case 'ReservationVerify':
             mainPageToRender = <ReservationVerifyPage/>
+            break
+        case 'ReservationSuccess':
+            mainPageToRender = <ReservationSuccessPage/>
             break
         default:
             mainPageToRender = <ShopDetailPage shopDetail={shopDetail}/>
