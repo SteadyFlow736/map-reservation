@@ -1,6 +1,6 @@
 'use client'
 
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, Suspense, useState} from "react";
 import Button from "@/components/Button";
 import Link from "next/link";
 import {useRouter, useSearchParams} from "next/navigation";
@@ -9,7 +9,6 @@ import {login} from "@/api";
 function LoginPage() {
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
-    const successParam = useSearchParams().get('result')
     const router = useRouter()
 
     const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -33,12 +32,9 @@ function LoginPage() {
     return (
         <div className="flex justify-center items-center h-screen">
             <div>
-                {
-                    successParam === 'success' ?
-                        <div className="text-center">회원가입에 성공했습니다🥂. 로그인 해 주세요.</div>
-                        :
-                        null
-                }
+                <Suspense>
+                    <SignupResult/>
+                </Suspense>
                 {/* 로그인 창 */}
                 <div className="border border-gray-200 w-96 rounded-2xl">
                     {/* 브랜드 */}
@@ -72,5 +68,22 @@ function LoginPage() {
         </div>
     )
 }
+
+/**
+ * 회원가입 결과 표시 컴포넌트.
+ *
+ * 이 컴포넌트를 굳이 분리한 이유가 있다. 분리하지 않고 'build' 하면 오류가 발생한다.
+ * 오류의 자세한 내용은 다음의 링크 참조: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+ */
+function SignupResult() {
+    const successParam = useSearchParams().get('result')
+    return (
+        successParam === 'success' ?
+            <div className="text-center">회원가입에 성공했습니다🥂. 로그인 해 주세요.</div>
+            :
+            null
+    )
+}
+
 
 export default LoginPage
