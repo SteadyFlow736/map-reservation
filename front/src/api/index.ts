@@ -1,8 +1,9 @@
 import axios from "axios";
 import Pageable from "@/dto/Pageable";
 import Time from "@/utils/Time";
+import {api_base_url} from "@/envs";
 
-const baseURL = "http://localhost:8080"
+const baseURL = api_base_url
 
 const instance = axios.create({
     baseURL,

@@ -1,9 +1,9 @@
-import {naver_map_client_id} from "@/config/map";
 import Script from "next/script";
 import {useAtomValue} from "jotai";
 import {hairShopSearchResultAtom, selectedHairShopAtom} from "@/atoms";
 import {useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
+import {naver_map_client_id} from "@/envs";
 
 // 보존될 필요가 있는 상태지만, 그 변화가 화면 렌더링을 트리거 하지 않음
 const markerMap = new Map<number, naver.maps.Marker>()

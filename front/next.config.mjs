@@ -8,9 +8,9 @@ const nextConfig = {
      *     - Configure `{ images: { unoptimized: true } }` in `next.config.js` to disable the Image Optimization API.
      *   Read more: https://nextjs.org/docs/messages/export-image-api
      */
-    // images: {
-    //     unoptimized: true
-    // }
+    images: {
+        unoptimized: true
+    }
 };
 
 export default nextConfig;
