@@ -44,12 +44,14 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         env:
           API_SERVER_IMAGE_NAME: ${{ env.API_SERVER_IMAGE_NAME }}
+          NAVER_MAPS_API_KEY_ID: ${{ secrets.NAVER_MAPS_API_KEY_ID }}
+          NAVER_MAPS_API_KEY: ${{ secrets.NAVER_MAPS_API_KEY }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_KEY }}
-          envs: API_SERVER_IMAGE_NAME
+          envs: API_SERVER_IMAGE_NAME,NAVER_MAPS_API_KEY_ID,NAVER_MAPS_API_KEY
           script: |
             cd map-reservation
             sh scripts/prod.sh
