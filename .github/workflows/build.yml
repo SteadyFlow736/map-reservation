@@ -33,10 +33,10 @@ jobs:
       - name: Copy script, docker compose files
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.HOST }}
-          port: ${{ secrets.PORT }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
+          host: ${{ secrets.SERVER_HOST }} # 퍼블릭 ip
+          port: ${{ secrets.SERVER_PORT }} # 포트 번호
+          username: ${{ secrets.SERVER_USERNAME }} # 계정명
+          key: ${{ secrets.SERVER_KEY }} # raw contents of private key
           source: "docker-compose-prod.yml,scripts/prod-run.sh"
           target: "map-reservation"
 
