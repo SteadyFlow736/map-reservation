@@ -43,13 +43,13 @@ jobs:
       - name: Docker compose up
         uses: appleboy/ssh-action@v1.0.3
         env:
-          APISERVER_IMAGE_NAME: ${{ env.APISERVER_IMAGE_NAME }}
+          API_SERVER_IMAGE_NAME: ${{ env.API_SERVER_IMAGE_NAME }}
         with:
-          host: ${{ secrets.HOST }}
-          port: ${{ secrets.PORT }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          envs: APISERVER_IMAGE_NAME
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_KEY }}
+          envs: API_SERVER_IMAGE_NAME
           script: |
             cd map-reservation
-            sh scripts/prod-run.sh
+            sh scripts/prod.sh

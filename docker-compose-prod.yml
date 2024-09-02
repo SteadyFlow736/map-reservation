@@ -1,1 +1,13 @@
-1
+services:
+  db:
+    image: mysql:8.0.39
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: map-reservation
+    ports:
+      - "3312:3306"
+  api-server:
+    image: ${API_SERVER_IMAGE_NAME}
+    ports:
+      - "8080:8080"
