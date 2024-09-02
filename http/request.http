@@ -1,6 +1,6 @@
 @localhost = localhost:8080
-@awshost =
-@host = {{localhost}}
+@awshost = {{AWS_HOST}}
+@host = {{awshost}}
 
 ### CSRF Token 발급
 GET http://{{host}}/api/csrf-token
