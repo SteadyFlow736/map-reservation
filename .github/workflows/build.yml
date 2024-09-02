@@ -37,7 +37,7 @@ jobs:
           port: ${{ secrets.SERVER_PORT }} # 포트 번호
           username: ${{ secrets.SERVER_USERNAME }} # 계정명
           key: ${{ secrets.SERVER_KEY }} # raw contents of private key
-          source: "docker-compose-prod.yml,scripts/prod.sh"
+          source: "docker-compose-prod.yml,scripts/prod.sh,nginx/nginx.conf"
           target: "map-reservation"
 
       - name: Docker compose up
