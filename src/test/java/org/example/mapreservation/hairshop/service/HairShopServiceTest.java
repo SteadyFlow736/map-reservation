@@ -9,12 +9,14 @@ import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.*;
 
+@Disabled("GeocodeService는 외부 API를 사용 중. mocking 으로 분리시키기 전까진 비활성화 처리(임시)")
 @SpringBootTest
 class HairShopServiceTest {
 

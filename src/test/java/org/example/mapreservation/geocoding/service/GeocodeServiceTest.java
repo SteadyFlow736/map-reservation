@@ -2,12 +2,14 @@ package org.example.mapreservation.geocoding.service;
 
 import org.example.mapreservation.geocoding.dto.GeocodeRequest;
 import org.example.mapreservation.geocoding.dto.GeocodeResponse;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled("외부 API를 호출하므로 테스트에서 제외")
 @SpringBootTest
 class GeocodeServiceTest {
 
