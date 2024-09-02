@@ -13,4 +13,4 @@ services:
       - "8080:8080"
     environment:
       # docker network 내의 db 호스트로 연결
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3312/map-reservation
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/map-reservation
