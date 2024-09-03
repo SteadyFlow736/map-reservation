@@ -1,6 +1,12 @@
 name: build-push-deploy
 on:
   push:
+    paths:
+      - .github/**
+      - scripts/**
+      - src/**
+      - docker-compose-prod.yml
+      - Dockerfile
     branches:
       - main
   workflow_dispatch:
