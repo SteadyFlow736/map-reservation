@@ -90,13 +90,21 @@ function NextButton() {
 function ReservationSelectButtons(
     {reservationStatus}: { reservationStatus: HairShopReservationStatus }) {
 
+    const now = new Date()
     const {date, openingTime, closingTime, reservedTimes} = reservationStatus
     const slots: TimeSlot[] = getTimeSlots(date, openingTime, closingTime, reservedTimes)
+        .filter(slot => now.getTime() < slot.dateTime.getTime()) // 현재 시간보다 작은 slot은 제외
 
     return (
-        <div className="grid grid-cols-4 gap-2">
-            {slots.map((slot, index) => <TimeSelectButton key={index} slot={slot}/>)}
-        </div>
+        <>
+            {slots.length === 0 ?
+                <div className="text-center">예약 가능한 시간이 없습니다.</div>
+                :
+                <div className="grid grid-cols-4 gap-2">
+                    {slots.map((slot, index) => <TimeSelectButton key={index} slot={slot}/>)}
+                </div>
+            }
+        </>
     )
 }
 
