@@ -11,6 +11,7 @@ import useCreateHairShopReservation from "@/hooks/useCreateHairShopReservation";
 import {useAtomValue} from "jotai";
 import {isAxiosError} from "axios";
 import ContainerLoader from "@/components/Loaders/ContainerLoader";
+import {fetchShopDetail} from "@/api";
 
 const CreateReservationCallContext = createContext<Function | undefined>(undefined)
 
@@ -101,15 +102,31 @@ function StickyNavBar() {
  * 예약 날짜, 시간 등 예약 하려는 정보 표시
  */
 function ReservationInfo() {
+    const selectedHairShop = useAtomValue(selectedHairShopAtom)
+    const [selectShopDetail, setSelectShopDetail] = useState<HairShopDetail>()
     const {selectedTimeSlot} = useContext(TimeSlotContext)
+
+    useEffect(() => {
+        if (selectedHairShop?.shopId) {
+            fetchShopDetail(selectedHairShop.shopId).then(shopDetail => setSelectShopDetail(shopDetail))
+        }
+    }, [selectedHairShop]);
+
     if (!selectedTimeSlot) return null
+    if (!selectShopDetail) return <ContainerLoader/>
 
     return (
         <div className="p-3">
             <p>다음 내용이 맞는지 확인해 주세요</p>
             <div className="rounded-xl border-2 border-black p-3 mt-3">
-                <span className="mr-3 text-gray-300">일정</span>
-                <span>{Time.formatDate(selectedTimeSlot.dateTime)}</span>
+                <div>
+                    <span className="mr-3 text-gray-300">헤어샵</span>
+                    <span>{selectShopDetail.shopName}</span>
+                </div>
+                <div>
+                    <span className="mr-3 text-gray-300">일정</span>
+                    <span>{Time.formatDate(selectedTimeSlot.dateTime)}</span>
+                </div>
             </div>
         </div>
     );
