@@ -1,7 +1,6 @@
 'use client'
 
 import {ChangeEvent, Suspense, useState} from "react";
-import Button from "@/components/Button";
 import Link from "next/link";
 import {useRouter, useSearchParams} from "next/navigation";
 import {login} from "@/api";
@@ -20,13 +19,13 @@ function LoginPage() {
         setPassword(event.target.value)
     }
 
-    const tryLogin = async () => {
+    const tryLogin = async (email: string, password: string) => {
         try {
             const result = await login(email, password)
-            console.log("성공", result)
+            console.log("로그인 성공", result)
             router.push("/")
         } catch (e) {
-            console.log("실패", e)
+            console.log("로그인 실패", e)
         }
     }
 
@@ -62,9 +61,13 @@ function LoginPage() {
                         />
                     </div>
 
-                    {/* 로그인 버튼 */}
                     <div className="p-5">
-                        <Button onClick={tryLogin} label="로그인"/>
+                        {/* 로그인 버튼 */}
+                        <button className="btn w-full" onClick={() => tryLogin(email, password)}>로그인</button>
+                        {/* 데모 로그인 버튼 */}
+                        <button className="btn w-full mt-2" onClick={() => tryLogin("abc@gmail.com", "Password1!")}>데모
+                            계정으로 로그인
+                        </button>
                     </div>
                 </div>
 
@@ -72,6 +75,8 @@ function LoginPage() {
                 <div className="my-5 flex justify-center text-gray-400">
                     <Link href="/register">회원 가입</Link>
                 </div>
+
+
             </div>
         </div>
     )
