@@ -3,18 +3,27 @@ import {useSetAtom} from "jotai/index";
 import {selectedHairShopAtom} from "@/atoms";
 import {XMarkIcon} from "@heroicons/react/16/solid";
 import Image from "next/image";
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import Button from "@/components/Button";
 import {useAtomValue} from "jotai";
 import {ShopSubPageContext, SubPage} from "@/components/ShopDetailPage/ShopDetailWrapperPage";
+import {fetchShopDetail} from "@/api";
+import ContainerfulLoader from "@/components/Loaders/ContainerfulLoader";
 
 /**
  * 샵의 상세 정보를 보여주는 컴포넌트
  */
-function ShopDetailPage({shopDetail}: { shopDetail: HairShopDetail | undefined }) {
+function ShopDetailPage() {
     const selectedHairShop = useAtomValue(selectedHairShopAtom)
+    const [shopDetail, setShopDetail] = useState<HairShopDetail>()
 
-    if (!shopDetail) return <div>Loading</div>
+    useEffect(() => {
+        if (selectedHairShop) {
+            fetchShopDetail(selectedHairShop.shopId).then(response => setShopDetail(response))
+        }
+    }, [selectedHairShop])
+
+    if (!shopDetail) return <ContainerfulLoader/>
 
     return (
         <>
@@ -41,7 +50,11 @@ function StickyNavBar() {
     )
 }
 
-function ShopHead({shopDetail}: { shopDetail: HairShopDetail }) {
+function ShopHead({
+                      shopDetail
+                  }: {
+    shopDetail: HairShopDetail
+}) {
     const {setShopSubPage} = useContext(ShopSubPageContext)
 
     const navigateTo = (subPage: SubPage) => {

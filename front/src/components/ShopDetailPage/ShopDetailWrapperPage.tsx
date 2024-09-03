@@ -1,7 +1,4 @@
 import {createContext, Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
-import {useAtom} from "jotai/index";
-import {selectedHairShopAtom} from "@/atoms";
-import {fetchShopDetail} from "@/api";
 import ShopDetailPage from "@/components/ShopDetailPage/ShopDetailPage";
 import ReservationVerifyPage from "@/components/ShopDetailPage/ReservationVerifyPage";
 import ReservationSuccessPage from "@/components/ShopDetailPage/ReservationSuccessPage";
@@ -37,19 +34,12 @@ export const TimeSlotContext = createContext<TimeSlotContextType>({
 function ShopDetailWrapperPage() {
     const [shopMainPage, setShopMainPage] = useState<MainPage>('ShopDetail')
     const [shopSubPage, setShopSubPage] = useState<SubPage>('홈')
-    const [selectedHairShop] = useAtom(selectedHairShopAtom)
-    const [shopDetail, setShopDetail] = useState<HairShopDetail>()
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot>()
-
-    useEffect(() => {
-        if (!selectedHairShop) return
-        fetchShopDetail(selectedHairShop.shopId).then(response => setShopDetail(response))
-    }, [selectedHairShop])
 
     let mainPageToRender
     switch (shopMainPage) {
         case 'ShopDetail':
-            mainPageToRender = <ShopDetailPage shopDetail={shopDetail}/>
+            mainPageToRender = <ShopDetailPage/>
             break
         case 'ReservationVerify':
             mainPageToRender = <ReservationVerifyPage/>
@@ -58,7 +48,7 @@ function ShopDetailWrapperPage() {
             mainPageToRender = <ReservationSuccessPage/>
             break
         default:
-            mainPageToRender = <ShopDetailPage shopDetail={shopDetail}/>
+            mainPageToRender = <ShopDetailPage/>
     }
 
     return (

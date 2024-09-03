@@ -5,6 +5,7 @@ import Button from "@/components/Button";
 import Link from "next/link";
 import {useRouter, useSearchParams} from "next/navigation";
 import {login} from "@/api";
+import {MapPinIcon} from "@heroicons/react/16/solid";
 
 function LoginPage() {
     const [email, setEmail] = useState<string>('')
@@ -35,10 +36,17 @@ function LoginPage() {
                 <Suspense>
                     <SignupResult/>
                 </Suspense>
+
+                {/* 로고 및 맵 화면 돌아가기 링크 */}
+                <Link className="flex items-center justify-center pb-3" href="/">
+                    <MapPinIcon className="h-6"/>
+                    <p className="text-xl">map reservation</p>
+                </Link>
+
                 {/* 로그인 창 */}
                 <div className="border border-gray-200 w-96 rounded-2xl">
                     {/* 브랜드 */}
-                    <p className="text-center p-5 text-xl">map-reservation 로그인</p>
+                    <p className="text-center p-5 text-xl">로그인</p>
 
                     {/* email, password 입력 인풋*/}
                     <div className="grid grid-cols1 p-5">

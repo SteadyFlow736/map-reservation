@@ -6,6 +6,7 @@ import {logout} from "@/api";
 import {useEffect} from "react";
 import {MapIcon} from "@heroicons/react/24/outline";
 import Link from "next/link";
+import PagefulLoader from "@/components/Loaders/PagefulLoader";
 
 function UserPage() {
     const router = useRouter()
@@ -20,7 +21,7 @@ function UserPage() {
         }
     }, [router, status]);
 
-    if (status === 'loading' || status === 'unauthenticated') return <div>Loading</div>
+    if (status === 'loading' || status === 'unauthenticated') return <PagefulLoader/>
 
     return (
         <>

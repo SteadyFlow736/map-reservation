@@ -5,6 +5,7 @@ import Link from "next/link";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {signup} from "@/api";
 import {useRouter} from "next/navigation";
+import {MapPinIcon} from "@heroicons/react/16/solid";
 
 type Inputs = {
     email: string
@@ -29,10 +30,16 @@ function RegisterPage() {
     return (
         <div className="flex justify-center items-center h-screen">
             <div>
+                {/* 로고 및 맵 화면 돌아가기 링크 */}
+                <Link className="flex items-center justify-center pb-3" href="/">
+                    <MapPinIcon className="h-6"/>
+                    <p className="text-xl">map reservation</p>
+                </Link>
+
                 {/* 회원가입 창 */}
                 <form className="border border-gray-200 w-96 rounded-2xl" onSubmit={handleSubmit(requestRegistry)}>
                     {/* 브랜드 */}
-                    <p className="text-center p-5 text-xl">map-reservation 회원가입</p>
+                    <p className="text-center p-5 text-xl">회원가입</p>
 
                     {/* email, password 입력 인풋*/}
                     <div className="grid grid-cols1 p-5">
