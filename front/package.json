@@ -18,7 +18,8 @@
     "react-calendar": "^5.0.0",
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
-    "react-spinners": "^0.14.1"
+    "react-spinners": "^0.14.1",
+    "react-toastify": "^10.0.5"
   },
   "devDependencies": {
     "@types/navermaps": "^3.7.5",
