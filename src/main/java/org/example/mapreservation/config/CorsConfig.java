@@ -1,5 +1,8 @@
 package org.example.mapreservation.config;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -8,8 +11,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+@Setter
+@Getter
+@ConfigurationProperties("cors")
 @Configuration
 public class CorsConfig {
+
+    private List<String> allowedOrigins;
 
     /**
      * 브라우저의 preflight 요청의 Access-Control-Request-* 에 대한 Access-Control-Allow-* 응답 설정 객체 리턴
@@ -26,8 +34,7 @@ public class CorsConfig {
         return source;
     }
 
-    private static CorsConfiguration getCorsConfiguration() {
-        List<String> allowedOrigins = List.of("http://localhost:3000");
+    private CorsConfiguration getCorsConfiguration() {
         List<String> allowedMethods = List.of("*");
         List<String> allowedHeaders = List.of("*");
 

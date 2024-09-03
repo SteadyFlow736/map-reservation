@@ -2,7 +2,9 @@ spring:
   profiles:
     active: local
   config:
-    import: optional:classpath:application-naver-maps.yml
+    import:
+      - optional:classpath:application-naver-maps.yml
+      - optional:classpath:application-cors.yml
   jpa:
     show-sql: true
     properties:
