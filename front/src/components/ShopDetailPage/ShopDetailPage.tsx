@@ -8,7 +8,7 @@ import Button from "@/components/Button";
 import {useAtomValue} from "jotai";
 import {ShopSubPageContext, SubPage} from "@/components/ShopDetailPage/ShopDetailWrapperPage";
 import {fetchShopDetail} from "@/api";
-import ContainerfulLoader from "@/components/Loaders/ContainerfulLoader";
+import ContainerLoader from "@/components/Loaders/ContainerLoader";
 
 /**
  * 샵의 상세 정보를 보여주는 컴포넌트
@@ -23,7 +23,7 @@ function ShopDetailPage() {
         }
     }, [selectedHairShop])
 
-    if (!shopDetail) return <ContainerfulLoader/>
+    if (!shopDetail) return <ContainerLoader/>
 
     return (
         <>

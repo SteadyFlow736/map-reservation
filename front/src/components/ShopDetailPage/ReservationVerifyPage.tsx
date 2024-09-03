@@ -10,6 +10,7 @@ import useAuth from "@/hooks/useAuth";
 import useCreateHairShopReservation from "@/hooks/useCreateHairShopReservation";
 import {useAtomValue} from "jotai";
 import {AxiosError} from "axios";
+import ContainerLoader from "@/components/Loaders/ContainerLoader";
 
 const CreateReservationCallContext = createContext<Function | undefined>(undefined)
 
@@ -19,33 +20,44 @@ const CreateReservationCallContext = createContext<Function | undefined>(undefin
 function ReservationVerifyPage() {
     // TODO: 로그인을 요구하는 코드를 재활용 가능하게 만들기. user page에서도 같은 로직을 사용중이다.
     const router = useRouter()
-    const {status} = useAuth()
+    const authState = useAuth()
     const mutation = useCreateHairShopReservation()
     const selectedHairShop = useAtomValue(selectedHairShopAtom)
     const {selectedTimeSlot} = useContext(TimeSlotContext)
     const {setShopMainPage} = useContext(ShopMainPageContext)
+
+    // 예약 생성 callback
     const createReservation = () => {
-        mutation.mutate({
-            shopId: selectedHairShop?.shopId,
-            reservationDateTime: selectedTimeSlot?.dateTime
-        }, {
-            onSuccess: () => {
-                setShopMainPage('ReservationSuccess')
-            }
-        })
+        mutation.mutate(
+            {
+                shopId: selectedHairShop?.shopId,
+                reservationDateTime: selectedTimeSlot?.dateTime
+            },
+            {
+                onSuccess: () => {
+                    setShopMainPage('ReservationSuccess')
+                },
+                onError: (error: Error) => {
+                    if (error instanceof AxiosError) {
+
+                    }
+                    console.log(error)
+                    //toast("hi")
+                }
+            })
     }
 
     useEffect(() => {
-        if (status === 'unauthenticated') {
+        if (authState.status === 'unauthenticated') {
             // 페이지 히스토리 최상단을 user에서 login으로 변경하고 login으로 이동.
             // login 페이지에서 로그인 포기하고 뒤로 가기 누르면 user 페이지가 아니라 전 화면(대표적으로 메인 화면)으로 돌아가기 위해서임
             router.replace('/login')
             return
         }
-    }, [router, status]);
+    }, [router, authState]);
 
-    if (status === 'loading' || status === 'unauthenticated') return <div>Loading</div>
-    if (mutation.isPending) return <div>Loading</div>
+    if (authState.status === 'loading' || authState.status === 'unauthenticated') return <ContainerLoader/>
+    if (mutation.isPending) return <ContainerLoader/>
 
     return (
         <div className="bg-white">
