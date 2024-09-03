@@ -6,10 +6,8 @@ function useCreateHairShopReservation() {
         mutationKey: ['CreateHairShopReservation'],
         mutationFn: (params: CreateReservationParams) => createHairShopReservation(params),
         onError: error => {
-            console.log(error)
         },
         onSuccess: data => {
-            console.log(data)
         }
 
     })
