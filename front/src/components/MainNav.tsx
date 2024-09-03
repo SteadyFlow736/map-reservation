@@ -4,7 +4,9 @@ import useAuth from "@/hooks/useAuth";
 
 function Logo() {
     return (
-        <MapIcon/>
+        <Link href='/'>
+            <MapIcon/>
+        </Link>
     );
 }
 
