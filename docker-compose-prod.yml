@@ -19,3 +19,4 @@ services:
       # naver maps properties
       NAVER-MAPS_API-KEY-ID: ${NAVER_MAPS_API_KEY_ID}
       NAVER-MAPS_API-KEY: ${NAVER_MAPS_API_KEY}
+      CORS_ALLOWED-ORIGINS: ${CORS_ALLOWED_ORIGINS}
