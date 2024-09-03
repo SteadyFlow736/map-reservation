@@ -51,7 +51,7 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_KEY }}
-          envs: API_SERVER_IMAGE_NAME,NAVER_MAPS_API_KEY_ID,NAVER_MAPS_API_KEY
+          envs: API_SERVER_IMAGE_NAME,NAVER_MAPS_API_KEY_ID,NAVER_MAPS_API_KEY,CORS_ALLOWED_ORIGINS
           script: |
             cd map-reservation
             sh scripts/prod.sh
