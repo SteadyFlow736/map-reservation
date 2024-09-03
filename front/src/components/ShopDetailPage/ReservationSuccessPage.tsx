@@ -5,10 +5,13 @@ import {
     ShopSubPageContext,
     TimeSlotContext
 } from "@/components/ShopDetailPage/ShopDetailWrapperPage";
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import {ArrowLeftIcon} from "@heroicons/react/24/outline";
 import {CheckCircleIcon, XMarkIcon} from "@heroicons/react/16/solid";
 import Time from "@/utils/Time";
+import {useAtomValue} from "jotai/index";
+import {fetchShopDetail} from "@/api";
+import ContainerLoader from "@/components/Loaders/ContainerLoader";
 
 /**
  * 예약 성공 페이지.
@@ -77,17 +80,33 @@ function Banner() {
  * 예왁 확정 정보
  */
 function SuccessInfo() {
+    const selectedHairShop = useAtomValue(selectedHairShopAtom)
+    const [selectShopDetail, setSelectShopDetail] = useState<HairShopDetail>()
     const {selectedTimeSlot} = useContext(TimeSlotContext)
+
+    useEffect(() => {
+        if (selectedHairShop?.shopId) {
+            fetchShopDetail(selectedHairShop.shopId).then(shopDetail => setSelectShopDetail(shopDetail))
+        }
+    }, [selectedHairShop]);
+
     if (!selectedTimeSlot) return null
+    if (!selectShopDetail) return <ContainerLoader/>
 
     return (
         <div className="p-3">
             <div className="rounded-xl border-2 border-black p-3 mt-3">
-                <span className="mr-3 text-gray-300">일정</span>
-                <span>{Time.formatDate(selectedTimeSlot.dateTime)}</span>
+                <div>
+                    <span className="mr-3 text-gray-300">헤어샵</span>
+                    <span>{selectShopDetail.shopName}</span>
+                </div>
+                <div>
+                    <span className="mr-3 text-gray-300">일정</span>
+                    <span>{Time.formatDate(selectedTimeSlot.dateTime)}</span>
+                </div>
             </div>
         </div>
-    );
+    )
 }
 
 /**
