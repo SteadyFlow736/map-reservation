@@ -9,6 +9,7 @@ import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.repository.HairShopRepository;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
+import org.example.mapreservation.reservation.dto.HairShopReservationDto;
 import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.dto.ReservationStatus;
 import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
@@ -77,5 +78,18 @@ public class ReservationService {
         LocalTime openingTime = LocalTime.of(10, 0);
         LocalTime closingTime = LocalTime.of(20, 0);
         return ReservationStatus.from(request.targetDate(), openingTime, closingTime, reservations);
+    }
+
+    /**
+     * 헤어샵 예약 정보 조회
+     *
+     * @param reservationId 헤어샵 예약 id
+     * @param username      조회 요청 유저
+     * @return 헤어샵 예약 정보
+     */
+    public HairShopReservationDto getHairShopReservation(Long reservationId, String username) {
+        HairShopReservation hairShopReservation = hairShopReservationRepository.findByHairShopAndCustomer(reservationId, username)
+                .orElseThrow(() -> new CustomException(ErrorCode.HSR_NOT_FOUND));
+        return HairShopReservationDto.from(reservationId, username, hairShopReservation);
     }
 }

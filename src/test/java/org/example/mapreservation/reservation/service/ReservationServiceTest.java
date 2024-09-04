@@ -11,6 +11,7 @@ import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
+import org.example.mapreservation.reservation.dto.HairShopReservationDto;
 import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.dto.ReservationStatus;
 import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
@@ -24,6 +25,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -137,31 +139,62 @@ class ReservationServiceTest {
         assertThat(foundReservation.get().getReservationTime()).isEqualTo(reservationTime);
     }
 
+    @DisplayName("고객은 헤어샵의 특정 날짜의 예약 현황을 조회할 수 있다.")
     @Test
     void getHairShopReservationStatus() {
-        // given
-        List<LocalDateTime> reservationTimes = List.of(
+        // given - 한 헤어샵에 여러 시간으로 예약 진행
+        List<LocalDateTime> reservationDateTimes = List.of(
                 LocalDateTime.of(2024, Month.AUGUST, 3, 13, 30),
                 LocalDateTime.of(2024, Month.AUGUST, 4, 13, 30),
                 LocalDateTime.of(2024, Month.AUGUST, 4, 15, 30),
                 LocalDateTime.of(2024, Month.AUGUST, 5, 15, 30)
         );
-        List<HairShopReservationCreateRequest> requests = reservationTimes.stream()
+        List<HairShopReservationCreateRequest> requests = reservationDateTimes.stream()
                 .map(HairShopReservationCreateRequest::new).toList();
-        LocalDateTime now = reservationTimes.get(0).minusHours(1);
+        LocalDateTime now = reservationDateTimes.get(0).minusHours(1);
         requests.forEach(r -> reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), now, r));
 
-        // when
-        LocalDate targetDate = reservationTimes.get(1).toLocalDate();
+        // when - 해당 헤어샵의 특정 날짜로 예약 현황 조회
+        LocalDate targetDate = reservationDateTimes.get(1).toLocalDate();
         HairShopReservationStatusGetRequest statusGetRequest =
                 new HairShopReservationStatusGetRequest(targetDate);
         ReservationStatus status = reservationService.getHairShopReservationStatus(hairShop.getId(), statusGetRequest);
 
-        // then
+        // then - 해당 날짜의 예약 현황 리턴
         assertThat(status.date()).isEqualTo(targetDate);
         assertThat(status.reservedTimes().size()).isEqualTo(2);
         assertThat(status.reservedTimes()).isEqualTo(
-                List.of(reservationTimes.get(1).toLocalTime(), reservationTimes.get(2).toLocalTime()));
+                List.of(reservationDateTimes.get(1).toLocalTime(), reservationDateTimes.get(2).toLocalTime()));
+    }
+
+    @DisplayName("고객은 자신이 한 특정 헤어샵 예약을 조회할 수 있다.")
+    @Test
+    void getHairShopReservation() {
+        // given - 한 헤어샵에 여러 시간으로 예약 진행
+        List<LocalDateTime> reservationDateTimes = List.of(
+                LocalDateTime.of(2024, Month.AUGUST, 3, 13, 30),
+                LocalDateTime.of(2024, Month.AUGUST, 4, 13, 30),
+                LocalDateTime.of(2024, Month.AUGUST, 4, 15, 30),
+                LocalDateTime.of(2024, Month.AUGUST, 5, 15, 30)
+        );
+        List<HairShopReservationCreateRequest> requests = reservationDateTimes.stream()
+                .map(HairShopReservationCreateRequest::new).toList();
+        LocalDateTime now = reservationDateTimes.get(0).minusHours(1);
+        List<Long> reservationIds = new ArrayList<>();
+        requests.forEach(r -> {
+            Long id = reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), now, r);
+            reservationIds.add(id);
+        });
+
+        // when - 특정 예약 조회
+        Long reservationId = reservationIds.get(0);
+        HairShopReservationDto foundReservationDto = reservationService.getHairShopReservation(reservationId, customer.getEmail());
+
+        // then - 예약 확인
+        assertThat(foundReservationDto.hairShopDto().shopId()).isEqualTo(hairShop.getId());
+        assertThat(foundReservationDto.reservationId()).isEqualTo(reservationId);
+        assertThat(foundReservationDto.username()).isEqualTo(customer.getEmail());
+        assertThat(foundReservationDto.reservationTime()).isEqualTo(reservationDateTimes.get(0));
     }
 
 }

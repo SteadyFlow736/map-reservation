@@ -2,6 +2,7 @@ package org.example.mapreservation.reservation.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
+import org.example.mapreservation.reservation.dto.HairShopReservationDto;
 import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.dto.ReservationStatus;
 import org.example.mapreservation.reservation.service.ReservationService;
@@ -9,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,6 +45,13 @@ public class ReservationController {
         return ResponseEntity.created(URI.create(uri)).build();
     }
 
+    /**
+     * 헤어샵의 특정 날짜 예약 현황 조회 API
+     *
+     * @param shopId  헤어샵 id
+     * @param request 조회 날짜
+     * @return 예약 현황
+     */
     @GetMapping("/api/hairshops/{shopId}/reservations/status")
     public ResponseEntity<ReservationStatus> getHairShopReservationStatus(
             @PathVariable("shopId") Long shopId,
@@ -50,5 +59,21 @@ public class ReservationController {
     ) {
         ReservationStatus status = reservationService.getHairShopReservationStatus(shopId, request);
         return ResponseEntity.ok(status);
+    }
+
+    /**
+     * 헤어샵 예약 정보 조회 API
+     *
+     * @param reservationId 예약 id
+     * @param user          유저 정보
+     * @return 예약 정보
+     */
+    @GetMapping("/api/reservations/{reservationId}")
+    public ResponseEntity<HairShopReservationDto> getHairShopReservation(
+            @PathVariable("reservationId") Long reservationId,
+            @AuthenticationPrincipal UserDetails user
+    ) {
+        HairShopReservationDto dto = reservationService.getHairShopReservation(reservationId, user.getUsername());
+        return ResponseEntity.ok(dto);
     }
 }
