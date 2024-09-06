@@ -1,7 +1,8 @@
 import axios from "axios";
-import Pageable from "@/dto/Pageable";
+import Pageable from "@/dto/page/Pageable";
 import Time from "@/utils/Time";
 import {api_base_url} from "@/envs";
+import qs from "qs";
 
 const baseURL = api_base_url
 
@@ -10,7 +11,11 @@ const instance = axios.create({
     // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
     // csrf token을 받아오려면 당연히 받아올 토근과 관련된 세션 아이디도 요청에 같이 포함되어야 한다.
     // cookie에 세션 아이디가 있으므로, withCredentials를 true로 하여 쿠키를 보내도록 한다.
-    withCredentials: true
+    withCredentials: true,
+    paramsSerializer: (params) => {
+        // ?sort=field1,asc&sort=field2,desc 처럼 쿼리 문자열에서 sort를 반복된 키로 직렬화
+        return qs.stringify(params, {arrayFormat: 'repeat'})
+    }
 })
 
 // 검색어 질의 API
@@ -23,7 +28,6 @@ async function fetchSearchResult(
         params: {
             searchTerm,
             ...pageable,
-            sort: pageable.sort.join(',')
         }
     })
     return data;
@@ -127,6 +131,22 @@ export type CreateReservationParams = {
     reservationDateTime: Date | undefined
 }
 
+/**
+ * 고객 헤어샵 예약 리스트 조회 API (Slice)
+ *
+ * @param pageable
+ */
+async function fetchHairShopReservations(
+    pageable: Pageable = {size: 10, page: 0, sort: ['reservationTime,desc']}
+): Promise<Slice<HairShopReservationDto>> {
+    const {data} = await instance.get(`/api/reservations`, {
+        params: {
+            ...pageable,
+        }
+    })
+    return data
+}
+
 export {
     fetchSearchResult,
     fetchShopDetail,
@@ -135,5 +155,6 @@ export {
     login,
     fetchSession,
     logout,
-    createHairShopReservation
+    createHairShopReservation,
+    fetchHairShopReservations
 }
