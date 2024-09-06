@@ -20,10 +20,10 @@ public record HairShopReservationDto(
         LocalDateTime reservationTime
 
 ) {
-    public static HairShopReservationDto from(Long reservationId, String username, HairShopReservation hairShopReservation) {
+    public static HairShopReservationDto from(HairShopReservation hairShopReservation) {
         return new HairShopReservationDto(
-                reservationId,
-                username,
+                hairShopReservation.getId(),
+                hairShopReservation.getCustomer().getEmail(),
                 HairShopDto.from(hairShopReservation.getHairShop()),
                 hairShopReservation.getReservationTime()
         );

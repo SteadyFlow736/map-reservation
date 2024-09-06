@@ -13,6 +13,8 @@ import org.example.mapreservation.reservation.dto.HairShopReservationDto;
 import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.dto.ReservationStatus;
 import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,8 +90,22 @@ public class ReservationService {
      * @return 헤어샵 예약 정보
      */
     public HairShopReservationDto getHairShopReservation(Long reservationId, String username) {
-        HairShopReservation hairShopReservation = hairShopReservationRepository.findByHairShopAndCustomer(reservationId, username)
+        HairShopReservation hairShopReservation = hairShopReservationRepository.findByIdAndCustomerEmail(reservationId, username)
                 .orElseThrow(() -> new CustomException(ErrorCode.HSR_NOT_FOUND));
-        return HairShopReservationDto.from(reservationId, username, hairShopReservation);
+        return HairShopReservationDto.from(hairShopReservation);
+    }
+
+    /**
+     * 고객별 예약 정보 조회 (slicing)
+     *
+     * @param username 고객 이메일
+     * @param pageable 페이지 정보
+     * @return 헤어샵 예약 정보 (slice)
+     */
+    public Slice<HairShopReservationDto> getHairShopReservations(String username, Pageable pageable) {
+        Slice<HairShopReservation> slice = hairShopReservationRepository.findByCustomerEmail(username, pageable);
+        // TODO: HairShopReservation -> HairShopReservationDto 변경 시 Customer 엔티티 조회 추가로 일어나는 N + 1 문제 해결
+        // ReesrvationServiceTest::getHairShopReservations 테스트에서 N + 1 문제 확인 가능
+        return slice.map(HairShopReservationDto::from);
     }
 }

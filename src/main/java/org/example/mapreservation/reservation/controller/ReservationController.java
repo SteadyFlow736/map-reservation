@@ -6,6 +6,8 @@ import org.example.mapreservation.reservation.dto.HairShopReservationDto;
 import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.dto.ReservationStatus;
 import org.example.mapreservation.reservation.service.ReservationService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -62,7 +64,7 @@ public class ReservationController {
     }
 
     /**
-     * 헤어샵 예약 정보 조회 API
+     * 예약 id를 통한 헤어샵 예약 정보 조회 API
      *
      * @param reservationId 예약 id
      * @param user          유저 정보
@@ -75,5 +77,21 @@ public class ReservationController {
     ) {
         HairShopReservationDto dto = reservationService.getHairShopReservation(reservationId, user.getUsername());
         return ResponseEntity.ok(dto);
+    }
+
+    /**
+     * 고객의 예약 리스트 조회 API
+     * 무한 스크롤을 지원하기 위해 Slice로 리턴한다.
+     *
+     * @param user 고객 정보
+     * @return 에약 리스트
+     */
+    @GetMapping("/api/reservations")
+    public ResponseEntity<Slice<HairShopReservationDto>> getHairShopReservations(
+            @AuthenticationPrincipal UserDetails user,
+            Pageable pageable
+    ) {
+        Slice<HairShopReservationDto> page = reservationService.getHairShopReservations(user.getUsername(), pageable);
+        return ResponseEntity.ok(page);
     }
 }

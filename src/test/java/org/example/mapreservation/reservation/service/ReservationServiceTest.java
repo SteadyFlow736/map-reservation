@@ -21,6 +21,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -195,6 +199,39 @@ class ReservationServiceTest {
         assertThat(foundReservationDto.reservationId()).isEqualTo(reservationId);
         assertThat(foundReservationDto.username()).isEqualTo(customer.getEmail());
         assertThat(foundReservationDto.reservationTime()).isEqualTo(reservationDateTimes.get(0));
+    }
+
+    @DisplayName("고객은 자신의 예약 리스트를 조회할 수 있다.")
+    @Test
+    void getHairShopReservations() {
+        // given - 한 헤어샵에 여러 시간으로 예약 진행
+        List<LocalDateTime> reservationDateTimes = List.of(
+                LocalDateTime.of(2024, Month.AUGUST, 3, 13, 30),
+                LocalDateTime.of(2024, Month.AUGUST, 4, 13, 30),
+                LocalDateTime.of(2024, Month.AUGUST, 4, 15, 30),
+                LocalDateTime.of(2024, Month.AUGUST, 5, 15, 30)
+        );
+        List<HairShopReservationCreateRequest> requests = reservationDateTimes.stream()
+                .map(HairShopReservationCreateRequest::new).toList();
+        LocalDateTime now = reservationDateTimes.get(0).minusHours(1);
+        requests.forEach(r -> {
+            reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), now, r);
+        });
+
+        // when - 특정 예약 조회
+        int pageNumber = 0;
+        int pageSize = 2;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize,
+                Sort.by(Sort.Direction.DESC, "reservationTime")
+        );
+        Slice<HairShopReservationDto> foundReservationDtos = reservationService.getHairShopReservations(customer.getEmail(), pageable);
+
+        // then - 예약 확인
+        assertThat(foundReservationDtos.getNumber()).isEqualTo(pageNumber);
+        assertThat(foundReservationDtos.getSize()).isEqualTo(pageSize);
+        assertThat(foundReservationDtos.getContent().get(0).reservationTime()).isEqualTo(reservationDateTimes.get(3));
+        assertThat(foundReservationDtos.getContent().get(1).reservationTime()).isEqualTo(reservationDateTimes.get(2));
+        assertThat(foundReservationDtos.hasNext()).isEqualTo(true);
     }
 
 }
