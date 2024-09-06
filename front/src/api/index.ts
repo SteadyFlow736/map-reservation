@@ -134,14 +134,20 @@ export type CreateReservationParams = {
 /**
  * 고객 헤어샵 예약 리스트 조회 API (Slice)
  *
- * @param pageable
+ * @param size 페이지 크기
+ * @param page 페이지 번호
+ * @param sort 정렬 옵션
  */
 async function fetchHairShopReservations(
-    pageable: Pageable = {size: 10, page: 0, sort: ['reservationTime,desc']}
+    size: number = 10,
+    page: number = 0,
+    sort: string[] = ['reservationTime,desc']
 ): Promise<Slice<HairShopReservationDto>> {
     const {data} = await instance.get(`/api/reservations`, {
         params: {
-            ...pageable,
+            size,
+            page,
+            sort
         }
     })
     return data

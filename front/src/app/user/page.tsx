@@ -7,6 +7,8 @@ import {useEffect} from "react";
 import {MapIcon} from "@heroicons/react/24/outline";
 import Link from "next/link";
 import PageLoader from "@/components/Loaders/PageLoader";
+import useInfiniteHairShopReservations from "@/hooks/useInfiniteHairShopReservations";
+import React from "react";
 
 function UserPage() {
     const router = useRouter()
@@ -36,6 +38,7 @@ function Bar({user}: { user: CustomerInfo }) {
 
     const handleLogoutClick = async () => {
         try {
+            // TODO: logout 이후 query cache invalidate 하기
             await logout()
             router.push('/')
         } catch (e) {
@@ -61,8 +64,23 @@ function Bar({user}: { user: CustomerInfo }) {
 }
 
 function Body() {
+    const pageSize = 10;
+    const {data, error, fetchNextPage, hasNextPage, isFetching, status}
+        = useInfiniteHairShopReservations(pageSize)
+
     return (
-        <div className="mt-14">hi</div>
+        <div className="mt-14">
+            {data?.pages.map((group, i) => (
+                <React.Fragment key={i}>
+                    {group.content.map(r => (
+                        <div key={r.reservationId}>
+                            <p>{r.hairShopDto.shopName}</p>
+                            <p>{r.reservationTime}</p>
+                        </div>
+                    ))}
+                </React.Fragment>
+            ))}
+        </div>
     )
 }
 
