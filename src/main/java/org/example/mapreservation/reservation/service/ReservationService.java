@@ -31,10 +31,10 @@ public class ReservationService {
     private final HairShopRepository hairShopRepository;
     private final CustomerRepository customerRepository;
 
-    public Long createHairShopReservation(Long shopId, String username, LocalDateTime currentTime,
+    public Long createHairShopReservation(Long shopId, String username, LocalDateTime currentDateTime,
                                           HairShopReservationCreateRequest request) {
 
-        isValidReservationTime(currentTime, request.reservationTime());
+        isValidReservationTime(currentDateTime, request.reservationTime());
 
         Customer customer = customerRepository.findByEmail(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.CUST_NOT_FOUND));
@@ -53,8 +53,8 @@ public class ReservationService {
         return hairShopReservationRepository.save(hairShopReservation).getId();
     }
 
-    private static void isValidReservationTime(LocalDateTime currentTime, LocalDateTime reservationTime) {
-        if (currentTime.isAfter(reservationTime)) {
+    private static void isValidReservationTime(LocalDateTime currentDateTime, LocalDateTime reservationTime) {
+        if (currentDateTime.isAfter(reservationTime)) {
             throw new CustomException(ErrorCode.HSR_OLD_RESERVATION_TIME);
         }
         List<Integer> allowedMinutes = List.of(0, 30);
@@ -108,4 +108,19 @@ public class ReservationService {
         // ReesrvationServiceTest::getHairShopReservations 테스트에서 N + 1 문제 확인 가능
         return slice.map(HairShopReservationDto::from);
     }
+
+    /**
+     * 예약 취소
+     *
+     * @param reservationId   예약 id
+     * @param username        예약자(고객 이메일)
+     * @param currentDateTime 현재 시간
+     */
+    public void cancelReservationById(Long reservationId, String username, LocalDateTime currentDateTime) {
+        HairShopReservation hairShopReservation = hairShopReservationRepository.findByIdAndCustomerEmail(reservationId, username)
+                .orElseThrow(() -> new CustomException(ErrorCode.HSR_NOT_FOUND));
+
+        hairShopReservation.cancel(currentDateTime);
+    }
+
 }

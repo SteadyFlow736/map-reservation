@@ -94,4 +94,19 @@ public class ReservationController {
         Slice<HairShopReservationDto> page = reservationService.getHairShopReservations(user.getUsername(), pageable);
         return ResponseEntity.ok(page);
     }
+
+    /**
+     * 예약 취소 API
+     *
+     * @param reservationId 예약 id
+     * @param user          예약자(고객 정보)
+     */
+    @PostMapping("/api/reservations/{reservationId}")
+    public ResponseEntity<Void> cancelHairShopReservation(
+            @PathVariable Long reservationId,
+            @AuthenticationPrincipal UserDetails user
+    ) {
+        reservationService.cancelReservationById(reservationId, user.getUsername(), LocalDateTime.now());
+        return ResponseEntity.ok().build();
+    }
 }

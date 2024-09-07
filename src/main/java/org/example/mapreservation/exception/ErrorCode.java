@@ -28,9 +28,15 @@ public enum ErrorCode {
     HSR_OLD_RESERVATION_TIME("이미 지나간 시간으로 헤어샵을 예약할 수 없습니다.", HttpStatus.BAD_REQUEST),
     HSR_INVALID_RESERVATION_TIME("예약 시간은 0분 또는 30분이어야 합니다.", HttpStatus.BAD_REQUEST),
     HSR_ALREADY_TAKEN_RESERVATION_TIME("이미 예약된 시간입니다.", HttpStatus.CONFLICT),
-    HSR_NOT_FOUND("일치하는 예약이 없습니다.", HttpStatus.NOT_FOUND)
-    ;
+    HSR_NOT_FOUND("일치하는 예약이 없습니다.", HttpStatus.NOT_FOUND),
+    HSR_OLD_RESERVATION_TIME_CANNOT_CANCEL("이미 지나간 예약이므로 취소할 수 없습니다.", HttpStatus.BAD_REQUEST);
 
+    /**
+     * 에러 코드 생성자
+     *
+     * @param message    에러 메시지
+     * @param httpStatus http 상태
+     */
     ErrorCode(String message, HttpStatus httpStatus) {
         this.message = message;
         this.httpStatus = httpStatus;
