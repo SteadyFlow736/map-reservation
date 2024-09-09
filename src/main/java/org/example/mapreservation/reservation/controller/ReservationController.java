@@ -1,6 +1,7 @@
 package org.example.mapreservation.reservation.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mapreservation.reservation.dto.CreateHairShopReservationResponse;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
 import org.example.mapreservation.reservation.dto.HairShopReservationDto;
 import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
@@ -37,14 +38,13 @@ public class ReservationController {
      * @return 예약 결과
      */
     @PostMapping("/api/hairshops/{shopId}/reservations")
-    public ResponseEntity<Void> createHairShopReservation(
+    public ResponseEntity<CreateHairShopReservationResponse> createHairShopReservation(
             @PathVariable("shopId") Long shopId,
             @AuthenticationPrincipal User user,
             @RequestBody HairShopReservationCreateRequest request
     ) {
-        Long reservationId = reservationService.createHairShopReservation(shopId, user.getUsername(), LocalDateTime.now(), request);
-        String uri = String.format("/api/hairshops/%s/reservations/%s", shopId, reservationId);
-        return ResponseEntity.created(URI.create(uri)).build();
+        CreateHairShopReservationResponse response = reservationService.createHairShopReservation(shopId, user.getUsername(), LocalDateTime.now(), request);
+        return ResponseEntity.created(URI.create("")).body(response);
     }
 
     /**

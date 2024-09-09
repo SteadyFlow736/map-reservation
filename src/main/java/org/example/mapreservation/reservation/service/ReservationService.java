@@ -8,6 +8,7 @@ import org.example.mapreservation.exception.ErrorCode;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.repository.HairShopRepository;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
+import org.example.mapreservation.reservation.dto.CreateHairShopReservationResponse;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
 import org.example.mapreservation.reservation.dto.HairShopReservationDto;
 import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
@@ -45,8 +46,8 @@ public class ReservationService {
      * @param request         요청 내용(예약 시간)
      * @return 예약 id
      */
-    public Long createHairShopReservation(Long shopId, String username, LocalDateTime currentDateTime,
-                                          HairShopReservationCreateRequest request) {
+    public CreateHairShopReservationResponse createHairShopReservation(Long shopId, String username, LocalDateTime currentDateTime,
+                                                                       HairShopReservationCreateRequest request) {
 
         // redisson을 이용한 분산락 적용으로 "헤어샵 id + 예약 시간" 조합이 유일하게 예약될 수 있도록 함
         // TODO: 분산락을 재사용 가능하게, 깔끔하게 적용할 수 있는 법 찾기. (wrapping method or aop or facade ...?)
@@ -61,7 +62,8 @@ public class ReservationService {
             if (!available) {
                 throw new CustomException(ErrorCode.LCK_CANNOT_ACQUIRE_LOCK, "잠시 후 다시 시도해 주세요.");
             }
-            return transactionTemplate.execute(status -> createHairShopReservationInternal(shopId, username, currentDateTime, request));
+            Long reservationId = transactionTemplate.execute(status -> createHairShopReservationInternal(shopId, username, currentDateTime, request));
+            return new CreateHairShopReservationResponse(reservationId);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {

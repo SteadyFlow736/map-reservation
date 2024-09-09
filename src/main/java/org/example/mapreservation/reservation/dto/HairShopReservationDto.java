@@ -12,20 +12,25 @@ import java.time.LocalDateTime;
  * @param username        예약 유저명
  * @param hairShopDto     헤어샵 정보
  * @param reservationTime 예약 시간
+ * @param status          예약 상태
  */
 public record HairShopReservationDto(
         Long reservationId,
         String username,
         HairShopDto hairShopDto,
-        LocalDateTime reservationTime
+        LocalDateTime reservationTime,
+        HairShopReservation.Status status
 
 ) {
-    public static HairShopReservationDto from(HairShopReservation hairShopReservation) {
+    public static HairShopReservationDto from(
+            HairShopReservation hairShopReservation) {
+
         return new HairShopReservationDto(
                 hairShopReservation.getId(),
                 hairShopReservation.getCustomer().getEmail(),
                 HairShopDto.from(hairShopReservation.getHairShop()),
-                hairShopReservation.getReservationTime()
+                hairShopReservation.getReservationTime(),
+                hairShopReservation.getReservationStatus()
         );
     }
 }

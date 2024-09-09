@@ -10,6 +10,7 @@ import org.example.mapreservation.hairshop.repository.HairShopRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
+import org.example.mapreservation.reservation.dto.CreateHairShopReservationResponse;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
 import org.example.mapreservation.reservation.dto.HairShopReservationDto;
 import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
@@ -92,10 +93,10 @@ class ReservationServiceTest {
         HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
 
         // when
-        Long reservationId = reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), currentTime, request);
+        CreateHairShopReservationResponse response = reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), currentTime, request);
 
         // then
-        Optional<HairShopReservation> foundReservation = reservationRepository.findById(reservationId);
+        Optional<HairShopReservation> foundReservation = reservationRepository.findById(response.reservationId());
         assertThat(foundReservation).isNotEmpty();
         assertThat(foundReservation.get().getHairShop().getId()).isEqualTo(hairShop.getId());
         assertThat(foundReservation.get().getCustomer().getId()).isEqualTo(customer.getId());
@@ -119,8 +120,8 @@ class ReservationServiceTest {
         for (int i = 0; i < threadCount; i++) {
             es.submit(() -> {
                 try {
-                    Long id = reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), currentTime, request);
-                    reservationId.set(id);
+                    CreateHairShopReservationResponse response = reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), currentTime, request);
+                    reservationId.set(response.reservationId());
                 } catch (Exception e) {
                     exceptions.add(e);
                 } finally {
@@ -185,7 +186,7 @@ class ReservationServiceTest {
         LocalDateTime now = reservationDateTimes.get(0).minusHours(1);
         List<Long> reservationIds = new ArrayList<>();
         requests.forEach(r -> {
-            Long id = reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), now, r);
+            Long id = reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), now, r).reservationId();
             reservationIds.add(id);
         });
 
