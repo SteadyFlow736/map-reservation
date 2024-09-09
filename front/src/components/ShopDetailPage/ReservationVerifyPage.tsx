@@ -11,7 +11,7 @@ import useCreateHairShopReservation from "@/hooks/useCreateHairShopReservation";
 import {useAtomValue} from "jotai";
 import {isAxiosError} from "axios";
 import ContainerLoader from "@/components/Loaders/ContainerLoader";
-import {fetchShopDetail} from "@/api";
+import {fetchShopDetail} from "@/api/hairShop";
 
 const CreateReservationCallContext = createContext<Function | undefined>(undefined)
 

@@ -1,4 +1,4 @@
-import {fetchHairShopReservations} from "@/api";
+import {fetchHairShopReservations} from "@/api/reservation";
 import {useInfiniteQuery, useQuery} from "@tanstack/react-query";
 import {QueryKeys} from "@/config/queryClient";
 

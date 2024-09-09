@@ -2,7 +2,7 @@ import {useAtomValue} from "jotai";
 import {selectedHairShopAtom} from "@/atoms";
 import {useQuery} from "@tanstack/react-query";
 import {QueryKeys} from "@/config/queryClient";
-import {fetchShopDetail} from "@/api";
+import {fetchShopDetail} from "@/api/hairShop";
 
 function ShopSubPageHome() {
     const selectHairShopId = useAtomValue(selectedHairShopAtom)?.shopId

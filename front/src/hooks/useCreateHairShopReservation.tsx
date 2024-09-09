@@ -1,5 +1,5 @@
 import {useMutation} from "@tanstack/react-query";
-import {createHairShopReservation, CreateReservationParams} from "@/api";
+import {createHairShopReservation, CreateReservationParams} from "@/api/reservation";
 
 function useCreateHairShopReservation() {
     return useMutation({

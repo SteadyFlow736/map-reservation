@@ -10,7 +10,7 @@ import {ArrowLeftIcon} from "@heroicons/react/24/outline";
 import {CheckCircleIcon, XMarkIcon} from "@heroicons/react/16/solid";
 import Time from "@/utils/Time";
 import {useAtomValue} from "jotai/index";
-import {fetchShopDetail} from "@/api";
+import {fetchShopDetail} from "@/api/hairShop";
 import ContainerLoader from "@/components/Loaders/ContainerLoader";
 
 /**

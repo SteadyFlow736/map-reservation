@@ -3,7 +3,7 @@
 import Button from "@/components/Button";
 import Link from "next/link";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {signup} from "@/api";
+import {signup} from "@/api/auth";
 import {useRouter} from "next/navigation";
 import {MapPinIcon} from "@heroicons/react/16/solid";
 

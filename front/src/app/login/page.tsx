@@ -3,7 +3,7 @@
 import {ChangeEvent, Suspense, useState} from "react";
 import Link from "next/link";
 import {useRouter, useSearchParams} from "next/navigation";
-import {login} from "@/api";
+import {login} from "@/api/auth";
 import {MapPinIcon} from "@heroicons/react/16/solid";
 
 function LoginPage() {

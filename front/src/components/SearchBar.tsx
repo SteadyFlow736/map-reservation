@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {hairShopSearchResultAtom} from "@/atoms";
-import {fetchSearchResult} from "@/api";
+import {fetchSearchResult} from "@/api/hairShop";
 import {useSetAtom} from "jotai";
 
 function SearchBar() {

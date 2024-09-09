@@ -7,7 +7,7 @@ import {useContext, useEffect, useState} from "react";
 import Button from "@/components/Button";
 import {useAtomValue} from "jotai";
 import {ShopSubPageContext, SubPage} from "@/components/ShopDetailPage/ShopDetailWrapperPage";
-import {fetchShopDetail} from "@/api";
+import {fetchShopDetail} from "@/api/hairShop";
 import ContainerLoader from "@/components/Loaders/ContainerLoader";
 
 /**

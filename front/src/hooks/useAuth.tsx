@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {fetchSession} from "@/api";
+import {fetchSession} from "@/api/auth";
 
 type AuthState = {
     status: 'loading'

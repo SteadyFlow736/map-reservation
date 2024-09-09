@@ -4,7 +4,7 @@ import 'react-calendar/dist/Calendar.css';
 import './react-calendar-custom.css'
 import {skipToken, useQuery} from "@tanstack/react-query";
 import {QueryKeys} from "@/config/queryClient";
-import {fetchReservationStatus} from "@/api";
+import {fetchReservationStatus} from "@/api/reservation";
 import {useAtomValue} from "jotai";
 import {selectedHairShopAtom} from "@/atoms";
 import Time from "@/utils/Time";
