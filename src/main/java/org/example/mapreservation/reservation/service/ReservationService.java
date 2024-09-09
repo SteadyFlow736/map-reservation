@@ -13,26 +13,64 @@ import org.example.mapreservation.reservation.dto.HairShopReservationDto;
 import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.dto.ReservationStatus;
 import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
-@Transactional
 @Service
 public class ReservationService {
 
     private final HairShopReservationRepository hairShopReservationRepository;
     private final HairShopRepository hairShopRepository;
     private final CustomerRepository customerRepository;
+    private final RedissonClient redissonClient;
+    private final TransactionTemplate transactionTemplate;
 
+    /**
+     * 헤어샵 예약
+     *
+     * @param shopId          대상 헤어샵 id
+     * @param username        고객명(이메일)
+     * @param currentDateTime 현재 시간
+     * @param request         요청 내용(예약 시간)
+     * @return 예약 id
+     */
     public Long createHairShopReservation(Long shopId, String username, LocalDateTime currentDateTime,
                                           HairShopReservationCreateRequest request) {
+
+        // redisson을 이용한 분산락 적용으로 "헤어샵 id + 예약 시간" 조합이 유일하게 예약될 수 있도록 함
+        // TODO: 분산락을 재사용 가능하게, 깔끔하게 적용할 수 있는 법 찾기. (wrapping method or aop or facade ...?)
+        String lockKey = String.format("%s:%s", shopId, request.reservationTime());
+        RLock lock = redissonClient.getLock(lockKey);
+
+        // 커밋 전에 잠금이 풀리면 race condition이 발생해 정합성에 문제가 발생한다.
+        // 커밋 후에 잠금을 풀도록 하기 위해, 트랜잭션 실행을 분산락 실행으로 감쌌다.
+        // https://helloworld.kurly.com/blog/distributed-redisson-lock/
+        try {
+            boolean available = lock.tryLock(5L, 3L, TimeUnit.SECONDS);
+            if (!available) {
+                throw new CustomException(ErrorCode.LCK_CANNOT_ACQUIRE_LOCK, "잠시 후 다시 시도해 주세요.");
+            }
+            return transactionTemplate.execute(status -> createHairShopReservationInternal(shopId, username, currentDateTime, request));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private Long createHairShopReservationInternal(Long shopId, String username, LocalDateTime currentDateTime,
+                                                   HairShopReservationCreateRequest request) {
 
         isValidReservationTime(currentDateTime, request.reservationTime());
 
@@ -66,6 +104,7 @@ public class ReservationService {
         }
     }
 
+    @Transactional
     public ReservationStatus getHairShopReservationStatus(Long shopId, HairShopReservationStatusGetRequest request) {
         LocalDateTime searchStartDateTime = request.getStartDateTime();
         LocalDateTime searchEndDateTime = request.getEndDateTime();
@@ -89,6 +128,7 @@ public class ReservationService {
      * @param username      조회 요청 유저
      * @return 헤어샵 예약 정보
      */
+    @Transactional
     public HairShopReservationDto getHairShopReservation(Long reservationId, String username) {
         HairShopReservation hairShopReservation = hairShopReservationRepository.findByIdAndCustomerEmail(reservationId, username)
                 .orElseThrow(() -> new CustomException(ErrorCode.HSR_NOT_FOUND));
@@ -102,6 +142,7 @@ public class ReservationService {
      * @param pageable 페이지 정보
      * @return 헤어샵 예약 정보 (slice)
      */
+    @Transactional
     public Slice<HairShopReservationDto> getHairShopReservations(String username, Pageable pageable) {
         Slice<HairShopReservation> slice = hairShopReservationRepository.findByCustomerEmail(username, pageable);
         // TODO: HairShopReservation -> HairShopReservationDto 변경 시 Customer 엔티티 조회 추가로 일어나는 N + 1 문제 해결
@@ -116,6 +157,7 @@ public class ReservationService {
      * @param username        예약자(고객 이메일)
      * @param currentDateTime 현재 시간
      */
+    @Transactional
     public void cancelReservationById(Long reservationId, String username, LocalDateTime currentDateTime) {
         HairShopReservation hairShopReservation = hairShopReservationRepository.findByIdAndCustomerEmail(reservationId, username)
                 .orElseThrow(() -> new CustomException(ErrorCode.HSR_NOT_FOUND));

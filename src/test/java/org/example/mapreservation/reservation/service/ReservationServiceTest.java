@@ -111,7 +111,7 @@ class ReservationServiceTest {
         HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
 
         // when - 동일한 예약 정보로 동시에 예약 시도
-        int threadCount = 5;
+        int threadCount = 1000;
         CountDownLatch latch = new CountDownLatch(threadCount);
         ExecutorService es = Executors.newFixedThreadPool(threadCount);
         AtomicReference<Long> reservationId = new AtomicReference<>();
@@ -132,8 +132,7 @@ class ReservationServiceTest {
 
         // then - 실패한 예약 검증
         assertThat(exceptions.size()).isEqualTo(threadCount - 1);
-        assertThat(exceptions).allMatch(e -> e.getClass().equals(
-                DataIntegrityViolationException.class) || e.getClass().equals(CustomException.class));
+        assertThat(exceptions).allMatch(e -> e.getClass().equals(CustomException.class));
         // then - 성공된 예약 검증
         Long id = reservationId.get();
         Optional<HairShopReservation> foundReservation = reservationRepository.findById(id);

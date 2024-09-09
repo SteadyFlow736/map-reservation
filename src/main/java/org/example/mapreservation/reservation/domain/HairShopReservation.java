@@ -25,8 +25,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(indexes = @Index(
         name = "idx_hair_shop_id_reservation_time",
-        columnList = "hair_shop_id, reservation_time",
-        unique = true))
+        columnList = "hair_shop_id, reservation_time"
+))
 @Entity
 public class HairShopReservation {
 
