@@ -12,6 +12,7 @@ import Time from "@/utils/Time";
 import {useAtomValue} from "jotai/index";
 import {fetchShopDetail} from "@/api/hairShop";
 import ContainerLoader from "@/components/Loaders/ContainerLoader";
+import useCancelHairShopReservation from "@/hooks/useCancelHairShopReservation";
 
 /**
  * 예약 성공 페이지.
@@ -110,12 +111,32 @@ function SuccessInfo() {
 }
 
 /**
- * 예약취소 버튼
+ * 예약 취소 버튼
  */
 function CancelButton() {
+    const selectedHairShop = useAtomValue(selectedHairShopAtom)
+    const mutation = useCancelHairShopReservation()
+    const {setShopMainPage} = useContext(ShopMainPageContext)
+
+    const cancelReservation = () => {
+        if (!selectedHairShop?.shopId) return
+        mutation.mutate(selectedHairShop.shopId, {
+            onSuccess: () => {
+                setShopMainPage("ReservationCancelledPage")
+            },
+            onError: () => {
+            }
+        })
+    }
+
     return (
         <div className="p-3">
-            <button className="btn w-full">예약 취소</button>
+            <button
+                className="btn w-full"
+                onClick={cancelReservation}
+            >
+                예약 취소
+            </button>
         </div>
     );
 }

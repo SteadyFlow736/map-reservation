@@ -69,4 +69,17 @@ export async function fetchReservationStatus(shopId: number, date: Date): Promis
     return data
 }
 
-// export async function cancleHairShopReservations
+/**
+ * 헤어샵 예약 취소 API
+ *
+ * @param reservationId 예약 id
+ */
+export async function cancelHairShopReservation(reservationId: number): Promise<void> {
+    const csrfToken = await fetchCsrfToken()
+    const {data} = await instance.post(`/api/reservations/${reservationId}`, null, {
+        headers: {
+            [csrfToken.headerName]: csrfToken.token
+        }
+    });
+    return data
+}

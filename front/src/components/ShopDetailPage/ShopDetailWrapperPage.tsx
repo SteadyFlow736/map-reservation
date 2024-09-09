@@ -2,8 +2,9 @@ import {createContext, Dispatch, SetStateAction, useContext, useEffect, useState
 import ShopDetailPage from "@/components/ShopDetailPage/ShopDetailPage";
 import ReservationVerifyPage from "@/components/ShopDetailPage/ReservationVerifyPage";
 import ReservationSuccessPage from "@/components/ShopDetailPage/ReservationSuccessPage";
+import ReservationCancelledPage from "@/components/ShopDetailPage/ReservationCancelledPage";
 
-export type MainPage = 'ShopDetail' | 'ReservationVerify' | 'ReservationSuccess'
+export type MainPage = 'ShopDetail' | 'ReservationVerify' | 'ReservationSuccess' | 'ReservationCancelledPage'
 export type SubPage = '홈' | '소식' | '예약' | '리뷰'
 export type TimeSlot = {
     dateTime: Date
@@ -47,6 +48,9 @@ function ShopDetailWrapperPage() {
         case 'ReservationSuccess':
             mainPageToRender = <ReservationSuccessPage/>
             break
+        case 'ReservationCancelledPage':
+            mainPageToRender = <ReservationCancelledPage/>
+            break;
         default:
             mainPageToRender = <ShopDetailPage/>
     }
