@@ -8,8 +8,10 @@ import {fetchCsrfToken} from "@/api/auth";
  * @param shopId 헤어샵 Id
  * @param reservationDateTime 예약 날짜, 시간
  */
-export async function createHairShopReservation({shopId, reservationDateTime}: CreateReservationParams): Promise<void> {
-    if (!shopId || !reservationDateTime) return
+export async function createHairShopReservation({shopId, reservationDateTime}: CreateReservationParams): Promise<{
+    reservationId: number
+}> {
+    if (!shopId || !reservationDateTime) throw new Error("헤어샵 시술 예약을 하려면 헤어샵 id와 예약 시간을 지정해야 합니다.")
     const request: HairShopReservationCreateRequest = {
         reservationTime: Time.formatLocalDateToISO(reservationDateTime)
     }

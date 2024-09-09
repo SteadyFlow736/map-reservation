@@ -67,7 +67,7 @@ function NextButton() {
     const {setShopMainPage} = useContext(ShopMainPageContext)
 
     const next = async () => {
-        setShopMainPage('ReservationVerify')
+        setShopMainPage({_tag: 'ReservationVerify'})
     }
 
     return (

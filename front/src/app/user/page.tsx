@@ -107,6 +107,9 @@ function ReservationCard({reservation}: { reservation: HairShopReservationDto })
         <div className="border rounded p-3">
             <p>{reservation.hairShopDto.shopName}</p>
             <p>{Time.formatDate(new Date(reservation.reservationTime))}</p>
+            {
+                reservation.status === 'CANCELLED' ? <p>취소됨</p> : null
+            }
         </div>
     );
 }

@@ -37,8 +37,8 @@ function ReservationVerifyPage() {
                 reservationDateTime: selectedTimeSlot?.dateTime
             },
             {
-                onSuccess: () => {
-                    setShopMainPage('ReservationSuccess')
+                onSuccess: (response) => {
+                    setShopMainPage({_tag: 'ReservationSuccess', reservationId: response.reservationId})
                 },
                 onError: (error: Error) => {
                     if (isAxiosError(error)) {
@@ -83,7 +83,7 @@ function StickyNavBar() {
     const {setShopMainPage} = useContext(ShopMainPageContext)
 
     const back = () => {
-        setShopMainPage('ShopDetail')
+        setShopMainPage({_tag: 'ShopDetail'})
     }
 
     const close = () => {
@@ -155,7 +155,7 @@ function BackButton() {
     const {setShopMainPage} = useContext(ShopMainPageContext)
 
     const goPrevious = () => {
-        setShopMainPage('ShopDetail')
+        setShopMainPage({_tag: 'ShopDetail'})
     }
     return <button onClick={goPrevious} className="btn w-full">이전</button>
 }

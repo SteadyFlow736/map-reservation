@@ -14,19 +14,23 @@ import {fetchShopDetail} from "@/api/hairShop";
 import ContainerLoader from "@/components/Loaders/ContainerLoader";
 import useCancelHairShopReservation from "@/hooks/useCancelHairShopReservation";
 
+interface ReservationSuccessPageProps {
+    reservationId: number
+}
+
 /**
  * 예약 성공 페이지.
  * 예약 성공 했음을 사용자에게 보여준다.
  * TODO: 예약 아이디로 내용을 가져와야 한다.
  */
-function ReservationSuccessPage() {
+function ReservationSuccessPage({reservationId}: ReservationSuccessPageProps) {
 
     return (
         <div className="bg-white">
             <StickyNavBar/>
             <Banner/>
             <SuccessInfo/>
-            <CancelButton/>
+            <CancelButton reservationId={reservationId}/>
         </div>
     )
 }
@@ -46,7 +50,7 @@ function StickyNavBar() {
      */
     const back = () => {
         setShopSubPage('홈')
-        setShopMainPage('ShopDetail')
+        setShopMainPage({_tag: 'ShopDetail'})
         setSelectedTimeSlot(undefined)
     }
 
@@ -113,16 +117,17 @@ function SuccessInfo() {
 /**
  * 예약 취소 버튼
  */
-function CancelButton() {
+function CancelButton({reservationId}: { reservationId: number }) {
     const selectedHairShop = useAtomValue(selectedHairShopAtom)
     const mutation = useCancelHairShopReservation()
     const {setShopMainPage} = useContext(ShopMainPageContext)
 
     const cancelReservation = () => {
         if (!selectedHairShop?.shopId) return
-        mutation.mutate(selectedHairShop.shopId, {
+        // shopId가 아니고 reservationId를 넣어야 한다.
+        mutation.mutate(reservationId, {
             onSuccess: () => {
-                setShopMainPage("ReservationCancelledPage")
+                setShopMainPage({_tag: "ReservationCancelledPage"})
             },
             onError: () => {
             }

@@ -4,7 +4,17 @@ import ReservationVerifyPage from "@/components/ShopDetailPage/ReservationVerify
 import ReservationSuccessPage from "@/components/ShopDetailPage/ReservationSuccessPage";
 import ReservationCancelledPage from "@/components/ShopDetailPage/ReservationCancelledPage";
 
-export type MainPage = 'ShopDetail' | 'ReservationVerify' | 'ReservationSuccess' | 'ReservationCancelledPage'
+// export type MainPage = 'ShopDetail' | 'ReservationVerify' | 'ReservationSuccess' | 'ReservationCancelledPage'
+export type MainPage = {
+    _tag: 'ShopDetail'
+} | {
+    _tag: 'ReservationVerify'
+} | {
+    _tag: 'ReservationSuccess',
+    reservationId: number
+} | {
+    _tag: 'ReservationCancelledPage'
+}
 export type SubPage = '홈' | '소식' | '예약' | '리뷰'
 export type TimeSlot = {
     dateTime: Date
@@ -13,7 +23,7 @@ export type TimeSlot = {
 
 type ShopMainPageContextType = { shopMainPage: MainPage, setShopMainPage: Dispatch<SetStateAction<MainPage>> }
 export const ShopMainPageContext = createContext<ShopMainPageContextType>({
-    shopMainPage: 'ShopDetail', setShopMainPage: () => {
+    shopMainPage: {_tag: 'ShopDetail'}, setShopMainPage: () => {
     }
 })
 
@@ -33,12 +43,12 @@ export const TimeSlotContext = createContext<TimeSlotContextType>({
 })
 
 function ShopDetailWrapperPage() {
-    const [shopMainPage, setShopMainPage] = useState<MainPage>('ShopDetail')
+    const [shopMainPage, setShopMainPage] = useState<MainPage>({_tag: 'ShopDetail'})
     const [shopSubPage, setShopSubPage] = useState<SubPage>('홈')
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot>()
 
     let mainPageToRender
-    switch (shopMainPage) {
+    switch (shopMainPage._tag) {
         case 'ShopDetail':
             mainPageToRender = <ShopDetailPage/>
             break
@@ -46,7 +56,7 @@ function ShopDetailWrapperPage() {
             mainPageToRender = <ReservationVerifyPage/>
             break
         case 'ReservationSuccess':
-            mainPageToRender = <ReservationSuccessPage/>
+            mainPageToRender = <ReservationSuccessPage reservationId={shopMainPage.reservationId}/>
             break
         case 'ReservationCancelledPage':
             mainPageToRender = <ReservationCancelledPage/>

@@ -34,7 +34,7 @@ function StickyNavBar() {
      */
     const back = () => {
         setShopSubPage('홈')
-        setShopMainPage('ShopDetail')
+        setShopMainPage({_tag: 'ShopDetail'})
         setSelectedTimeSlot(undefined)
     }
 
