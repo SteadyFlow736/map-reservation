@@ -2,13 +2,11 @@ import {useContext, useState} from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import './react-calendar-custom.css'
-import {skipToken, useQuery} from "@tanstack/react-query";
-import {QueryKeys} from "@/config/queryClient";
-import {fetchReservationStatus} from "@/api/reservation";
 import {useAtomValue} from "jotai";
 import {selectedHairShopAtom} from "@/atoms";
 import Time from "@/utils/Time";
 import {ShopMainPageContext, TimeSlot, TimeSlotContext} from "@/components/ShopDetailPage/ShopDetailWrapperPage";
+import useReservationSlots from "@/hooks/useReservationSlots";
 
 type ValuePiece = Date | null
 type Value = ValuePiece | [ValuePiece, ValuePiece]
@@ -24,11 +22,7 @@ function ShopSubPageReservation() {
     const selectedHairShop = useAtomValue(selectedHairShopAtom)
     const {selectedTimeSlot, setSelectedTimeSlot} = useContext(TimeSlotContext)
 
-    const {data, status} = useQuery({
-        queryKey: [QueryKeys.reservationStatus, value],
-        queryFn: selectedHairShop && value && value instanceof Date ?
-            () => fetchReservationStatus(selectedHairShop.shopId, value) : skipToken
-    })
+    const {data, status} = useReservationSlots(selectedHairShop?.shopId, value instanceof Date ? value : undefined)
 
     const banner = selectedTimeSlot ? selectedTimeSlot.dateTime.toLocaleString() : '날짜와 시간을 선택해 주세요'
 
@@ -91,8 +85,8 @@ function ReservationSelectButtons(
     {reservationStatus}: { reservationStatus: HairShopReservationStatus }) {
 
     const now = new Date()
-    const {date, openingTime, closingTime, reservedTimes} = reservationStatus
-    const slots: TimeSlot[] = getTimeSlots(date, openingTime, closingTime, reservedTimes)
+    const {date, openingTime, closingTime, timeAndStatuses} = reservationStatus
+    const slots: TimeSlot[] = getTimeSlots(date, openingTime, closingTime, timeAndStatuses)
         .filter(slot => now.getTime() < slot.dateTime.getTime()) // 현재 시간보다 작은 slot은 제외
 
     return (
@@ -139,11 +133,11 @@ function TimeSelectButton({slot}: { slot: TimeSlot }) {
  * @param date 기준 날짜
  * @param openingTime 영업 시작 시간
  * @param closingTime 영업 종료 시간
- * @param reservedTimes 예약된 시간 리스트
+ * @param timeAndStatuses 예약된 시간과 상태 리스트
  * @return 기준 날짜의 예약 가능한 시간 슬롯 리스트
  */
 const getTimeSlots = (date: string, openingTime: string, closingTime: string,
-                      reservedTimes: string[]): TimeSlot[] => {
+                      timeAndStatuses: TimeAndStatus[]): TimeSlot[] => {
 
     let currentDate = Time.stringToDate(date, openingTime)
     const closingDate = Time.stringToDate(date, closingTime)
@@ -157,10 +151,12 @@ const getTimeSlots = (date: string, openingTime: string, closingTime: string,
         currentDate = Time.addMinutesToDateTime(currentDate, 30)
     }
 
-    reservedTimes.forEach(reservedTime => {
-        const slot = slots.find(slot => slot.dateTime.getTime() === Time.stringToDate(date, reservedTime).getTime())
-        if (slot) slot.reserved = true
-    })
+    timeAndStatuses
+        .filter(ts => ts.status === 'RESERVED')
+        .forEach(ts => {
+            const slot = slots.find(slot => slot.dateTime.getTime() === Time.stringToDate(date, ts.time).getTime())
+            if (slot) slot.reserved = true
+        })
 
     return slots
 }

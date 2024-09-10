@@ -4,10 +4,10 @@ import {QueryClient} from "@tanstack/query-core";
 export const queryClient = new QueryClient()
 
 // query keys
-type QueryKey = "shopDetail" | "reservationStatus" | "reservations"
+type QueryKey = "shopDetail" | "reservationSlots" | "reservations"
 export const QueryKeys: Record<QueryKey, QueryKey> = {
     shopDetail: "shopDetail",
-    reservationStatus: "reservationStatus",
+    reservationSlots: "reservationSlots",
     reservations: "reservations"
 };
 

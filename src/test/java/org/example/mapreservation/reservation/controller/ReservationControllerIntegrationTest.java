@@ -9,7 +9,6 @@ import org.example.mapreservation.hairshop.repository.HairShopRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
-import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -148,7 +147,7 @@ class ReservationControllerIntegrationTest {
                 .andExpect(jsonPath("$.date").value(reservationTime.toLocalDate().toString()))
                 .andExpect(jsonPath("$.openingTime").value("10:00"))
                 .andExpect(jsonPath("$.closingTime").value("20:00"))
-                .andExpect(jsonPath("$.reservedTimes.size()").value(1))
-                .andExpect(jsonPath("$.reservedTimes.[0]").value(reservationTime.toLocalTime().toString()));
+                .andExpect(jsonPath("$.timeAndStatuses.size()").value(1))
+                .andExpect(jsonPath("$.timeAndStatuses[0].time").value(reservationTime.toLocalTime().toString()));
     }
 }

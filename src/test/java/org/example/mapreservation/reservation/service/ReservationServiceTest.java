@@ -21,7 +21,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -166,8 +165,8 @@ class ReservationServiceTest {
 
         // then - 해당 날짜의 예약 현황 리턴
         assertThat(status.date()).isEqualTo(targetDate);
-        assertThat(status.reservedTimes().size()).isEqualTo(2);
-        assertThat(status.reservedTimes()).isEqualTo(
+        assertThat(status.timeAndStatuses().size()).isEqualTo(2);
+        assertThat(status.timeAndStatuses().stream().map(ReservationStatus.TimeAndStatus::time)).isEqualTo(
                 List.of(reservationDateTimes.get(1).toLocalTime(), reservationDateTimes.get(2).toLocalTime()));
     }
 
