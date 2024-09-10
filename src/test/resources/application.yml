@@ -8,11 +8,11 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: create
-#  datasource:
-#    url: jdbc:mysql://localhost:3310/map-reservation
-#    username: root
-#    password: password
-#    driver-class-name: com.mysql.cj.jdbc.Driver
+  datasource:
+    url: jdbc:mysql://localhost:3310/map-reservation
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:
       host: localhost
