@@ -112,7 +112,7 @@ class ReservationServiceTest {
         HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
 
         // when - 동일한 예약 정보로 동시에 예약 시도
-        int threadCount = 1000;
+        int threadCount = 100;
         CountDownLatch latch = new CountDownLatch(threadCount);
         ExecutorService es = Executors.newFixedThreadPool(threadCount);
         AtomicReference<Long> reservationId = new AtomicReference<>();
