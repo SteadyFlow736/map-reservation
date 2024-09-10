@@ -13,7 +13,11 @@ RUN gradle dependencies --no-daemon
 COPY . /app
 
 # Gradle 빌드를 실행하여 JAR 파일 생성
-RUN gradle clean build --no-daemon
+# RUN gradle clean build --no-daemon
+
+# 테스트 시 호스트 머신의 REDIS에 접근하도록 환경변수 설정.
+# 컨테이너에서 호스트로 접근 방법: https://docs.docker.com/desktop/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host
+RUN SPRING_DATA_REDIS_HOST=host.docker.internal SPRING_DATA_REDIS_PORT=6379 gradle clean build --no-daemon
 
 # 런타임 이미지로 지정
 FROM eclipse-temurin:17
