@@ -39,7 +39,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build app with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --info --stacktrace
 
       - name: Build and push docker images
         uses: docker/build-push-action@v5.2.0
