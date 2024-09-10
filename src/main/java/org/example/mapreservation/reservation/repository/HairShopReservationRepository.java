@@ -11,8 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface HairShopReservationRepository extends JpaRepository<HairShopReservation, Long> {
-    Optional<HairShopReservation> findByHairShopAndReservationTime(
-            HairShop hairShop, LocalDateTime localDateTime);
+
+    Optional<HairShopReservation> findByHairShopAndReservationTimeAndReservationStatus(
+            HairShop hairShop, LocalDateTime reservationDateTime, HairShopReservation.Status status);
 
     List<HairShopReservation> findByHairShopAndReservationTimeBetween(
             HairShop hairShop, LocalDateTime start, LocalDateTime end);

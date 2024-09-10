@@ -63,7 +63,9 @@ class HairShopReservationRepositoryTest {
         em.clear();
 
         // when
-        Optional<HairShopReservation> reservation = hairShopReservationRepository.findByHairShopAndReservationTime(hairShop, reservationTime);
+        Optional<HairShopReservation> reservation = hairShopReservationRepository
+                .findByHairShopAndReservationTimeAndReservationStatus(
+                        hairShop, reservationTime, HairShopReservation.Status.RESERVED);
 
         // then
         assertThat(reservation).isNotEmpty();

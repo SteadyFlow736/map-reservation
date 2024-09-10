@@ -85,7 +85,9 @@ public class ReservationService {
         HairShopReservation hairShopReservation =
                 new HairShopReservation(customer, hairShop, request.reservationTime());
 
-        hairShopReservationRepository.findByHairShopAndReservationTime(hairShop, request.reservationTime())
+        hairShopReservationRepository.findByHairShopAndReservationTimeAndReservationStatus(
+                        hairShop, request.reservationTime(), HairShopReservation.Status.RESERVED
+                )
                 .ifPresent(r -> {
                     throw new CustomException(ErrorCode.HSR_ALREADY_TAKEN_RESERVATION_TIME);
                 });
