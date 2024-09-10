@@ -4,6 +4,7 @@ import {Inter} from "next/font/google";
 import "./globals.css";
 import {QueryClientProvider} from "@tanstack/react-query";
 import {queryClient} from "@/config/queryClient";
+import React from "react";
 
 const inter = Inter({subsets: ["latin"]});
 

@@ -4,10 +4,19 @@ import {hairShopSearchResultAtom, selectedHairShopAtom} from "@/atoms";
 import {useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
 import {naver_map_client_id} from "@/envs";
+import ShopDetailColumn from "@/components/ShopDetailColumn";
+import SearchColumn from "@/components/SearchColumn";
 
 // 보존될 필요가 있는 상태지만, 그 변화가 화면 렌더링을 트리거 하지 않음
 const markerMap = new Map<number, naver.maps.Marker>()
 let prevMarker: naver.maps.Marker | undefined = undefined
+
+// Coord를 x, y 픽셀만큼 옮긴 Coord를 리턴
+function getCoordMovedBy(position: naver.maps.Coord, xPixel: number, yPixel: number, map: naver.maps.Map) {
+    const offset = map.getProjection().fromCoordToOffset(position)
+    const newPoint = new naver.maps.Point(offset.x + xPixel, offset.y + yPixel)
+    return map.getProjection().fromOffsetToCoord(newPoint)
+}
 
 function MainMap() {
     const [map, setMap] = useState<naver.maps.Map>()
@@ -59,9 +68,15 @@ function MainMap() {
             const marker = markerMap.get(selectedHairShop.shopId)
             if (marker && map) {
                 const position = marker.getPosition()
-                map.panTo(position)
+                const xPixelsFromLeftToCenter = window.innerWidth / 2
+                const widthShopDetailColumnInPixel = 384
+                const widthSearchColumnInPixel = 384
+                const xPixelsFromLeftToRemainingCenter =
+                    (window.innerWidth - (widthSearchColumnInPixel + widthShopDetailColumnInPixel)) / 2
+                const xDiff = xPixelsFromLeftToRemainingCenter - xPixelsFromLeftToCenter
+                const newPosition = getCoordMovedBy(position, xDiff, 0, map)
+                map.panTo(newPosition)
                 //const widthPixel = window.innerWidth
-                //const point = map.getProjection().fromCoordToPoint(position)
             }
         }
     }, [selectedHairShop, map]);
