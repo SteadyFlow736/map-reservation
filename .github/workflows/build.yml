@@ -23,8 +23,7 @@ jobs:
 
       - name: Set test environment
         run: |
-          cd scripts
-          sh test.sh
+          sh scripts/test.sh
 
       - name: Docker login
         uses: docker/login-action@v3.0.0
