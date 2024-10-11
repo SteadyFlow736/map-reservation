@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
 public record CustomerCreate(
         @Email(message = "이메일 형식이 잘못되었습니다.")
@@ -18,4 +19,9 @@ public record CustomerCreate(
         @Pattern(regexp = ".*[@$!%*?&].*", message = "비밀번호는 적어도 다음 특수 문자(@$!%*?&) 중 하나 이상을 포함해야 합니다.")
         String password
 ) {
+        @Builder
+        public CustomerCreate(String email, String password) {
+                this.email = email;
+                this.password = password;
+        }
 }

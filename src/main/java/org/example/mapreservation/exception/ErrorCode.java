@@ -32,7 +32,10 @@ public enum ErrorCode {
     HSR_OLD_RESERVATION_TIME_CANNOT_CANCEL("이미 지나간 예약이므로 취소할 수 없습니다.", HttpStatus.BAD_REQUEST),
 
     // Lock
-    LCK_CANNOT_ACQUIRE_LOCK("일시적인 오류가 발생했습니다.", HttpStatus.LOCKED);
+    LCK_CANNOT_ACQUIRE_LOCK("일시적인 오류가 발생했습니다.", HttpStatus.LOCKED),
+
+    // Common
+    CMN_BINDING_ERROR("필드 바인딩 실패", null);
 
     /**
      * 에러 코드 생성자

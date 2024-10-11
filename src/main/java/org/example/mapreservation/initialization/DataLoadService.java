@@ -1,8 +1,7 @@
 package org.example.mapreservation.initialization;
 
 import lombok.RequiredArgsConstructor;
-import org.example.mapreservation.customer.controller.request.CustomerCreate;
-import org.example.mapreservation.customer.service.CustomerService;
+import org.example.mapreservation.customer.service.CustomerServiceImpl;
 import org.example.mapreservation.hairshop.dto.CreateHairShopRequest;
 import org.example.mapreservation.hairshop.service.HairShopService;
 import org.example.mapreservation.owner.domain.Owner;
@@ -17,7 +16,7 @@ public class DataLoadService {
 
     private final HairShopService hairShopService;
     private final OwnerRepository ownerRepository;
-    private final CustomerService customerService;
+    private final CustomerServiceImpl customerService;
 
     public void load() {
         Long ownerId = createOwner();

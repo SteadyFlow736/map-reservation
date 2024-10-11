@@ -1,6 +1,7 @@
 package org.example.mapreservation.customer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mapreservation.customer.controller.port.CustomerService;
 import org.example.mapreservation.customer.domain.Customer;
 import org.example.mapreservation.customer.repository.CustomerRepository;
 import org.example.mapreservation.exception.CustomException;
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class CustomerService {
+public class CustomerServiceImpl implements CustomerService {
 
     private final PasswordEncoder passwordEncoder;
     private final CustomerRepository customerRepository;
