@@ -1,7 +1,7 @@
 package org.example.mapreservation.customer.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.mapreservation.customer.dto.CustomerCreateRequest;
+import org.example.mapreservation.customer.controller.request.CustomerCreate;
 import org.example.mapreservation.customer.repository.CustomerRepository;
 import org.example.mapreservation.exception.ErrorCode;
 import org.junit.jupiter.api.AfterEach;
@@ -44,12 +44,12 @@ class CustomerControllerIntegrationTest {
         // given
         String email = "abc@gmail.com";
         String password = "Password1!";
-        CustomerCreateRequest customerCreateRequest = new CustomerCreateRequest(email, password);
+        CustomerCreate customerCreate = new CustomerCreate(email, password);
 
         // when, then
         mockMvc.perform(post(registerURL)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsBytes(customerCreateRequest))
+                        .content(objectMapper.writeValueAsBytes(customerCreate))
                         .with(csrf())
                 )
                 .andDo(print())
@@ -63,10 +63,10 @@ class CustomerControllerIntegrationTest {
         // given - 최초 가입
         String email = "abc@gmail.com";
         String password = "Password1!";
-        CustomerCreateRequest customerCreateRequest = new CustomerCreateRequest(email, password);
+        CustomerCreate customerCreate = new CustomerCreate(email, password);
         mockMvc.perform(post(registerURL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsBytes(customerCreateRequest))
+                .content(objectMapper.writeValueAsBytes(customerCreate))
                 .with(csrf())
         );
 
@@ -74,7 +74,7 @@ class CustomerControllerIntegrationTest {
         // then - 에러 메시지 출력
         mockMvc.perform(post(registerURL)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsBytes(customerCreateRequest))
+                        .content(objectMapper.writeValueAsBytes(customerCreate))
                         .with(csrf())
                 )
                 .andDo(print())

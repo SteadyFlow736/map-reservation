@@ -2,7 +2,6 @@ package org.example.mapreservation.customer.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.mapreservation.customer.domain.Customer;
-import org.example.mapreservation.customer.dto.CustomerCreateRequest;
 import org.example.mapreservation.customer.repository.CustomerRepository;
 import org.example.mapreservation.exception.CustomException;
 import org.example.mapreservation.exception.ErrorCode;
@@ -22,12 +21,11 @@ public class CustomerService {
     /**
      * 계정을 생성한다.
      *
-     * @param customerCreateRequest - 계정 생성 요청 정보
      * @return 생성된 계정의 고유 아이디 리턴
      * @throws CustomException 이미 등록된 이메일로 계정 생성 요청 시
      */
-    public Long createCustomer(CustomerCreateRequest customerCreateRequest) {
-        Customer customer = customerCreateRequest.toEntity(passwordEncoder);
+    public Long createCustomer(String email, String notEncodedPassword) {
+        Customer customer = new Customer(email, passwordEncoder.encode(notEncodedPassword));
         try {
             // save 대신 saveAndFlush 하여 바로 쓰기 쿼리를 날리도록 하였다.
             // 이 시점에 DataIntegrityViolationException 을 잡을 수 있도록 하기 위해서이다.

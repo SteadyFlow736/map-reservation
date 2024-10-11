@@ -1,13 +1,11 @@
-package org.example.mapreservation.customer.dto;
+package org.example.mapreservation.customer.controller.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import org.example.mapreservation.customer.domain.Customer;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-public record CustomerCreateRequest(
+public record CustomerCreate(
         @Email(message = "이메일 형식이 잘못되었습니다.")
         @NotBlank(message = "이메일은 필수 제출 항목입니다.")
         String email,
@@ -20,9 +18,4 @@ public record CustomerCreateRequest(
         @Pattern(regexp = ".*[@$!%*?&].*", message = "비밀번호는 적어도 다음 특수 문자(@$!%*?&) 중 하나 이상을 포함해야 합니다.")
         String password
 ) {
-
-    public Customer toEntity(PasswordEncoder passwordEncoder) {
-        String encodedPassword = passwordEncoder.encode(password);
-        return new Customer(email, encodedPassword);
-    }
 }

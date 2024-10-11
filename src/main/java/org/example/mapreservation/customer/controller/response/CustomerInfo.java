@@ -1,4 +1,4 @@
-package org.example.mapreservation.customer.dto;
+package org.example.mapreservation.customer.controller.response;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

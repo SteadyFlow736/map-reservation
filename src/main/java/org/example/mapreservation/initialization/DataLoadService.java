@@ -1,7 +1,7 @@
 package org.example.mapreservation.initialization;
 
 import lombok.RequiredArgsConstructor;
-import org.example.mapreservation.customer.dto.CustomerCreateRequest;
+import org.example.mapreservation.customer.controller.request.CustomerCreate;
 import org.example.mapreservation.customer.service.CustomerService;
 import org.example.mapreservation.hairshop.dto.CreateHairShopRequest;
 import org.example.mapreservation.hairshop.service.HairShopService;
@@ -48,6 +48,6 @@ public class DataLoadService {
     }
 
     private void createCustomer() {
-        customerService.createCustomer(new CustomerCreateRequest("abc@gmail.com", "Password1!"));
+        customerService.createCustomer("abc@gmail.com", "Password1!");
     }
 }

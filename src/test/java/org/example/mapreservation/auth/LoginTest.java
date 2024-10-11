@@ -2,7 +2,6 @@ package org.example.mapreservation.auth;
 
 import org.assertj.core.api.Assertions;
 import org.example.mapreservation.customer.domain.Customer;
-import org.example.mapreservation.customer.dto.CustomerCreateRequest;
 import org.example.mapreservation.customer.repository.CustomerRepository;
 import org.example.mapreservation.customer.service.CustomerService;
 import org.example.mapreservation.exception.ErrorCode;
@@ -43,7 +42,7 @@ public class LoginTest {
         // given - 가입된 계정
         String email = "abc@gmail.com";
         String password = "12345678";
-        customerService.createCustomer(new CustomerCreateRequest(email, password));
+        customerService.createCustomer(email, password);
 
         // when - 가입된 계정을 올바르게 전달
         // then - 로그인 성공
@@ -64,7 +63,7 @@ public class LoginTest {
         // given - 가입된 계정
         String email = "abc@gmail.com";
         String password = "12345678";
-        customerService.createCustomer(new CustomerCreateRequest(email, password));
+        customerService.createCustomer(email, password);
 
         // when - 일치하지 않는 비밀번호로 로그인 시도
         // then - 로그인 실패

@@ -2,8 +2,8 @@ package org.example.mapreservation.customer.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.mapreservation.customer.dto.CustomerCreateRequest;
-import org.example.mapreservation.customer.dto.CustomerInfo;
+import org.example.mapreservation.customer.controller.request.CustomerCreate;
+import org.example.mapreservation.customer.controller.response.CustomerInfo;
 import org.example.mapreservation.customer.service.CustomerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,16 +23,16 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping("/api/customers")
-    public ResponseEntity<Void> createCustomer(@RequestBody @Valid CustomerCreateRequest customerCreateRequest) {
-        Long id = customerService.createCustomer(customerCreateRequest);
+    public ResponseEntity<Void> createCustomer(@RequestBody @Valid CustomerCreate request) {
+        Long id = customerService.createCustomer(request.email(), request.password());
         return ResponseEntity.created(URI.create("/api/customers/" + id)).build();
     }
 
     @GetMapping("/api/customers/me")
-    public CustomerInfo getMyInfo() {
+    public ResponseEntity<CustomerInfo> getMyInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails user = (UserDetails) authentication.getPrincipal();
-        return CustomerInfo.from(user);
+        return ResponseEntity.ok(CustomerInfo.from(user));
     }
 
 }

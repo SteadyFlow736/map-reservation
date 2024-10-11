@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import org.example.mapreservation.customer.controller.request.CustomerCreate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,7 +16,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 
-class CustomerCreateRequestTest {
+class CustomerCreateTest {
 
     private static Validator validator;
 
@@ -29,9 +30,9 @@ class CustomerCreateRequestTest {
     void whenValidEmailAndPassword_thenNoConstraintViolations() {
         String email = "abc@gmail.com";
         String password = "Password1!";
-        CustomerCreateRequest request = new CustomerCreateRequest(email, password);
+        CustomerCreate request = new CustomerCreate(email, password);
 
-        Set<ConstraintViolation<CustomerCreateRequest>> violations =
+        Set<ConstraintViolation<CustomerCreate>> violations =
                 validator.validate(request);
 
         assertThat(violations).isEmpty();
@@ -41,9 +42,9 @@ class CustomerCreateRequestTest {
     void whenInvalidEmail_thenConstraintViolation() {
         String email = "invalid-email";
         String password = "Password1!";
-        CustomerCreateRequest request = new CustomerCreateRequest(email, password);
+        CustomerCreate request = new CustomerCreate(email, password);
 
-        Set<ConstraintViolation<CustomerCreateRequest>> violations =
+        Set<ConstraintViolation<CustomerCreate>> violations =
                 validator.validateProperty(request, "email");
 
         assertThat(violations.size()).isEqualTo(1);
@@ -55,9 +56,9 @@ class CustomerCreateRequestTest {
     @ParameterizedTest
     void whenInvalidPassword_thenConstraintViolation(String password, String violationMessage) {
         String email = "abc@gmail.com";
-        CustomerCreateRequest request = new CustomerCreateRequest(email, password);
+        CustomerCreate request = new CustomerCreate(email, password);
 
-        Set<ConstraintViolation<CustomerCreateRequest>> violations =
+        Set<ConstraintViolation<CustomerCreate>> violations =
                 validator.validateProperty(request, "password");
 
         assertThat(violations.size()).isEqualTo(1);
@@ -86,9 +87,9 @@ class CustomerCreateRequestTest {
     void whenBlankPassword_thenAllConstraintViolations() {
         String email = "abc@gmail.com";
         String password = "";
-        CustomerCreateRequest request = new CustomerCreateRequest(email, password);
+        CustomerCreate request = new CustomerCreate(email, password);
 
-        Set<ConstraintViolation<CustomerCreateRequest>> violations =
+        Set<ConstraintViolation<CustomerCreate>> violations =
                 validator.validateProperty(request, "password");
 
         assertThat(violations.size()).isEqualTo(6);
