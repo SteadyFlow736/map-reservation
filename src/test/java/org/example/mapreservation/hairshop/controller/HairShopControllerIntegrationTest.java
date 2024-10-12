@@ -1,7 +1,7 @@
 package org.example.mapreservation.hairshop.controller;
 
 import org.example.mapreservation.common.Address;
-import org.example.mapreservation.customer.repository.CustomerRepository;
+import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.repository.HairShopRepository;
 import org.example.mapreservation.owner.domain.Owner;
@@ -30,7 +30,7 @@ class HairShopControllerIntegrationTest {
     @Autowired
     HairShopReservationRepository hairShopReservationRepository;
     @Autowired
-    CustomerRepository customerRepository;
+    CustomerJpaRepository customerRepository;
     @Autowired
     HairShopRepository hairShopRepository;
     @Autowired

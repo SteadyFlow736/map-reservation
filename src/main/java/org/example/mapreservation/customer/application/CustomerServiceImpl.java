@@ -1,9 +1,9 @@
-package org.example.mapreservation.customer.service;
+package org.example.mapreservation.customer.application;
 
 import lombok.RequiredArgsConstructor;
-import org.example.mapreservation.customer.controller.port.CustomerService;
+import org.example.mapreservation.customer.application.repository.CustomerRepository;
+import org.example.mapreservation.customer.application.service.CustomerService;
 import org.example.mapreservation.customer.domain.Customer;
-import org.example.mapreservation.customer.repository.CustomerRepository;
 import org.example.mapreservation.exception.CustomException;
 import org.example.mapreservation.exception.ErrorCode;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Transactional
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
@@ -25,6 +24,7 @@ public class CustomerServiceImpl implements CustomerService {
      * @return 생성된 계정의 고유 아이디 리턴
      * @throws CustomException 이미 등록된 이메일로 계정 생성 요청 시
      */
+    @Transactional
     public Long createCustomer(String email, String notEncodedPassword) {
         Customer customer = new Customer(email, passwordEncoder.encode(notEncodedPassword));
         try {

@@ -2,8 +2,8 @@ package org.example.mapreservation.auth;
 
 import org.assertj.core.api.Assertions;
 import org.example.mapreservation.customer.domain.Customer;
-import org.example.mapreservation.customer.repository.CustomerRepository;
-import org.example.mapreservation.customer.service.CustomerServiceImpl;
+import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
+import org.example.mapreservation.customer.application.CustomerServiceImpl;
 import org.example.mapreservation.exception.ErrorCode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +29,7 @@ public class LoginTest {
     @Autowired
     CustomerServiceImpl customerService;
     @Autowired
-    CustomerRepository customerRepository;
+    CustomerJpaRepository customerRepository;
 
     @AfterEach
     void clean() {

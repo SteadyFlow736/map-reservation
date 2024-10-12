@@ -1,7 +1,7 @@
 package org.example.mapreservation.initialization;
 
 import lombok.RequiredArgsConstructor;
-import org.example.mapreservation.customer.service.CustomerServiceImpl;
+import org.example.mapreservation.customer.application.CustomerServiceImpl;
 import org.example.mapreservation.hairshop.dto.CreateHairShopRequest;
 import org.example.mapreservation.hairshop.service.HairShopService;
 import org.example.mapreservation.owner.domain.Owner;

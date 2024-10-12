@@ -3,7 +3,7 @@ package org.example.mapreservation.reservation.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.mapreservation.common.Address;
 import org.example.mapreservation.customer.domain.Customer;
-import org.example.mapreservation.customer.repository.CustomerRepository;
+import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.repository.HairShopRepository;
 import org.example.mapreservation.owner.domain.Owner;
@@ -41,7 +41,7 @@ class ReservationControllerIntegrationTest {
     @Autowired
     HairShopRepository hairShopRepository;
     @Autowired
-    CustomerRepository customerRepository;
+    CustomerJpaRepository customerRepository;
     @Autowired
     OwnerRepository ownerRepository;
     @Autowired

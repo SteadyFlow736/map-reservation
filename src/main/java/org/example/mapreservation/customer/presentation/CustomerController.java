@@ -1,11 +1,11 @@
-package org.example.mapreservation.customer.controller;
+package org.example.mapreservation.customer.presentation;
 
 import jakarta.validation.Valid;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
-import org.example.mapreservation.customer.controller.port.CustomerService;
-import org.example.mapreservation.customer.controller.request.CustomerCreate;
-import org.example.mapreservation.customer.controller.response.CustomerInfo;
+import org.example.mapreservation.customer.application.service.CustomerService;
+import org.example.mapreservation.customer.presentation.request.CustomerCreate;
+import org.example.mapreservation.customer.presentation.response.CustomerInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -1,7 +1,7 @@
 package org.example.mapreservation.hairshop.repository;
 
 import org.example.mapreservation.common.Address;
-import org.example.mapreservation.customer.repository.CustomerRepository;
+import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.dto.HairShopDto;
 import org.example.mapreservation.hairshop.dto.HairShopSearchCondition;
@@ -29,7 +29,7 @@ class HairShopQueryRepositoryTest {
     @Autowired
     HairShopReservationRepository hairShopReservationRepository;
     @Autowired
-    CustomerRepository customerRepository;
+    CustomerJpaRepository customerRepository;
     @Autowired
     HairShopRepository hairShopRepository;
     @Autowired

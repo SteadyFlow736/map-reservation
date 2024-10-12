@@ -1,8 +1,8 @@
-package org.example.mapreservation.customer.controller;
+package org.example.mapreservation.customer.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.mapreservation.customer.controller.port.CustomerService;
-import org.example.mapreservation.customer.controller.request.CustomerCreate;
+import org.example.mapreservation.customer.application.service.CustomerService;
+import org.example.mapreservation.customer.presentation.request.CustomerCreate;
 import org.example.mapreservation.customer.providers.InvalidPasswordProvider;
 import org.example.mapreservation.exception.GlobalExceptionHandler;
 import org.hamcrest.Matchers;

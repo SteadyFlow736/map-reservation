@@ -3,7 +3,7 @@ package org.example.mapreservation.reservation.service;
 import lombok.extern.slf4j.Slf4j;
 import org.example.mapreservation.common.Address;
 import org.example.mapreservation.customer.domain.Customer;
-import org.example.mapreservation.customer.repository.CustomerRepository;
+import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.exception.CustomException;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.repository.HairShopRepository;
@@ -49,7 +49,7 @@ class ReservationServiceTest {
     @Autowired
     OwnerRepository ownerRepository;
     @Autowired
-    CustomerRepository customerRepository;
+    CustomerJpaRepository customerRepository;
     @Autowired
     ReservationService reservationService;
     @Autowired

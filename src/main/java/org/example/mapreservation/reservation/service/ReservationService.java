@@ -2,7 +2,7 @@ package org.example.mapreservation.reservation.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.mapreservation.customer.domain.Customer;
-import org.example.mapreservation.customer.repository.CustomerRepository;
+import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.exception.CustomException;
 import org.example.mapreservation.exception.ErrorCode;
 import org.example.mapreservation.hairshop.domain.HairShop;
@@ -33,7 +33,7 @@ public class ReservationService {
 
     private final HairShopReservationRepository hairShopReservationRepository;
     private final HairShopRepository hairShopRepository;
-    private final CustomerRepository customerRepository;
+    private final CustomerJpaRepository customerRepository;
     private final RedissonClient redissonClient;
     private final TransactionTemplate transactionTemplate;
 

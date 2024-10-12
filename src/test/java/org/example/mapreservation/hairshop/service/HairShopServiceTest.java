@@ -1,7 +1,7 @@
 package org.example.mapreservation.hairshop.service;
 
 import org.example.mapreservation.common.Address;
-import org.example.mapreservation.customer.repository.CustomerRepository;
+import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.dto.CreateHairShopRequest;
 import org.example.mapreservation.hairshop.repository.HairShopRepository;
@@ -29,7 +29,7 @@ class HairShopServiceTest {
     @Autowired
     HairShopReservationRepository hairShopReservationRepository;
     @Autowired
-    CustomerRepository customerRepository;
+    CustomerJpaRepository customerRepository;
 
     @BeforeEach
     void beforeEach() {

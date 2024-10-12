@@ -1,4 +1,4 @@
-package org.example.mapreservation.customer.controller.request;
+package org.example.mapreservation.customer.presentation.request;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;

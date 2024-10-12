@@ -3,7 +3,7 @@ package org.example.mapreservation.reservation.repository;
 import jakarta.persistence.EntityManager;
 import org.example.mapreservation.common.Address;
 import org.example.mapreservation.customer.domain.Customer;
-import org.example.mapreservation.customer.repository.CustomerRepository;
+import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.repository.HairShopRepository;
 import org.example.mapreservation.owner.domain.Owner;
@@ -32,7 +32,7 @@ class HairShopReservationRepositoryTest {
     @Autowired
     OwnerRepository ownerRepository;
     @Autowired
-    CustomerRepository customerRepository;
+    CustomerJpaRepository customerRepository;
     @Autowired
     EntityManager em;
 

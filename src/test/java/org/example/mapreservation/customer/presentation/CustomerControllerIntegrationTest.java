@@ -1,8 +1,8 @@
-package org.example.mapreservation.customer.controller;
+package org.example.mapreservation.customer.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.mapreservation.customer.controller.request.CustomerCreate;
-import org.example.mapreservation.customer.repository.CustomerRepository;
+import org.example.mapreservation.customer.presentation.request.CustomerCreate;
+import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.exception.ErrorCode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +31,7 @@ class CustomerControllerIntegrationTest {
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
-    CustomerRepository customerRepository;
+    CustomerJpaRepository customerRepository;
 
     @AfterEach
     void clean() {
