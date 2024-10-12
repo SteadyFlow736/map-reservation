@@ -33,6 +33,9 @@ public class CustomerServiceImpl implements CustomerService {
         try {
             // save 대신 saveAndFlush 하여 바로 쓰기 쿼리를 날리도록 하였다.
             // 이 시점에 DataIntegrityViolationException 을 잡을 수 있도록 하기 위해서이다.
+            // UPDATE: Customer의 키 생성 전략을 IDENTITY로 변경하면 MySQL 대상으로는 바로 sql을 보내 저장하고 id를 얻어온다.
+            // 따라서 Customer의 키 생성 전략을 IDNETITY로 설정했다면 그냥 save를 시행해도 된다.
+            // 하지만 언제나 MySQL일 것이라는 보장은 없으므로 saveAndFlush를 유지하는 것이 더 나을 것이다.
             return customerRepository.saveAndFlush(customer).getId();
         } catch (DataIntegrityViolationException ex) {
             throw new CustomException(ErrorCode.CUST_ALREADY_TAKEN_EMAIL, ex);

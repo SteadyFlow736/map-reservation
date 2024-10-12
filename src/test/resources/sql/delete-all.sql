@@ -1,1 +1,1 @@
-delete from customer;
+delete from customer where 1;

@@ -52,7 +52,7 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void 고객이_중복된_이메일로_가입_시도_시_에러_메시지_리턴한다() {
+    void 고객이_중복된_이메일로_가입_시도_시_예외를_던진다() {
         // given
         String email = "abc@gmail.com";
         String password = "Password1!";
