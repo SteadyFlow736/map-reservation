@@ -79,8 +79,10 @@ class ReservationServiceTest {
         HairShop hairShop = new HairShop("샵1", new Address("거리1", "101호"), owner);
         hairShopRepository.save(hairShop);
         this.hairShop = hairShop;
-        Customer customer = new Customer("abc@gmail.com", "12345678");
-        customerRepository.save(customer);
+        Customer customer = Customer.builder()
+                .email("abc@gmail.com")
+                .password("12345678")
+                .build();        customerRepository.save(customer);
         this.customer = customer;
     }
 

@@ -26,7 +26,10 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Transactional
     public Long createCustomer(String email, String notEncodedPassword) {
-        Customer customer = new Customer(email, passwordEncoder.encode(notEncodedPassword));
+        Customer customer = Customer.builder()
+                .email(email)
+                .password(passwordEncoder.encode(notEncodedPassword))
+                .build();
         try {
             // save 대신 saveAndFlush 하여 바로 쓰기 쿼리를 날리도록 하였다.
             // 이 시점에 DataIntegrityViolationException 을 잡을 수 있도록 하기 위해서이다.

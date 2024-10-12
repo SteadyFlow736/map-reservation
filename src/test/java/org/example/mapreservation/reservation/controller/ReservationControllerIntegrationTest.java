@@ -58,7 +58,10 @@ class ReservationControllerIntegrationTest {
         HairShop hairShop = new HairShop("이준 헤어", new Address("성남대로123", "301호"), owner);
         hairShopId = hairShopRepository.save(hairShop).getId();
         // 고객
-        Customer customer = new Customer("abc@gmail.com", "12345678");
+        Customer customer = Customer.builder()
+                .email("abc@gmail.com")
+                .password("12345678")
+                .build();
         customerRepository.save(customer);
     }
 

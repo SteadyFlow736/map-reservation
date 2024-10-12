@@ -22,7 +22,10 @@ class HairShopReservationTest {
         // given
         Owner owner = new Owner("이준");
         HairShop hairShop = new HairShop("이준 헤어", new Address("성남대로123", "301호"), owner);
-        Customer customer = new Customer("abc@gmail.com", "12345678");
+        Customer customer = Customer.builder()
+                .email("abc@gmail.com")
+                .password("12345678")
+                .build();
 
         LocalDateTime reservationDateTime = LocalDateTime.now().withSecond(0).withNano(0);
         HairShopReservation hairShopReservation = new HairShopReservation(customer, hairShop, reservationDateTime);
@@ -40,7 +43,10 @@ class HairShopReservationTest {
         // given
         Owner owner = new Owner("이준");
         HairShop hairShop = new HairShop("이준 헤어", new Address("성남대로123", "301호"), owner);
-        Customer customer = new Customer("abc@gmail.com", "12345678");
+        Customer customer = Customer.builder()
+                .email("abc@gmail.com")
+                .password("12345678")
+                .build();
 
         LocalDateTime reservationDateTime = LocalDateTime.now().withSecond(0).withNano(0);
         HairShopReservation hairShopReservation = new HairShopReservation(customer, hairShop, reservationDateTime);
