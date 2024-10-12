@@ -64,6 +64,8 @@ class CustomerServiceImplIntegrationTest {
         // when, then
         assertThatThrownBy(() -> customerService.createCustomer(email, password))
                 .isInstanceOf(CustomException.class)
-                .hasMessage("이미 가입된 이메일 주소입니다.");
+                .hasMessage("이미 가입된 이메일 주소입니다.")
+                .rootCause().message().matches(message ->
+                        message.contains("Duplicate entry 'abc@gmail.com'"));
     }
 }
