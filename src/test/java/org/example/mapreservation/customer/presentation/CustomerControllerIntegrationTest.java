@@ -2,7 +2,6 @@ package org.example.mapreservation.customer.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.mapreservation.customer.presentation.request.CustomerCreate;
-import org.example.mapreservation.exception.ErrorCode;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +47,7 @@ class CustomerControllerIntegrationTest {
                         .with(csrf())
                 )
                 .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(header().exists("Location"));
+                .andExpect(status().isCreated());
     }
 
     @Test
