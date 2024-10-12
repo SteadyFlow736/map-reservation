@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<CustomErrorResponse<Object>> handleException(MethodArgumentNotValidException ex) {
         logError(ex);
         Map<String, List<String>> fieldViolations = FieldExtractor.fieldViolations(ex.getBindingResult());
-        ErrorCode errorCode = ErrorCode.CMN_BINDING_ERROR;
+        ErrorCode errorCode = ErrorCode.CMM_FIELD_VALIDATION_FAILURE;
         return createResponseEntity(errorCode.name(), errorCode.getMessage(), ex.getStatusCode(), fieldViolations);
     }
 

@@ -35,7 +35,7 @@ public enum ErrorCode {
     LCK_CANNOT_ACQUIRE_LOCK("일시적인 오류가 발생했습니다.", HttpStatus.LOCKED),
 
     // Common
-    CMN_BINDING_ERROR("필드 바인딩 실패", null);
+    CMM_FIELD_VALIDATION_FAILURE("필드 값 검증에 실패했습니다.", null);
 
     /**
      * 에러 코드 생성자
