@@ -11,10 +11,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Disabled("외부 API를 호출하므로 테스트에서 제외")
 @SpringBootTest
-class GeocodeServiceTest {
+class GeocodeServiceImplTest {
 
     @Autowired
-    GeocodeService geocodeService;
+    GeocodeServiceImpl geocodeService;
 
     @Test
     void test() {

@@ -1,6 +1,7 @@
 package org.example.mapreservation.geocoding.domain;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -31,6 +32,14 @@ public record GeocodeResponse(String status, Meta meta, List<Address> addresses,
         private String x; // 경도(longitude)
         private String y; // 위도(latitude)
         private Double distance;
+
+        public void updateLongitude(String longitude) {
+            this.x = longitude;
+        }
+
+        public void updateLatitude(String latitude) {
+            this.y = latitude;
+        }
     }
 
     @Getter

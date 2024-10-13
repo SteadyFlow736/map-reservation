@@ -1,6 +1,7 @@
 package org.example.mapreservation.geocoding.application;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mapreservation.geocoding.application.service.GeocodeService;
 import org.example.mapreservation.geocoding.domain.GeocodeRequest;
 import org.example.mapreservation.geocoding.domain.GeocodeResponse;
 import org.example.mapreservation.geocoding.property.NaverMapsProperty;
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class GeocodeService {
+public class GeocodeServiceImpl implements GeocodeService {
 
     private final NaverMapsProperty naverMapsProperty;
     private final RestTemplate restTemplate;

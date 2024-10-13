@@ -3,9 +3,9 @@ package org.example.mapreservation.hairshop.application;
 import lombok.RequiredArgsConstructor;
 import org.example.mapreservation.exception.CustomException;
 import org.example.mapreservation.exception.ErrorCode;
+import org.example.mapreservation.geocoding.application.service.GeocodeService;
 import org.example.mapreservation.geocoding.domain.GeocodeRequest;
 import org.example.mapreservation.geocoding.domain.GeocodeResponse;
-import org.example.mapreservation.geocoding.application.GeocodeService;
 import org.example.mapreservation.hairshop.application.service.HairShopService;
 import org.example.mapreservation.hairshop.domain.HairShopCreate;
 import org.example.mapreservation.hairshop.domain.HairShop;
@@ -34,17 +34,15 @@ public class HairShopServiceImpl implements HairShopService {
     public Long createHairShop(HairShopCreate request) {
         Owner owner = ownerRepository.findById(request.ownerId())
                 .orElseThrow(() -> new CustomException(ErrorCode.OWNER_NOT_FOUND));
-        HairShop hairShop;
+        HairShop hairShop = new HairShop(request.name(), request.address(), owner, request.imageUrls());
 
         GeocodeRequest geocodeRequest = new GeocodeRequest(request.address().getRoadAddress(), null);
         GeocodeResponse geocodeResponse = geocodeService.geocode(geocodeRequest);
 
         if (!geocodeResponse.addresses().isEmpty()) {
-            String longitude = geocodeResponse.addresses().get(0).getX(); // 경도
-            String latitude = geocodeResponse.addresses().get(0).getY(); // 위도
-            hairShop = new HairShop(request.name(), request.address(), owner, longitude, latitude, request.imageUrls());
-        } else {
-            hairShop = new HairShop(request.name(), request.address(), owner, request.imageUrls());
+            hairShop.updateLongitudeLatitude(
+                    geocodeResponse.addresses().get(0).getX(),
+                    geocodeResponse.addresses().get(0).getY());
         }
 
         return hairShopRepository.save(hairShop).getId();

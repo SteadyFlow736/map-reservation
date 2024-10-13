@@ -21,6 +21,11 @@ public class Owner {
     @Column(nullable = false)
     private String name;
 
+    public Owner(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Owner(String name) {
         this.name = name;
     }
