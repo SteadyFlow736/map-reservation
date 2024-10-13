@@ -6,7 +6,7 @@ import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.exception.CustomException;
 import org.example.mapreservation.exception.ErrorCode;
 import org.example.mapreservation.hairshop.domain.HairShop;
-import org.example.mapreservation.hairshop.repository.HairShopRepository;
+import org.example.mapreservation.hairshop.infrastructure.HairShopJpaRepository;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
 import org.example.mapreservation.reservation.dto.CreateHairShopReservationResponse;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class ReservationService {
 
     private final HairShopReservationRepository hairShopReservationRepository;
-    private final HairShopRepository hairShopRepository;
+    private final HairShopJpaRepository hairShopRepository;
     private final CustomerJpaRepository customerRepository;
     private final RedissonClient redissonClient;
     private final TransactionTemplate transactionTemplate;

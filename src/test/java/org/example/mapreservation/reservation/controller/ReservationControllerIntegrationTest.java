@@ -5,7 +5,7 @@ import org.example.mapreservation.common.Address;
 import org.example.mapreservation.customer.domain.Customer;
 import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.hairshop.domain.HairShop;
-import org.example.mapreservation.hairshop.repository.HairShopRepository;
+import org.example.mapreservation.hairshop.infrastructure.HairShopJpaRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
@@ -39,7 +39,7 @@ class ReservationControllerIntegrationTest {
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
-    HairShopRepository hairShopRepository;
+    HairShopJpaRepository hairShopRepository;
     @Autowired
     CustomerJpaRepository customerRepository;
     @Autowired

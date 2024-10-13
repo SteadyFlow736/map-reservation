@@ -1,8 +1,8 @@
-package org.example.mapreservation.geocoding.service;
+package org.example.mapreservation.geocoding.application;
 
 import lombok.RequiredArgsConstructor;
-import org.example.mapreservation.geocoding.dto.GeocodeRequest;
-import org.example.mapreservation.geocoding.dto.GeocodeResponse;
+import org.example.mapreservation.geocoding.domain.GeocodeRequest;
+import org.example.mapreservation.geocoding.domain.GeocodeResponse;
 import org.example.mapreservation.geocoding.property.NaverMapsProperty;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

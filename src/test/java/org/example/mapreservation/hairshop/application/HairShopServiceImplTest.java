@@ -1,10 +1,9 @@
-package org.example.mapreservation.hairshop.service;
+package org.example.mapreservation.hairshop.application;
 
-import org.example.mapreservation.common.Address;
 import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
+import org.example.mapreservation.hairshop.domain.HairShopCreate;
 import org.example.mapreservation.hairshop.domain.HairShop;
-import org.example.mapreservation.hairshop.dto.CreateHairShopRequest;
-import org.example.mapreservation.hairshop.repository.HairShopRepository;
+import org.example.mapreservation.hairshop.infrastructure.HairShopJpaRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
@@ -18,14 +17,14 @@ import static org.assertj.core.api.Assertions.*;
 
 @Disabled("GeocodeService는 외부 API를 사용 중. mocking 으로 분리시키기 전까진 비활성화 처리(임시)")
 @SpringBootTest
-class HairShopServiceTest {
+class HairShopServiceImplTest {
 
     @Autowired
-    HairShopService hairShopService;
+    HairShopServiceImpl hairShopServiceImpl;
     @Autowired
     OwnerRepository ownerRepository;
     @Autowired
-    HairShopRepository hairShopRepository;
+    HairShopJpaRepository hairShopRepository;
     @Autowired
     HairShopReservationRepository hairShopReservationRepository;
     @Autowired
@@ -48,8 +47,8 @@ class HairShopServiceTest {
         // given
         Owner owner = new Owner("주인1");
         ownerRepository.save(owner);
-        CreateHairShopRequest request = new CreateHairShopRequest("헤어샵1", new Address("도로 주소1", "101호"), owner.getId());
-        Long hairShopId = hairShopService.createHairShop(request);
+        HairShopCreate request = new HairShopCreate("헤어샵1", "도로 주소1", "101호", owner.getId());
+        Long hairShopId = hairShopServiceImpl.createHairShop(request);
 
         // when
         HairShop foundHairShop = hairShopRepository.findById(hairShopId)

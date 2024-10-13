@@ -61,14 +61,6 @@ public class HairShop {
         }
     }
 
-    public HairShop(String name, Address address, Owner owner, String longitude, String latitude) {
-        this.name = name;
-        this.address = address;
-        this.owner = owner;
-        this.longitude = longitude;
-        this.latitude = latitude;
-    }
-
     public HairShop(String name, Address address, Owner owner, List<String> imageUrls) {
         this.name = name;
         this.address = address;

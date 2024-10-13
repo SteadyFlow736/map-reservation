@@ -6,7 +6,7 @@ import org.example.mapreservation.customer.domain.Customer;
 import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.exception.CustomException;
 import org.example.mapreservation.hairshop.domain.HairShop;
-import org.example.mapreservation.hairshop.repository.HairShopRepository;
+import org.example.mapreservation.hairshop.infrastructure.HairShopJpaRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
@@ -45,7 +45,7 @@ import static org.assertj.core.api.Assertions.*;
 class ReservationServiceTest {
 
     @Autowired
-    HairShopRepository hairShopRepository;
+    HairShopJpaRepository hairShopRepository;
     @Autowired
     OwnerRepository ownerRepository;
     @Autowired
@@ -196,7 +196,7 @@ class ReservationServiceTest {
         HairShopReservationDto foundReservationDto = reservationService.getHairShopReservation(reservationId, customer.getEmail());
 
         // then - 예약 확인
-        assertThat(foundReservationDto.hairShopDto().shopId()).isEqualTo(hairShop.getId());
+        assertThat(foundReservationDto.hairShopResponse().shopId()).isEqualTo(hairShop.getId());
         assertThat(foundReservationDto.reservationId()).isEqualTo(reservationId);
         assertThat(foundReservationDto.username()).isEqualTo(customer.getEmail());
         assertThat(foundReservationDto.reservationTime()).isEqualTo(reservationDateTimes.get(0));

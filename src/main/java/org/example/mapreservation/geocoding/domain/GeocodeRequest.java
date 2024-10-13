@@ -1,4 +1,4 @@
-package org.example.mapreservation.geocoding.dto;
+package org.example.mapreservation.geocoding.domain;
 
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.validation.annotation.Validated;

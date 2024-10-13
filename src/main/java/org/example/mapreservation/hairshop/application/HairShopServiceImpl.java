@@ -1,18 +1,19 @@
-package org.example.mapreservation.hairshop.service;
+package org.example.mapreservation.hairshop.application;
 
 import lombok.RequiredArgsConstructor;
 import org.example.mapreservation.exception.CustomException;
 import org.example.mapreservation.exception.ErrorCode;
-import org.example.mapreservation.geocoding.dto.GeocodeRequest;
-import org.example.mapreservation.geocoding.dto.GeocodeResponse;
-import org.example.mapreservation.geocoding.service.GeocodeService;
+import org.example.mapreservation.geocoding.domain.GeocodeRequest;
+import org.example.mapreservation.geocoding.domain.GeocodeResponse;
+import org.example.mapreservation.geocoding.application.GeocodeService;
+import org.example.mapreservation.hairshop.application.service.HairShopService;
+import org.example.mapreservation.hairshop.domain.HairShopCreate;
 import org.example.mapreservation.hairshop.domain.HairShop;
-import org.example.mapreservation.hairshop.dto.CreateHairShopRequest;
-import org.example.mapreservation.hairshop.dto.HairShopDetail;
-import org.example.mapreservation.hairshop.dto.HairShopDto;
-import org.example.mapreservation.hairshop.dto.HairShopSearchCondition;
-import org.example.mapreservation.hairshop.repository.HairShopQueryRepository;
-import org.example.mapreservation.hairshop.repository.HairShopRepository;
+import org.example.mapreservation.hairshop.domain.HairShopDetailResponse;
+import org.example.mapreservation.hairshop.domain.HairShopResponse;
+import org.example.mapreservation.hairshop.domain.HairShopSearchCondition;
+import org.example.mapreservation.hairshop.application.repository.HairShopQueryRepository;
+import org.example.mapreservation.hairshop.application.repository.HairShopRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.springframework.data.domain.Page;
@@ -23,14 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class HairShopService {
+public class HairShopServiceImpl implements HairShopService {
 
     private final HairShopRepository hairShopRepository;
+    private final HairShopQueryRepository hairShopQueryRepository;
     private final OwnerRepository ownerRepository;
     private final GeocodeService geocodeService;
-    private final HairShopQueryRepository hairShopQueryRepository;
 
-    public Long createHairShop(CreateHairShopRequest request) {
+    public Long createHairShop(HairShopCreate request) {
         Owner owner = ownerRepository.findById(request.ownerId())
                 .orElseThrow(() -> new CustomException(ErrorCode.OWNER_NOT_FOUND));
         HairShop hairShop;
@@ -49,14 +50,14 @@ public class HairShopService {
         return hairShopRepository.save(hairShop).getId();
     }
 
-    public Page<HairShopDto> searchHairShop(HairShopSearchCondition searchCondition, Pageable pageable) {
-        return hairShopQueryRepository.search(searchCondition, pageable);
+    public Page<HairShopResponse> searchHairShop(HairShopSearchCondition searchCondition, Pageable pageable) {
+        return hairShopQueryRepository.search(searchCondition, pageable).map(HairShopResponse::from);
     }
 
-    public HairShopDetail getHairShopDetail(Long hairShopId) {
+    public HairShopDetailResponse getHairShopDetail(Long hairShopId) {
         HairShop hairShop = hairShopRepository.findById(hairShopId)
                 .orElseThrow(() -> new CustomException(ErrorCode.HS_NOT_FOUND));
-        return HairShopDetail.from(hairShop);
+        return HairShopDetailResponse.from(hairShop);
     }
 
 }

@@ -1,9 +1,9 @@
-package org.example.mapreservation.hairshop.controller;
+package org.example.mapreservation.hairshop.presentation;
 
 import org.example.mapreservation.common.Address;
 import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.hairshop.domain.HairShop;
-import org.example.mapreservation.hairshop.repository.HairShopRepository;
+import org.example.mapreservation.hairshop.infrastructure.HairShopJpaRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
@@ -32,7 +32,7 @@ class HairShopControllerIntegrationTest {
     @Autowired
     CustomerJpaRepository customerRepository;
     @Autowired
-    HairShopRepository hairShopRepository;
+    HairShopJpaRepository hairShopRepository;
     @Autowired
     OwnerRepository ownerRepository;
 

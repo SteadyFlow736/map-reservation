@@ -1,10 +1,10 @@
-package org.example.mapreservation.hairshop.repository;
+package org.example.mapreservation.hairshop.infrastructure;
 
 import org.example.mapreservation.common.Address;
 import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.hairshop.domain.HairShop;
-import org.example.mapreservation.hairshop.dto.HairShopDto;
-import org.example.mapreservation.hairshop.dto.HairShopSearchCondition;
+import org.example.mapreservation.hairshop.domain.HairShopResponse;
+import org.example.mapreservation.hairshop.domain.HairShopSearchCondition;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
@@ -22,16 +22,16 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-class HairShopQueryRepositoryTest {
+class HairShopQueryRepositoryImplTest {
 
     @Autowired
-    HairShopQueryRepository hairShopQueryRepository;
+    HairShopQueryRepositoryImpl hairShopQueryRepositoryImpl;
     @Autowired
     HairShopReservationRepository hairShopReservationRepository;
     @Autowired
     CustomerJpaRepository customerRepository;
     @Autowired
-    HairShopRepository hairShopRepository;
+    HairShopJpaRepository hairShopRepository;
     @Autowired
     OwnerRepository ownerRepository;
 
@@ -69,10 +69,10 @@ class HairShopQueryRepositoryTest {
         );
 
         // when
-        Page<HairShopDto> result = hairShopQueryRepository.search(condition, pageable);
+        Page<HairShopResponse> result = hairShopQueryRepositoryImpl.search(condition, pageable).map(HairShopResponse::from);
 
         // then
-        List<HairShopDto> content = result.getContent();
+        List<HairShopResponse> content = result.getContent();
         assertThat(content.size()).isEqualTo(2);
         assertThat(content.get(0).shopName()).isEqualTo("헤어샵2");
         assertThat(content.get(1).shopName()).isEqualTo("헤어샵1");

@@ -1,4 +1,4 @@
-package org.example.mapreservation.hairshop.repository;
+package org.example.mapreservation.hairshop.infrastructure;
 
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -7,9 +7,9 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.example.mapreservation.hairshop.application.repository.HairShopQueryRepository;
 import org.example.mapreservation.hairshop.domain.HairShop;
-import org.example.mapreservation.hairshop.dto.HairShopDto;
-import org.example.mapreservation.hairshop.dto.HairShopSearchCondition;
+import org.example.mapreservation.hairshop.domain.HairShopSearchCondition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,7 +23,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 
 @RequiredArgsConstructor
 @Repository
-public class HairShopQueryRepository {
+public class HairShopQueryRepositoryImpl implements HairShopQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
@@ -34,7 +34,7 @@ public class HairShopQueryRepository {
      * @param pageable        페이징, 정렬 기준
      * @return 페이징된 결과
      */
-    public Page<HairShopDto> search(HairShopSearchCondition searchCondition, Pageable pageable) {
+    public Page<HairShop> search(HairShopSearchCondition searchCondition, Pageable pageable) {
         JPAQuery<HairShop> query = queryFactory
                 .selectFrom(hairShop)
                 .where(
@@ -60,8 +60,7 @@ public class HairShopQueryRepository {
                         hairShopNameLikeExpression(searchCondition.searchTerm())
                 );
 
-        Page<HairShop> page = PageableExecutionUtils.getPage(hairShops, pageable, countQuery::fetchOne);
-        return page.map(HairShopDto::from);
+        return PageableExecutionUtils.getPage(hairShops, pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression hairShopNameLikeExpression(String hairShopName) {

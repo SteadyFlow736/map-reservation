@@ -1,7 +1,7 @@
-package org.example.mapreservation.geocoding.service;
+package org.example.mapreservation.geocoding.application;
 
-import org.example.mapreservation.geocoding.dto.GeocodeRequest;
-import org.example.mapreservation.geocoding.dto.GeocodeResponse;
+import org.example.mapreservation.geocoding.domain.GeocodeRequest;
+import org.example.mapreservation.geocoding.domain.GeocodeResponse;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

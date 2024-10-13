@@ -1,7 +1,6 @@
-package org.example.mapreservation.geocoding.dto;
+package org.example.mapreservation.geocoding.domain;
 
 import lombok.Getter;
-import lombok.ToString;
 
 import java.util.List;
 

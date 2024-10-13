@@ -1,7 +1,7 @@
 package org.example.mapreservation.hairshop.domain;
 
 import org.example.mapreservation.common.Address;
-import org.example.mapreservation.hairshop.repository.HairShopRepository;
+import org.example.mapreservation.hairshop.infrastructure.HairShopJpaRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class HairShopTest {
     @Autowired
     OwnerRepository ownerRepository;
     @Autowired
-    HairShopRepository hairShopRepository;
+    HairShopJpaRepository hairShopRepository;
 
     @Test
     void saveAndLoadTest() {
