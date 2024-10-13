@@ -1,4 +1,4 @@
-type HairShopDto = {
+type HairShopResponse = {
     shopId: number
     shopName: string
     latitude: string

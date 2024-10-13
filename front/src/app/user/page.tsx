@@ -105,7 +105,7 @@ function InfiniteReservations() {
 function ReservationCard({reservation}: { reservation: HairShopReservationDto }) {
     return (
         <div className="border rounded p-3">
-            <p>{reservation.hairShopDto.shopName}</p>
+            <p>{reservation.hairShopResponse.shopName}</p>
             <p>{Time.formatDate(new Date(reservation.reservationTime))}</p>
             {
                 reservation.status === 'CANCELLED' ? <p>취소됨</p> : null

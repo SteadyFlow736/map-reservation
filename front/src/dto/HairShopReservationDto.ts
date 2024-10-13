@@ -1,7 +1,7 @@
 type HairShopReservationDto = {
     reservationId: number
     username: string
-    hairShopDto: HairShopDto
+    hairShopResponse: HairShopResponse
     reservationTime: string
     status: Status
 }
