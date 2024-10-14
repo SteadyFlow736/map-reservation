@@ -1,7 +1,6 @@
-package org.example.mapreservation.reservation.dto;
+package org.example.mapreservation.reservation.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.example.mapreservation.reservation.domain.HairShopReservation;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

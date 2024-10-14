@@ -1,4 +1,4 @@
-package org.example.mapreservation.reservation.controller;
+package org.example.mapreservation.reservation.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.mapreservation.common.Address;
@@ -8,8 +8,8 @@ import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.infrastructure.HairShopJpaRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
-import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
-import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
+import org.example.mapreservation.reservation.domain.HairShopReservationCreateRequest;
+import org.example.mapreservation.reservation.infrastructure.HairShopReservationRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

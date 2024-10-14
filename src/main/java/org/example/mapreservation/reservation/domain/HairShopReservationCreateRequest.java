@@ -1,4 +1,4 @@
-package org.example.mapreservation.reservation.dto;
+package org.example.mapreservation.reservation.domain;
 
 import java.time.LocalDateTime;
 

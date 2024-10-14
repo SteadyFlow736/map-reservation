@@ -1,4 +1,4 @@
-package org.example.mapreservation.reservation.service;
+package org.example.mapreservation.reservation.application;
 
 import lombok.RequiredArgsConstructor;
 import org.example.mapreservation.customer.domain.Customer;
@@ -8,12 +8,12 @@ import org.example.mapreservation.exception.ErrorCode;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.infrastructure.HairShopJpaRepository;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
-import org.example.mapreservation.reservation.dto.CreateHairShopReservationResponse;
-import org.example.mapreservation.reservation.dto.HairShopReservationCreateRequest;
-import org.example.mapreservation.reservation.dto.HairShopReservationDto;
-import org.example.mapreservation.reservation.dto.HairShopReservationStatusGetRequest;
-import org.example.mapreservation.reservation.dto.ReservationStatus;
-import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
+import org.example.mapreservation.reservation.domain.HairShopReservationCreateResponse;
+import org.example.mapreservation.reservation.domain.HairShopReservationCreateRequest;
+import org.example.mapreservation.reservation.domain.HairShopReservationResponse;
+import org.example.mapreservation.reservation.domain.HairShopReservationStatusGetRequest;
+import org.example.mapreservation.reservation.domain.ReservationStatus;
+import org.example.mapreservation.reservation.infrastructure.HairShopReservationRepository;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +46,7 @@ public class ReservationService {
      * @param request         요청 내용(예약 시간)
      * @return 예약 id
      */
-    public CreateHairShopReservationResponse createHairShopReservation(Long shopId, String username, LocalDateTime currentDateTime,
+    public HairShopReservationCreateResponse createHairShopReservation(Long shopId, String username, LocalDateTime currentDateTime,
                                                                        HairShopReservationCreateRequest request) {
 
         // redisson을 이용한 분산락 적용으로 "헤어샵 id + 예약 시간" 조합이 유일하게 예약될 수 있도록 함
@@ -63,7 +63,7 @@ public class ReservationService {
                 throw new CustomException(ErrorCode.LCK_CANNOT_ACQUIRE_LOCK, "잠시 후 다시 시도해 주세요.");
             }
             Long reservationId = transactionTemplate.execute(status -> createHairShopReservationInternal(shopId, username, currentDateTime, request));
-            return new CreateHairShopReservationResponse(reservationId);
+            return new HairShopReservationCreateResponse(reservationId);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
@@ -133,10 +133,10 @@ public class ReservationService {
      * @return 헤어샵 예약 정보
      */
     @Transactional
-    public HairShopReservationDto getHairShopReservation(Long reservationId, String username) {
+    public HairShopReservationResponse getHairShopReservation(Long reservationId, String username) {
         HairShopReservation hairShopReservation = hairShopReservationRepository.findByIdAndCustomerEmail(reservationId, username)
                 .orElseThrow(() -> new CustomException(ErrorCode.HSR_NOT_FOUND));
-        return HairShopReservationDto.from(hairShopReservation);
+        return HairShopReservationResponse.from(hairShopReservation);
     }
 
     /**
@@ -147,11 +147,11 @@ public class ReservationService {
      * @return 헤어샵 예약 정보 (slice)
      */
     @Transactional
-    public Slice<HairShopReservationDto> getHairShopReservations(String username, Pageable pageable) {
+    public Slice<HairShopReservationResponse> getHairShopReservations(String username, Pageable pageable) {
         Slice<HairShopReservation> slice = hairShopReservationRepository.findByCustomerEmail(username, pageable);
         // TODO: HairShopReservation -> HairShopReservationDto 변경 시 Customer 엔티티 조회 추가로 일어나는 N + 1 문제 해결
         // ReesrvationServiceTest::getHairShopReservations 테스트에서 N + 1 문제 확인 가능
-        return slice.map(HairShopReservationDto::from);
+        return slice.map(HairShopReservationResponse::from);
     }
 
     /**

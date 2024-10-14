@@ -1,7 +1,6 @@
-package org.example.mapreservation.reservation.dto;
+package org.example.mapreservation.reservation.domain;
 
 import org.example.mapreservation.hairshop.domain.HairShopResponse;
-import org.example.mapreservation.reservation.domain.HairShopReservation;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
  * @param reservationTime 예약 시간
  * @param status          예약 상태
  */
-public record HairShopReservationDto(
+public record HairShopReservationResponse(
         Long reservationId,
         String username,
         HairShopResponse hairShopResponse,
@@ -22,10 +21,10 @@ public record HairShopReservationDto(
         HairShopReservation.Status status
 
 ) {
-    public static HairShopReservationDto from(
+    public static HairShopReservationResponse from(
             HairShopReservation hairShopReservation) {
 
-        return new HairShopReservationDto(
+        return new HairShopReservationResponse(
                 hairShopReservation.getId(),
                 hairShopReservation.getCustomer().getEmail(),
                 HairShopResponse.from(hairShopReservation.getHairShop()),

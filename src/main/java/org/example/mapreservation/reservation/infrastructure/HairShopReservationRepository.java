@@ -1,4 +1,4 @@
-package org.example.mapreservation.reservation.repository;
+package org.example.mapreservation.reservation.infrastructure;
 
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.reservation.domain.HairShopReservation;

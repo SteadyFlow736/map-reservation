@@ -1,4 +1,4 @@
-package org.example.mapreservation.reservation.repository;
+package org.example.mapreservation.reservation.infrastructure;
 
 import jakarta.persistence.EntityManager;
 import org.example.mapreservation.common.Address;
