@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface HairShopReservationRepository extends JpaRepository<HairShopReservation, Long> {
+public interface HairShopReservationJpaRepository extends JpaRepository<HairShopReservation, Long> {
 
     Optional<HairShopReservation> findByHairShopAndReservationTimeAndReservationStatus(
             HairShop hairShop, LocalDateTime reservationDateTime, HairShopReservation.Status status);

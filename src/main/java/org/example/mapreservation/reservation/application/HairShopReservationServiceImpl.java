@@ -1,19 +1,20 @@
 package org.example.mapreservation.reservation.application;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mapreservation.customer.application.repository.CustomerRepository;
 import org.example.mapreservation.customer.domain.Customer;
-import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.exception.CustomException;
 import org.example.mapreservation.exception.ErrorCode;
+import org.example.mapreservation.hairshop.application.repository.HairShopRepository;
 import org.example.mapreservation.hairshop.domain.HairShop;
-import org.example.mapreservation.hairshop.infrastructure.HairShopJpaRepository;
+import org.example.mapreservation.reservation.application.repository.HairShopReservationRepository;
+import org.example.mapreservation.reservation.application.service.HairShopReservationService;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateResponse;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateRequest;
 import org.example.mapreservation.reservation.domain.HairShopReservationResponse;
 import org.example.mapreservation.reservation.domain.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.domain.ReservationStatus;
-import org.example.mapreservation.reservation.infrastructure.HairShopReservationRepository;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Pageable;
@@ -29,11 +30,11 @@ import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
 @Service
-public class ReservationService {
+public class HairShopReservationServiceImpl implements HairShopReservationService {
 
     private final HairShopReservationRepository hairShopReservationRepository;
-    private final HairShopJpaRepository hairShopRepository;
-    private final CustomerJpaRepository customerRepository;
+    private final HairShopRepository hairShopRepository;
+    private final CustomerRepository customerRepository;
     private final RedissonClient redissonClient;
     private final TransactionTemplate transactionTemplate;
 
@@ -46,8 +47,9 @@ public class ReservationService {
      * @param request         요청 내용(예약 시간)
      * @return 예약 id
      */
-    public HairShopReservationCreateResponse createHairShopReservation(Long shopId, String username, LocalDateTime currentDateTime,
-                                                                       HairShopReservationCreateRequest request) {
+    @Override
+    public HairShopReservationCreateResponse createReservation(Long shopId, String username, LocalDateTime currentDateTime,
+                                                               HairShopReservationCreateRequest request) {
 
         // redisson을 이용한 분산락 적용으로 "헤어샵 id + 예약 시간" 조합이 유일하게 예약될 수 있도록 함
         // TODO: 분산락을 재사용 가능하게, 깔끔하게 적용할 수 있는 법 찾기. (wrapping method or aop or facade ...?)
@@ -109,7 +111,8 @@ public class ReservationService {
     }
 
     @Transactional
-    public ReservationStatus getHairShopReservationStatus(Long shopId, HairShopReservationStatusGetRequest request) {
+    @Override
+    public ReservationStatus getReservationStatus(Long shopId, HairShopReservationStatusGetRequest request) {
         LocalDateTime searchStartDateTime = request.getStartDateTime();
         LocalDateTime searchEndDateTime = request.getEndDateTime();
 
@@ -133,7 +136,8 @@ public class ReservationService {
      * @return 헤어샵 예약 정보
      */
     @Transactional
-    public HairShopReservationResponse getHairShopReservation(Long reservationId, String username) {
+    @Override
+    public HairShopReservationResponse getReservation(Long reservationId, String username) {
         HairShopReservation hairShopReservation = hairShopReservationRepository.findByIdAndCustomerEmail(reservationId, username)
                 .orElseThrow(() -> new CustomException(ErrorCode.HSR_NOT_FOUND));
         return HairShopReservationResponse.from(hairShopReservation);
@@ -147,7 +151,8 @@ public class ReservationService {
      * @return 헤어샵 예약 정보 (slice)
      */
     @Transactional
-    public Slice<HairShopReservationResponse> getHairShopReservations(String username, Pageable pageable) {
+    @Override
+    public Slice<HairShopReservationResponse> getReservations(String username, Pageable pageable) {
         Slice<HairShopReservation> slice = hairShopReservationRepository.findByCustomerEmail(username, pageable);
         // TODO: HairShopReservation -> HairShopReservationDto 변경 시 Customer 엔티티 조회 추가로 일어나는 N + 1 문제 해결
         // ReesrvationServiceTest::getHairShopReservations 테스트에서 N + 1 문제 확인 가능
@@ -162,7 +167,8 @@ public class ReservationService {
      * @param currentDateTime 현재 시간
      */
     @Transactional
-    public void cancelReservationById(Long reservationId, String username, LocalDateTime currentDateTime) {
+    @Override
+    public void cancelReservation(Long reservationId, String username, LocalDateTime currentDateTime) {
         HairShopReservation hairShopReservation = hairShopReservationRepository.findByIdAndCustomerEmail(reservationId, username)
                 .orElseThrow(() -> new CustomException(ErrorCode.HSR_NOT_FOUND));
 

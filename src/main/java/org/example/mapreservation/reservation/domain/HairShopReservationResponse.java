@@ -19,7 +19,6 @@ public record HairShopReservationResponse(
         HairShopResponse hairShopResponse,
         LocalDateTime reservationTime,
         HairShopReservation.Status status
-
 ) {
     public static HairShopReservationResponse from(
             HairShopReservation hairShopReservation) {

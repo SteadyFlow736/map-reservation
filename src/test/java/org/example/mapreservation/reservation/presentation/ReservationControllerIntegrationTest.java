@@ -9,7 +9,7 @@ import org.example.mapreservation.hairshop.infrastructure.HairShopJpaRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateRequest;
-import org.example.mapreservation.reservation.infrastructure.HairShopReservationRepository;
+import org.example.mapreservation.reservation.infrastructure.HairShopReservationJpaRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +45,7 @@ class ReservationControllerIntegrationTest {
     @Autowired
     OwnerRepository ownerRepository;
     @Autowired
-    HairShopReservationRepository hairShopReservationRepository;
+    HairShopReservationJpaRepository hairShopReservationRepository;
 
     private Long hairShopId;
 

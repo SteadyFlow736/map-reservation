@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.*;
 class HairShopReservationRepositoryTest {
 
     @Autowired
-    HairShopReservationRepository hairShopReservationRepository;
+    HairShopReservationJpaRepository hairShopReservationRepository;
     @Autowired
     HairShopJpaRepository hairShopRepository;
     @Autowired

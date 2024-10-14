@@ -1,12 +1,12 @@
 package org.example.mapreservation.reservation.presentation;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mapreservation.reservation.application.service.HairShopReservationService;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateResponse;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateRequest;
 import org.example.mapreservation.reservation.domain.HairShopReservationResponse;
 import org.example.mapreservation.reservation.domain.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.domain.ReservationStatus;
-import org.example.mapreservation.reservation.application.ReservationService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.repository.query.Param;
@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @RestController
 public class ReservationController {
 
-    private final ReservationService reservationService;
+    private final HairShopReservationService reservationService;
 
     /**
      * 헤어샵 예약
@@ -42,7 +42,8 @@ public class ReservationController {
             @AuthenticationPrincipal UserDetails user,
             @RequestBody HairShopReservationCreateRequest request
     ) {
-        HairShopReservationCreateResponse response = reservationService.createHairShopReservation(shopId, user.getUsername(), LocalDateTime.now(), request);
+        HairShopReservationCreateResponse response = reservationService.createReservation(
+                shopId, user.getUsername(), LocalDateTime.now(), request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
@@ -60,7 +61,7 @@ public class ReservationController {
             @PathVariable("shopId") Long shopId,
             @Param("targetDate") HairShopReservationStatusGetRequest request
     ) {
-        ReservationStatus status = reservationService.getHairShopReservationStatus(shopId, request);
+        ReservationStatus status = reservationService.getReservationStatus(shopId, request);
         return ResponseEntity.ok(status);
     }
 
@@ -76,7 +77,7 @@ public class ReservationController {
             @PathVariable("reservationId") Long reservationId,
             @AuthenticationPrincipal UserDetails user
     ) {
-        HairShopReservationResponse response = reservationService.getHairShopReservation(reservationId, user.getUsername());
+        HairShopReservationResponse response = reservationService.getReservation(reservationId, user.getUsername());
         return ResponseEntity.ok(response);
     }
 
@@ -93,7 +94,7 @@ public class ReservationController {
             @AuthenticationPrincipal UserDetails user,
             Pageable pageable
     ) {
-        Slice<HairShopReservationResponse> page = reservationService.getHairShopReservations(user.getUsername(), pageable);
+        Slice<HairShopReservationResponse> page = reservationService.getReservations(user.getUsername(), pageable);
         return ResponseEntity.ok(page);
     }
 
@@ -108,7 +109,7 @@ public class ReservationController {
             @PathVariable Long reservationId,
             @AuthenticationPrincipal UserDetails user
     ) {
-        reservationService.cancelReservationById(reservationId, user.getUsername(), LocalDateTime.now());
+        reservationService.cancelReservation(reservationId, user.getUsername(), LocalDateTime.now());
         return ResponseEntity.ok().build();
     }
 }

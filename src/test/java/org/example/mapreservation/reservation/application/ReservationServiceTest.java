@@ -15,7 +15,7 @@ import org.example.mapreservation.reservation.domain.HairShopReservationCreateRe
 import org.example.mapreservation.reservation.domain.HairShopReservationResponse;
 import org.example.mapreservation.reservation.domain.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.domain.ReservationStatus;
-import org.example.mapreservation.reservation.infrastructure.HairShopReservationRepository;
+import org.example.mapreservation.reservation.infrastructure.HairShopReservationJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,9 +51,9 @@ class ReservationServiceTest {
     @Autowired
     CustomerJpaRepository customerRepository;
     @Autowired
-    ReservationService reservationService;
+    HairShopReservationServiceImpl reservationService;
     @Autowired
-    HairShopReservationRepository reservationRepository;
+    HairShopReservationJpaRepository reservationRepository;
 
     Customer customer;
     HairShop hairShop;
@@ -94,7 +94,7 @@ class ReservationServiceTest {
         HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
 
         // when
-        HairShopReservationCreateResponse response = reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), currentTime, request);
+        HairShopReservationCreateResponse response = reservationService.createReservation(hairShop.getId(), customer.getEmail(), currentTime, request);
 
         // then
         Optional<HairShopReservation> foundReservation = reservationRepository.findById(response.reservationId());
@@ -121,7 +121,7 @@ class ReservationServiceTest {
         for (int i = 0; i < threadCount; i++) {
             es.submit(() -> {
                 try {
-                    HairShopReservationCreateResponse response = reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), currentTime, request);
+                    HairShopReservationCreateResponse response = reservationService.createReservation(hairShop.getId(), customer.getEmail(), currentTime, request);
                     reservationId.set(response.reservationId());
                 } catch (Exception e) {
                     exceptions.add(e);
@@ -157,13 +157,13 @@ class ReservationServiceTest {
         List<HairShopReservationCreateRequest> requests = reservationDateTimes.stream()
                 .map(HairShopReservationCreateRequest::new).toList();
         LocalDateTime now = reservationDateTimes.get(0).minusHours(1);
-        requests.forEach(r -> reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), now, r));
+        requests.forEach(r -> reservationService.createReservation(hairShop.getId(), customer.getEmail(), now, r));
 
         // when - 해당 헤어샵의 특정 날짜로 예약 현황 조회
         LocalDate targetDate = reservationDateTimes.get(1).toLocalDate();
         HairShopReservationStatusGetRequest statusGetRequest =
                 new HairShopReservationStatusGetRequest(targetDate);
-        ReservationStatus status = reservationService.getHairShopReservationStatus(hairShop.getId(), statusGetRequest);
+        ReservationStatus status = reservationService.getReservationStatus(hairShop.getId(), statusGetRequest);
 
         // then - 해당 날짜의 예약 현황 리턴
         assertThat(status.date()).isEqualTo(targetDate);
@@ -187,13 +187,13 @@ class ReservationServiceTest {
         LocalDateTime now = reservationDateTimes.get(0).minusHours(1);
         List<Long> reservationIds = new ArrayList<>();
         requests.forEach(r -> {
-            Long id = reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), now, r).reservationId();
+            Long id = reservationService.createReservation(hairShop.getId(), customer.getEmail(), now, r).reservationId();
             reservationIds.add(id);
         });
 
         // when - 특정 예약 조회
         Long reservationId = reservationIds.get(0);
-        HairShopReservationResponse foundReservationDto = reservationService.getHairShopReservation(reservationId, customer.getEmail());
+        HairShopReservationResponse foundReservationDto = reservationService.getReservation(reservationId, customer.getEmail());
 
         // then - 예약 확인
         assertThat(foundReservationDto.hairShopResponse().shopId()).isEqualTo(hairShop.getId());
@@ -216,7 +216,7 @@ class ReservationServiceTest {
                 .map(HairShopReservationCreateRequest::new).toList();
         LocalDateTime now = reservationDateTimes.get(0).minusHours(1);
         requests.forEach(r -> {
-            reservationService.createHairShopReservation(hairShop.getId(), customer.getEmail(), now, r);
+            reservationService.createReservation(hairShop.getId(), customer.getEmail(), now, r);
         });
 
         // when - 특정 예약 조회
@@ -225,7 +225,7 @@ class ReservationServiceTest {
         Pageable pageable = PageRequest.of(pageNumber, pageSize,
                 Sort.by(Sort.Direction.DESC, "reservationTime")
         );
-        Slice<HairShopReservationResponse> foundReservationDtos = reservationService.getHairShopReservations(customer.getEmail(), pageable);
+        Slice<HairShopReservationResponse> foundReservationDtos = reservationService.getReservations(customer.getEmail(), pageable);
 
         // then - 예약 확인
         assertThat(foundReservationDtos.getNumber()).isEqualTo(pageNumber);
