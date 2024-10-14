@@ -35,7 +35,9 @@ public enum ErrorCode {
     LCK_CANNOT_ACQUIRE_LOCK("일시적인 오류가 발생했습니다.", HttpStatus.LOCKED),
 
     // Common
-    CMM_FIELD_VALIDATION_FAILURE("필드 값 검증에 실패했습니다.", null);
+    CMM_FIELD_VALIDATION_FAILURE("필드 값 검증에 실패했습니다.", HttpStatus.BAD_REQUEST),
+    CMM_ARGUMENT_TYPE_MISMATCH("전달된 값의 타입이 맞지 않습니다.", HttpStatus.BAD_REQUEST),
+    CMM_NO_HANDLER_FOUND("핸들러가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
 
     /**
      * 에러 코드 생성자
