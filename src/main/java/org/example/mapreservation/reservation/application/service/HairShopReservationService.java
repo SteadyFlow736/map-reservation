@@ -3,11 +3,11 @@ package org.example.mapreservation.reservation.application.service;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateRequest;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateResponse;
 import org.example.mapreservation.reservation.domain.HairShopReservationResponse;
-import org.example.mapreservation.reservation.domain.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.domain.ReservationStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface HairShopReservationService {
@@ -27,11 +27,11 @@ public interface HairShopReservationService {
     /**
      * 헤어샵 하루 예약 현황 조회
      *
-     * @param shopId  헤어샵 id
-     * @param request 날짜
+     * @param shopId     헤어샵 id
+     * @param targetDate 날짜
      * @return 헤어샵 예약 현황
      */
-    ReservationStatus getReservationStatus(Long shopId, HairShopReservationStatusGetRequest request);
+    ReservationStatus getReservationStatus(Long shopId, LocalDate targetDate);
 
     /**
      * 헤어샵 예약 상세 조회

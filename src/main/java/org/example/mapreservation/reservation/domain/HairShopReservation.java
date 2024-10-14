@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.mapreservation.customer.domain.Customer;
@@ -59,7 +60,9 @@ public class HairShopReservation {
     @Enumerated(EnumType.STRING)
     private Status reservationStatus;
 
-    public HairShopReservation(Customer customer, HairShop hairShop, LocalDateTime reservationTime) {
+    @Builder
+    public HairShopReservation(Long id, Customer customer, HairShop hairShop, LocalDateTime reservationTime) {
+        this.id = id;
         this.customer = customer;
         this.hairShop = hairShop;
         this.reservationTime = reservationTime;

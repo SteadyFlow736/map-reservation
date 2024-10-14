@@ -8,7 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +31,9 @@ public class HairShopReservationRepositoryImpl implements HairShopReservationRep
     }
 
     @Override
-    public List<HairShopReservation> findByHairShopAndReservationTimeBetween(HairShop hairShop, LocalDateTime start, LocalDateTime end) {
-        return hairShopReservationJpaRepository.findByHairShopAndReservationTimeBetween(hairShop, start, end);
+    public List<HairShopReservation> findByHairShopAndTargetDate(HairShop hairShop, LocalDate targetDate) {
+        return hairShopReservationJpaRepository.findByHairShopAndReservationTimeBetween(
+                hairShop, targetDate.atStartOfDay(), targetDate.atTime(LocalTime.MAX));
     }
 
     @Override

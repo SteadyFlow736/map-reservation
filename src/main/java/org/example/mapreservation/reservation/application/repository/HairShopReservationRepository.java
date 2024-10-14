@@ -5,6 +5,7 @@ import org.example.mapreservation.reservation.domain.HairShopReservation;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -15,8 +16,8 @@ public interface HairShopReservationRepository {
     Optional<HairShopReservation> findByHairShopAndReservationTimeAndReservationStatus(
             HairShop hairShop, LocalDateTime reservationDateTime, HairShopReservation.Status status);
 
-    List<HairShopReservation> findByHairShopAndReservationTimeBetween(
-            HairShop hairShop, LocalDateTime start, LocalDateTime end);
+    List<HairShopReservation> findByHairShopAndTargetDate(
+            HairShop hairShop, LocalDate targetDate);
 
     Optional<HairShopReservation> findByIdAndCustomerEmail(Long hairShopId, String email);
 

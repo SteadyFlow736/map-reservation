@@ -13,7 +13,6 @@ import org.example.mapreservation.reservation.domain.HairShopReservation;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateResponse;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateRequest;
 import org.example.mapreservation.reservation.domain.HairShopReservationResponse;
-import org.example.mapreservation.reservation.domain.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.domain.ReservationStatus;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -67,26 +67,24 @@ public class HairShopReservationServiceImpl implements HairShopReservationServic
 
     @Transactional
     @Override
-    public ReservationStatus getReservationStatus(Long shopId, HairShopReservationStatusGetRequest request) {
-        LocalDateTime searchStartDateTime = request.getStartDateTime();
-        LocalDateTime searchEndDateTime = request.getEndDateTime();
-
+    public ReservationStatus getReservationStatus(Long shopId, LocalDate targetDate) {
         HairShop hairShop = hairShopRepository.findById(shopId)
                 .orElseThrow(() -> new CustomException(ErrorCode.HS_NOT_FOUND));
 
         List<HairShopReservation> reservations = hairShopReservationRepository
-                .findByHairShopAndReservationTimeBetween(hairShop, searchStartDateTime, searchEndDateTime);
+                .findByHairShopAndTargetDate(hairShop, targetDate);
 
         // TODO: 영업 시작, 종료 시간은 헤어샵 마다, 기준 날짜마다 다르게 가져갈 수 있도록 기능 넣기. 일단 고정된 값으로 전달.
         LocalTime openingTime = LocalTime.of(10, 0);
         LocalTime closingTime = LocalTime.of(20, 0);
-        return ReservationStatus.from(request.targetDate(), openingTime, closingTime, reservations);
+        return ReservationStatus.from(targetDate, openingTime, closingTime, reservations);
     }
 
     @Transactional
     @Override
     public HairShopReservationResponse getReservation(Long reservationId, String username) {
-        HairShopReservation hairShopReservation = hairShopReservationRepository.findByIdAndCustomerEmail(reservationId, username)
+        HairShopReservation hairShopReservation = hairShopReservationRepository
+                .findByIdAndCustomerEmail(reservationId, username)
                 .orElseThrow(() -> new CustomException(ErrorCode.HSR_NOT_FOUND));
         return HairShopReservationResponse.from(hairShopReservation);
     }
@@ -95,7 +93,7 @@ public class HairShopReservationServiceImpl implements HairShopReservationServic
     @Override
     public Slice<HairShopReservationResponse> getReservations(String username, Pageable pageable) {
         Slice<HairShopReservation> slice = hairShopReservationRepository.findByCustomerEmail(username, pageable);
-        // TODO: HairShopReservation -> HairShopReservationDto 변경 시 Customer 엔티티 조회 추가로 일어나는 N + 1 문제 해결
+        // TODO: HairShopReservation -> HairShopReservationResponse 변경 시 HairShop, Customer 엔티티 조회 추가로 일어나는 N + 1 문제 해결
         // ReesrvationServiceTest::getHairShopReservations 테스트에서 N + 1 문제 확인 가능
         return slice.map(HairShopReservationResponse::from);
     }
@@ -120,8 +118,11 @@ public class HairShopReservationServiceImpl implements HairShopReservationServic
         HairShop hairShop = hairShopRepository.findById(shopId)
                 .orElseThrow(() -> new CustomException(ErrorCode.HS_NOT_FOUND));
 
-        HairShopReservation hairShopReservation =
-                new HairShopReservation(customer, hairShop, request.reservationTime());
+        HairShopReservation hairShopReservation = HairShopReservation.builder()
+                .customer(customer)
+                .hairShop(hairShop)
+                .reservationTime(request.reservationTime())
+                .build();
 
         hairShopReservationRepository.findByHairShopAndReservationTimeAndReservationStatus(
                         hairShop, request.reservationTime(), HairShopReservation.Status.RESERVED

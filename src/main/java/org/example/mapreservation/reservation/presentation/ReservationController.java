@@ -5,7 +5,6 @@ import org.example.mapreservation.reservation.application.service.HairShopReserv
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateResponse;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateRequest;
 import org.example.mapreservation.reservation.domain.HairShopReservationResponse;
-import org.example.mapreservation.reservation.domain.HairShopReservationStatusGetRequest;
 import org.example.mapreservation.reservation.domain.ReservationStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
@@ -52,16 +52,16 @@ public class ReservationController {
     /**
      * 헤어샵 예약 현황 조회 by 헤어샵 id, 날짜
      *
-     * @param shopId  헤어샵 id
-     * @param request 조회 날짜
+     * @param shopId     헤어샵 id
+     * @param targetDate 조회 날짜
      * @return 예약 현황
      */
     @GetMapping("/api/hairshops/{shopId}/reservations/status")
     public ResponseEntity<ReservationStatus> getHairShopReservationStatus(
             @PathVariable("shopId") Long shopId,
-            @Param("targetDate") HairShopReservationStatusGetRequest request
+            @Param("targetDate") LocalDate targetDate
     ) {
-        ReservationStatus status = reservationService.getReservationStatus(shopId, request);
+        ReservationStatus status = reservationService.getReservationStatus(shopId, targetDate);
         return ResponseEntity.ok(status);
     }
 

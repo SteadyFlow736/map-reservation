@@ -1,7 +1,10 @@
 package org.example.mapreservation.hairshop.domain;
 
+import lombok.Builder;
+
 import java.util.List;
 
+@Builder
 public record HairShopResponse(
         Long shopId,
         String shopName,
