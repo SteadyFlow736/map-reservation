@@ -20,6 +20,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 @SqlGroup({
+        @Sql(value = "/sql/delete-all.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         @Sql(value = "/sql/customer-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 })
 @SpringBootTest

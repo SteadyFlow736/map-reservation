@@ -8,8 +8,8 @@ import java.util.List;
 public record HairShopDetailResponse(
         Long shopId,
         String shopName,
-        String latitude,
         String longitude,
+        String latitude,
         List<String> imageUrls,
         String roadAddress,
         String detailAddress
@@ -18,8 +18,8 @@ public record HairShopDetailResponse(
         return new HairShopDetailResponse(
                 hairShop.getId(),
                 hairShop.getName(),
-                hairShop.getLatitude(),
                 hairShop.getLongitude(),
+                hairShop.getLatitude(),
                 hairShop.getImageUrls(),
                 hairShop.getAddress().getRoadAddress(),
                 hairShop.getAddress().getDetailAddress());

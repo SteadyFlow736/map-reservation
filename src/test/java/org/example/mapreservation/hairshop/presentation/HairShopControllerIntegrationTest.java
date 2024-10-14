@@ -1,17 +1,17 @@
 package org.example.mapreservation.hairshop.presentation;
 
 import org.example.mapreservation.common.Address;
-import org.example.mapreservation.customer.infrastructure.CustomerJpaRepository;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.hairshop.infrastructure.HairShopJpaRepository;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.owner.repository.OwnerRepository;
-import org.example.mapreservation.reservation.repository.HairShopReservationRepository;
-import org.junit.jupiter.api.BeforeEach;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -20,7 +20,11 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SqlGroup({
+        @Sql(value = "/sql/delete-all.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+})
 @AutoConfigureMockMvc
 @SpringBootTest
 class HairShopControllerIntegrationTest {
@@ -28,33 +32,17 @@ class HairShopControllerIntegrationTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    HairShopReservationRepository hairShopReservationRepository;
-    @Autowired
-    CustomerJpaRepository customerRepository;
-    @Autowired
-    HairShopJpaRepository hairShopRepository;
+    HairShopJpaRepository hairShopJpaRepository;
     @Autowired
     OwnerRepository ownerRepository;
 
-    @BeforeEach
-    void beforeEach() {
-        cleanUp();
-    }
-
-    private void cleanUp() {
-        hairShopReservationRepository.deleteAll();
-        customerRepository.deleteAll();
-        hairShopRepository.deleteAll();
-        ownerRepository.deleteAll();
-    }
-
     @Test
-    void searchHairShop() throws Exception {
+    void 검색어와_페이지_정보를_전달하여_검색_결과를_받아볼_수_있다() throws Exception {
         // given - 데이터 준비
         Owner owner = new Owner("사장1");
         ownerRepository.save(owner);
         Address address = new Address("도로명 주소", "101호");
-        hairShopRepository.saveAll(List.of(
+        hairShopJpaRepository.saveAll(List.of(
                 new HairShop("헤어샵1", address, owner),
                 new HairShop("헤어샵2", address, owner),
                 new HairShop("헤어샵3", address, owner),
@@ -82,19 +70,28 @@ class HairShopControllerIntegrationTest {
     }
 
     @Test
-    void getHairShopDetail() throws Exception {
+    void 특정_헤어샵의_상세_정보를_얻을_수_있다() throws Exception {
         // given - 데이터 준비
         Owner owner = new Owner("사장1");
         ownerRepository.save(owner);
-        Address address = new Address("도로명 주소", "101호");
-        HairShop hairShop = hairShopRepository.save(new HairShop("헤어샵1", address, owner));
+        Address address = new Address("도로주소", "상세주소");
+        HairShop hairShop = hairShopJpaRepository.save(
+                new HairShop("헤어샵", address, owner, "10.0", "20.0", List.of("url1", "url2", "url3")));
 
         // when, then
         mockMvc.perform(get("/api/hairshops/{hairShopId}", hairShop.getId())
                         .with(csrf())
                 )
                 .andDo(print())
-                .andExpect(jsonPath("$.shopId").value(hairShop.getId()))
-                .andExpect(jsonPath("$.shopName").value(hairShop.getName()));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.shopId").isNotEmpty())
+                .andExpect(jsonPath("$.shopName").value("헤어샵"))
+                .andExpect(jsonPath("$.longitude").value("10.0"))
+                .andExpect(jsonPath("$.latitude").value("20.0"))
+                .andExpect(jsonPath("$.imageUrls").value(
+                        Matchers.contains("url1", "url2", "url3")
+                ))
+                .andExpect(jsonPath("$.roadAddress").value("도로주소"))
+                .andExpect(jsonPath("$.detailAddress").value("상세주소"));
     }
 }
