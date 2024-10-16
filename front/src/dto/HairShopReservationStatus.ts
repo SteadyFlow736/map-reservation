@@ -11,10 +11,5 @@ type HairShopReservationStatus = {
     date: string
     openingTime: string
     closingTime: string
-    timeAndStatuses: TimeAndStatus[]
-}
-
-type TimeAndStatus = {
-    time: string
-    status: Status
+    reservedTimes: string[]
 }

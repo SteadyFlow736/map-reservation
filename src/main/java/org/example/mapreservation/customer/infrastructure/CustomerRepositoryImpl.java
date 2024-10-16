@@ -22,4 +22,9 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     public Optional<Customer> findByEmail(String username) {
         return customerJpaRepository.findByEmail(username);
     }
+
+    @Override
+    public Customer save(Customer customer) {
+        return customerJpaRepository.save(customer);
+    }
 }

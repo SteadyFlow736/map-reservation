@@ -8,4 +8,6 @@ public interface CustomerRepository {
     Customer saveAndFlush(Customer customer);
 
     Optional<Customer> findByEmail(String username);
+
+    Customer save(Customer anotherCustomer);
 }
