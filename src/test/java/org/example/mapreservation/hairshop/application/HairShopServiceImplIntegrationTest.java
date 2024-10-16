@@ -119,7 +119,7 @@ class HairShopServiceImplIntegrationTest {
         assertThat(hairShopResponses.getContent().get(0).shopName()).isEqualTo("헤어샵1");
         assertThat(hairShopResponses.getContent().get(0).longitude()).isEqualTo("10.0");
         assertThat(hairShopResponses.getContent().get(0).latitude()).isEqualTo("20.0");
-        assertThat(hairShopResponses.getContent().get(0).images()).isNull();
+        assertThat(hairShopResponses.getContent().get(0).images()).isEmpty();
         assertThat(hairShopResponses.getContent().get(1).shopId()).isEqualTo(2L);
     }
 

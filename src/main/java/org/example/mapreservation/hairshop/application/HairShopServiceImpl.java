@@ -34,7 +34,12 @@ public class HairShopServiceImpl implements HairShopService {
     public Long createHairShop(HairShopCreate request) {
         Owner owner = ownerRepository.findById(request.ownerId())
                 .orElseThrow(() -> new CustomException(ErrorCode.OWNER_NOT_FOUND));
-        HairShop hairShop = new HairShop(request.name(), request.address(), owner, request.imageUrls());
+        HairShop hairShop = HairShop.builder()
+                .name(request.name())
+                .address(request.address())
+                .owner(owner)
+                .imageUrls(request.imageUrls())
+                .build();
 
         GeocodeRequest geocodeRequest = new GeocodeRequest(request.address().getRoadAddress(), null);
         GeocodeResponse geocodeResponse = geocodeService.geocode(geocodeRequest);

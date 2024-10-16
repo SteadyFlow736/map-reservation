@@ -40,12 +40,12 @@ class HairShopQueryRepositoryImplIntegrationTest {
         ownerRepository.save(owner);
         Address address = new Address("도로명 주소", "101호");
         hairShopJpaRepository.saveAll(List.of(
-                new HairShop("헤어샵1", address, owner),
-                new HairShop("헤어샵2", address, owner),
-                new HairShop("헤어샵3", address, owner),
-                new HairShop("헤어샵4", address, owner),
-                new HairShop("헤어샵5", address, owner),
-                new HairShop("블루클럽", address, owner)
+                HairShop.builder().name("헤어샵1").address(address).owner(owner).build(),
+                HairShop.builder().name("헤어샵2").address(address).owner(owner).build(),
+                HairShop.builder().name("헤어샵3").address(address).owner(owner).build(),
+                HairShop.builder().name("헤어샵4").address(address).owner(owner).build(),
+                HairShop.builder().name("헤어샵5").address(address).owner(owner).build(),
+                HairShop.builder().name("블루클럽").address(address).owner(owner).build()
         ));
 
         // given - 검색 조건 설정

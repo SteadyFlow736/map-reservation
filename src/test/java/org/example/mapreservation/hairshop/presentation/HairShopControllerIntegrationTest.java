@@ -43,12 +43,12 @@ class HairShopControllerIntegrationTest {
         ownerRepository.save(owner);
         Address address = new Address("도로명 주소", "101호");
         hairShopJpaRepository.saveAll(List.of(
-                new HairShop("헤어샵1", address, owner),
-                new HairShop("헤어샵2", address, owner),
-                new HairShop("헤어샵3", address, owner),
-                new HairShop("헤어샵4", address, owner),
-                new HairShop("헤어샵5", address, owner),
-                new HairShop("블루클럽", address, owner)
+                HairShop.builder().name("헤어샵1").address(address).owner(owner).build(),
+                HairShop.builder().name("헤어샵2").address(address).owner(owner).build(),
+                HairShop.builder().name("헤어샵3").address(address).owner(owner).build(),
+                HairShop.builder().name("헤어샵4").address(address).owner(owner).build(),
+                HairShop.builder().name("헤어샵5").address(address).owner(owner).build(),
+                HairShop.builder().name("블루클럽").address(address).owner(owner).build()
         ));
 
         // when, then
@@ -76,7 +76,15 @@ class HairShopControllerIntegrationTest {
         ownerRepository.save(owner);
         Address address = new Address("도로주소", "상세주소");
         HairShop hairShop = hairShopJpaRepository.save(
-                new HairShop("헤어샵", address, owner, "10.0", "20.0", List.of("url1", "url2", "url3")));
+                HairShop.builder()
+                        .name("헤어샵")
+                        .address(address)
+                        .owner(owner)
+                        .longitude("10.0")
+                        .latitude("20.0")
+                        .imageUrls(List.of("url1", "url2", "url3"))
+                        .build()
+        );
 
         // when, then
         mockMvc.perform(get("/api/hairshops/{hairShopId}", hairShop.getId())

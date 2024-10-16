@@ -125,8 +125,22 @@ public class HairShopServiceImplTest {
 
         Owner owner = new Owner(1L, "주인");
         List<HairShop> contents = List.of(
-                new HairShop(1L, "헤어샵1", new Address("도로주소", "상세주소"), owner, "10.0", "20.0", null),
-                new HairShop(2L, "헤어샵2", new Address("도로주소", "상세주소"), owner, "10.0", "20.0", null)
+                HairShop.builder()
+                        .id(1L)
+                        .name("헤어샵1")
+                        .address(new Address("도로주소", "상세주소"))
+                        .owner(owner)
+                        .longitude("10.0")
+                        .latitude("20.0")
+                        .build(),
+                HairShop.builder()
+                        .id(2L)
+                        .name("헤어샵2")
+                        .address(new Address("도로주소", "상세주소"))
+                        .owner(owner)
+                        .longitude("10.0")
+                        .latitude("20.0")
+                        .build()
         );
         Page<HairShop> hairShopPage = new PageImpl<>(contents);
 
@@ -141,7 +155,7 @@ public class HairShopServiceImplTest {
         assertThat(hairShopResponses.getContent().get(0).shopName()).isEqualTo("헤어샵1");
         assertThat(hairShopResponses.getContent().get(0).longitude()).isEqualTo("10.0");
         assertThat(hairShopResponses.getContent().get(0).latitude()).isEqualTo("20.0");
-        assertThat(hairShopResponses.getContent().get(0).images()).isNull();
+        assertThat(hairShopResponses.getContent().get(0).images()).isEmpty();
     }
 
     @Test

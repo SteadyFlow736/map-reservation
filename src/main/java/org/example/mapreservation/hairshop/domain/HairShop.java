@@ -60,37 +60,9 @@ public class HairShop {
         this.owner = owner;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.imageUrls = imageUrls;
-    }
-
-    public HairShop(String name, Address address, Owner owner, String longitude, String latitude, List<String> imageUrls) {
-        this.name = name;
-        this.address = address;
-        this.owner = owner;
-        this.longitude = longitude;
-        this.latitude = latitude;
         if (imageUrls != null) {
             this.imageUrls = imageUrls;
         }
-    }
-
-    public HairShop(String name, Address address, Owner owner, List<String> imageUrls) {
-        this.name = name;
-        this.address = address;
-        this.owner = owner;
-        this.longitude = null;
-        this.latitude = null;
-        if (imageUrls != null) {
-            this.imageUrls = imageUrls;
-        }
-    }
-
-    public HairShop(String name, Address address, Owner owner) {
-        this.name = name;
-        this.address = address;
-        this.owner = owner;
-        this.longitude = null;
-        this.latitude = null;
     }
 
     public void updateLongitudeLatitude(String longitude, String latitude) {
