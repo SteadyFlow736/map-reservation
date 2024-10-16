@@ -22,4 +22,8 @@ public interface HairShopReservationRepository {
     Optional<HairShopReservation> findByIdAndCustomerEmail(Long hairShopId, String email);
 
     Slice<HairShopReservation> findByCustomerEmail(String email, Pageable pageable);
+
+    Optional<HairShopReservation> findById(Long hairShopId);
+
+    List<HairShopReservation> saveAll(List<HairShopReservation> reservations);
 }

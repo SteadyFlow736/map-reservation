@@ -160,11 +160,11 @@ class HairShopReservationServiceImplTest {
         assertThat(reservationStatus.date()).isEqualTo(LocalDate.of(2024, 10, 14));
         assertThat(reservationStatus.openingTime()).isEqualTo(LocalTime.of(10, 0));
         assertThat(reservationStatus.closingTime()).isEqualTo(LocalTime.of(20, 0));
-        assertThat(reservationStatus.timeAndStatuses()).containsExactlyInAnyOrder(
-                new ReservationStatus.TimeAndStatus(LocalTime.of(13, 0), HairShopReservation.Status.RESERVED),
-                new ReservationStatus.TimeAndStatus(LocalTime.of(13, 30), HairShopReservation.Status.RESERVED),
-                new ReservationStatus.TimeAndStatus(LocalTime.of(14, 0), HairShopReservation.Status.RESERVED),
-                new ReservationStatus.TimeAndStatus(LocalTime.of(14, 30), HairShopReservation.Status.RESERVED)
+        assertThat(reservationStatus.reservedTimes()).containsExactlyInAnyOrder(
+                LocalTime.of(13, 0),
+                LocalTime.of(13, 30),
+                LocalTime.of(14, 0),
+                LocalTime.of(14, 30)
         );
     }
 

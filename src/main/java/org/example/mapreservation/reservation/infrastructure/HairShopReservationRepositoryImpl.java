@@ -45,4 +45,14 @@ public class HairShopReservationRepositoryImpl implements HairShopReservationRep
     public Slice<HairShopReservation> findByCustomerEmail(String email, Pageable pageable) {
         return hairShopReservationJpaRepository.findByCustomerEmail(email, pageable);
     }
+
+    @Override
+    public Optional<HairShopReservation> findById(Long hairShopId) {
+        return hairShopReservationJpaRepository.findById(hairShopId);
+    }
+
+    @Override
+    public List<HairShopReservation> saveAll(List<HairShopReservation> reservations) {
+        return hairShopReservationJpaRepository.saveAll(reservations);
+    }
 }
