@@ -15,14 +15,13 @@ public interface HairShopReservationService {
     /**
      * 헤어샵 예약 생성
      *
-     * @param shopId          대상 헤어샵 id
-     * @param username        고객명(이메일)
-     * @param currentDateTime 현재 시간
-     * @param request         요청 내용(예약 시간)
+     * @param shopId   대상 헤어샵 id
+     * @param username 고객명(이메일)
+     * @param request  요청 내용(예약 시간)
      * @return 예약 id
      */
     HairShopReservationCreateResponse createReservation(
-            Long shopId, String username, LocalDateTime currentDateTime, HairShopReservationCreateRequest request);
+            Long shopId, String username, HairShopReservationCreateRequest request);
 
     /**
      * 헤어샵 하루 예약 현황 조회

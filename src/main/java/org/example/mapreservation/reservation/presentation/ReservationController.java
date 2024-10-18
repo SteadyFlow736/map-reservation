@@ -1,5 +1,6 @@
 package org.example.mapreservation.reservation.presentation;
 
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.example.mapreservation.reservation.application.service.HairShopReservationService;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateResponse;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Builder
 @RequiredArgsConstructor
 @RestController
 public class ReservationController {
@@ -43,7 +45,7 @@ public class ReservationController {
             @RequestBody HairShopReservationCreateRequest request
     ) {
         HairShopReservationCreateResponse response = reservationService.createReservation(
-                shopId, user.getUsername(), LocalDateTime.now(), request);
+                shopId, user.getUsername(), request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);

@@ -1,6 +1,7 @@
 package org.example.mapreservation.reservation.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,6 +15,7 @@ import java.util.List;
  * @param closingTime   영업 종료 시간
  * @param reservedTimes 예약 시간과 예약 상태
  */
+@Builder
 public record ReservationStatus(
         LocalDate date,
 

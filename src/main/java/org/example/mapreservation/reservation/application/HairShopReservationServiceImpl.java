@@ -9,6 +9,7 @@ import org.example.mapreservation.hairshop.application.repository.HairShopReposi
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.reservation.application.repository.HairShopReservationRepository;
 import org.example.mapreservation.reservation.application.service.HairShopReservationService;
+import org.example.mapreservation.reservation.application.service.TimeProvider;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateResponse;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateRequest;
@@ -37,10 +38,11 @@ public class HairShopReservationServiceImpl implements HairShopReservationServic
     private final CustomerRepository customerRepository;
     private final RedissonClient redissonClient;
     private final TransactionTemplate transactionTemplate;
+    private final TimeProvider timeProvider;
 
     @Override
     public HairShopReservationCreateResponse createReservation(
-            Long shopId, String username, LocalDateTime currentDateTime, HairShopReservationCreateRequest request) {
+            Long shopId, String username, HairShopReservationCreateRequest request) {
 
         // redisson을 이용한 분산락 적용으로 "헤어샵 id + 예약 시간" 조합이 유일하게 예약될 수 있도록 함
         // TODO: 분산락을 재사용 가능하게, 깔끔하게 적용할 수 있는 법 찾기. (wrapping method or aop or facade ...?)
@@ -56,7 +58,7 @@ public class HairShopReservationServiceImpl implements HairShopReservationServic
                 throw new CustomException(ErrorCode.LCK_CANNOT_ACQUIRE_LOCK, "잠시 후 다시 시도해 주세요.");
             }
             Long reservationId = transactionTemplate.execute(status ->
-                    createReservationInternal(shopId, username, currentDateTime, request));
+                    createReservationInternal(shopId, username, timeProvider.getCurrentDateTime(), request));
             return new HairShopReservationCreateResponse(reservationId);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

@@ -1,5 +1,6 @@
 package org.example.mapreservation.reservation.domain;
 
+import lombok.Builder;
 import org.example.mapreservation.hairshop.domain.HairShopResponse;
 
 import java.time.LocalDateTime;
@@ -7,12 +8,13 @@ import java.time.LocalDateTime;
 /**
  * 헤어샵 예약 정보
  *
- * @param reservationId   예약 id
- * @param username        예약 유저명
- * @param hairShopResponse     헤어샵 정보
- * @param reservationTime 예약 시간
- * @param status          예약 상태
+ * @param reservationId    예약 id
+ * @param username         예약 유저명
+ * @param hairShopResponse 헤어샵 정보
+ * @param reservationTime  예약 시간
+ * @param status           예약 상태
  */
+@Builder
 public record HairShopReservationResponse(
         Long reservationId,
         String username,

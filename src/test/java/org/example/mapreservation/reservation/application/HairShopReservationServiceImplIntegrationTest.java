@@ -6,6 +6,7 @@ import org.example.mapreservation.exception.CustomException;
 import org.example.mapreservation.hairshop.application.repository.HairShopRepository;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.reservation.application.repository.HairShopReservationRepository;
+import org.example.mapreservation.reservation.application.service.TimeProvider;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateRequest;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateResponse;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -33,6 +35,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @SqlGroup({
         @Sql(value = "/sql/delete-all.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
@@ -50,6 +53,8 @@ class HairShopReservationServiceImplIntegrationTest {
     private HairShopRepository hairShopRepository;
     @Autowired
     private CustomerRepository customerRepository;
+    @MockBean
+    private TimeProvider timeProvider;
 
     HairShop persistedHairShop;
     Customer persistedCustomer;
@@ -77,9 +82,11 @@ class HairShopReservationServiceImplIntegrationTest {
         LocalDateTime currentTime = LocalDateTime.of(2024, 10, 16, 9, 0);
         HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
 
+        when(timeProvider.getCurrentDateTime()).thenReturn(currentTime);
+
         // when
         HairShopReservationCreateResponse response = hairShopReservationServiceImpl
-                .createReservation(1L, "abc@gmail.com", currentTime, request);
+                .createReservation(1L, "abc@gmail.com", request);
 
         // then
         HairShopReservation hairShopReservation = hairShopReservationRepository.findById(response.reservationId()).orElseThrow();
@@ -108,6 +115,8 @@ class HairShopReservationServiceImplIntegrationTest {
         LocalDateTime currentTime = LocalDateTime.of(2024, 10, 16, 9, 0);
         HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
 
+        when(timeProvider.getCurrentDateTime()).thenReturn(currentTime);
+
         // when - 동일한 예약 정보로 동시에 예약 시도
         int threadCount = 100;
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -118,7 +127,7 @@ class HairShopReservationServiceImplIntegrationTest {
             es.submit(() -> {
                 try {
                     HairShopReservationCreateResponse response = hairShopReservationServiceImpl
-                            .createReservation(1L, "abc@gmail.com", currentTime, request);
+                            .createReservation(1L, "abc@gmail.com", request);
                     reservationId.set(response.reservationId());
                 } catch (Exception e) {
                     exceptions.add(e);
@@ -159,11 +168,12 @@ class HairShopReservationServiceImplIntegrationTest {
         // given
         LocalDateTime reservationTime = LocalDateTime.of(2024, 10, 16, 10, 0);
         LocalDateTime currentTime = LocalDateTime.of(2024, 10, 16, 10, 1);
+        when(timeProvider.getCurrentDateTime()).thenReturn(currentTime);
 
         // when, then
         HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
         assertThatThrownBy(() -> hairShopReservationServiceImpl
-                .createReservation(1L, "abc@gmail.com", currentTime, request))
+                .createReservation(1L, "abc@gmail.com", request))
                 .isInstanceOf(CustomException.class)
                 .hasMessage("이미 지나간 시간으로 헤어샵을 예약할 수 없습니다.");
     }
@@ -182,11 +192,12 @@ class HairShopReservationServiceImplIntegrationTest {
         // given
         LocalDateTime reservationTime = LocalDateTime.of(2024, 10, 16, 10, 1);
         LocalDateTime currentTime = LocalDateTime.of(2024, 10, 16, 9, 0);
+        when(timeProvider.getCurrentDateTime()).thenReturn(currentTime);
 
         // when, then
         HairShopReservationCreateRequest request = new HairShopReservationCreateRequest(reservationTime);
         assertThatThrownBy(() -> hairShopReservationServiceImpl
-                .createReservation(1L, "abc@gmail.com", currentTime, request))
+                .createReservation(1L, "abc@gmail.com", request))
                 .isInstanceOf(CustomException.class)
                 .hasMessage("예약 시간은 0분 또는 30분이어야 합니다.");
     }

@@ -26,8 +26,18 @@ public class HairShopReservationRepositoryImpl implements HairShopReservationRep
     }
 
     @Override
-    public Optional<HairShopReservation> findByHairShopAndReservationTimeAndReservationStatus(HairShop hairShop, LocalDateTime reservationDateTime, HairShopReservation.Status status) {
-        return hairShopReservationJpaRepository.findByHairShopAndReservationTimeAndReservationStatus(hairShop, reservationDateTime, status);
+    public List<HairShopReservation> saveAll(List<HairShopReservation> reservations) {
+        return hairShopReservationJpaRepository.saveAll(reservations);
+    }
+
+    @Override
+    public Optional<HairShopReservation> findById(Long hairShopId) {
+        return hairShopReservationJpaRepository.findById(hairShopId);
+    }
+
+    @Override
+    public Optional<HairShopReservation> findByIdAndCustomerEmail(Long hairShopId, String email) {
+        return hairShopReservationJpaRepository.findByIdAndCustomerEmail(hairShopId, email);
     }
 
     @Override
@@ -37,22 +47,14 @@ public class HairShopReservationRepositoryImpl implements HairShopReservationRep
     }
 
     @Override
-    public Optional<HairShopReservation> findByIdAndCustomerEmail(Long hairShopId, String email) {
-        return hairShopReservationJpaRepository.findByIdAndCustomerEmail(hairShopId, email);
-    }
-
-    @Override
     public Slice<HairShopReservation> findByCustomerEmail(String email, Pageable pageable) {
         return hairShopReservationJpaRepository.findByCustomerEmail(email, pageable);
     }
 
     @Override
-    public Optional<HairShopReservation> findById(Long hairShopId) {
-        return hairShopReservationJpaRepository.findById(hairShopId);
-    }
-
-    @Override
-    public List<HairShopReservation> saveAll(List<HairShopReservation> reservations) {
-        return hairShopReservationJpaRepository.saveAll(reservations);
+    public Optional<HairShopReservation> findByHairShopAndReservationTimeAndReservationStatus(
+            HairShop hairShop, LocalDateTime reservationDateTime, HairShopReservation.Status status) {
+        return hairShopReservationJpaRepository
+                .findByHairShopAndReservationTimeAndReservationStatus(hairShop, reservationDateTime, status);
     }
 }

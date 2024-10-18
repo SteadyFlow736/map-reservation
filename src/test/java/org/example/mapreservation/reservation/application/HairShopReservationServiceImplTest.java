@@ -8,6 +8,7 @@ import org.example.mapreservation.hairshop.application.repository.HairShopReposi
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.owner.domain.Owner;
 import org.example.mapreservation.reservation.application.repository.HairShopReservationRepository;
+import org.example.mapreservation.reservation.application.service.TimeProvider;
 import org.example.mapreservation.reservation.domain.HairShopReservation;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateRequest;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateResponse;
@@ -42,6 +43,7 @@ class HairShopReservationServiceImplTest {
     CustomerRepository customerRepository;
     RedissonClient redissonClient;
     TransactionTemplate transactionTemplate;
+    TimeProvider timeProvider;
 
     HairShopReservationServiceImpl hairShopReservationService;
 
@@ -61,13 +63,16 @@ class HairShopReservationServiceImplTest {
         customerRepository = mock(CustomerRepository.class);
         redissonClient = mock(RedissonClient.class);
         transactionTemplate = mock(TransactionTemplate.class);
+        timeProvider = mock(TimeProvider.class);
 
         hairShopReservationService = new HairShopReservationServiceImpl(
                 hairShopReservationRepository,
                 hairShopRepository,
                 customerRepository,
                 redissonClient,
-                transactionTemplate);
+                transactionTemplate,
+                timeProvider
+        );
     }
 
     private void initField() {
@@ -103,12 +108,13 @@ class HairShopReservationServiceImplTest {
         when(redissonClient.getLock(anyString())).thenReturn(lock);
         when(lock.tryLock(anyLong(), anyLong(), any(TimeUnit.class))).thenReturn(locked);
         when(transactionTemplate.execute(any())).thenReturn(createReservationId);
+        when(timeProvider.getCurrentDateTime()).thenReturn(currentTime);
 
         ArgumentCaptor<String> lockKeyCaptor = ArgumentCaptor.forClass(String.class);
 
         // when
         HairShopReservationCreateResponse response =
-                hairShopReservationService.createReservation(1L, "abc@gmail.com", currentTime, request);
+                hairShopReservationService.createReservation(1L, "abc@gmail.com", request);
 
         // then
         verify(redissonClient, times(1)).getLock(lockKeyCaptor.capture());
@@ -132,7 +138,7 @@ class HairShopReservationServiceImplTest {
 
         // when, then
         assertThatThrownBy(() ->
-                hairShopReservationService.createReservation(1L, "abc@gmail.com", currentTime, request))
+                hairShopReservationService.createReservation(1L, "abc@gmail.com", request))
                 .isInstanceOf(CustomException.class)
                 .hasMessage("일시적인 오류가 발생했습니다.: 잠시 후 다시 시도해 주세요.");
     }
