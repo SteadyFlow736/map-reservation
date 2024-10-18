@@ -204,4 +204,6 @@ public class ReservationControllerTest {
         assertThat(body.username()).isEqualTo("abc@gmail.com");
         assertThat(body.status()).isEqualTo(HairShopReservation.Status.RESERVED);
     }
+
+    // 계속 할 것인가 말 것인가...?
 }
