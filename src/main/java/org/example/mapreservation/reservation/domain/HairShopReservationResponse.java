@@ -1,5 +1,6 @@
 package org.example.mapreservation.reservation.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import org.example.mapreservation.hairshop.domain.HairShopResponse;
 
@@ -19,6 +20,7 @@ public record HairShopReservationResponse(
         Long reservationId,
         String username,
         HairShopResponse hairShopResponse,
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
         LocalDateTime reservationTime,
         HairShopReservation.Status status
 ) {

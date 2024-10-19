@@ -1,20 +1,22 @@
 package org.example.mapreservation.reservation.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.mapreservation.hairshop.domain.HairShopResponse;
 import org.example.mapreservation.reservation.application.service.HairShopReservationService;
+import org.example.mapreservation.reservation.domain.HairShopReservation;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateRequest;
 import org.example.mapreservation.reservation.domain.HairShopReservationCreateResponse;
+import org.example.mapreservation.reservation.domain.HairShopReservationResponse;
 import org.example.mapreservation.reservation.domain.ReservationStatus;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * ReservationController validation 테스트
  * 파라미터 validation, collaborator(서비스) 메시징, api 리턴 검증
  */
+@AutoConfigureMockMvc(addFilters = false) // MockMvc에 spring security filter 적용 제외(wiki의 @WebMvcTest 항목 참조)
 @WebMvcTest(controllers = ReservationController.class)
 class ReservationControllerValidationTest {
 
@@ -124,7 +127,6 @@ class ReservationControllerValidationTest {
      * - 예약 현황 리턴
      * </pre>
      */
-    @WithMockUser
     @Test
     void 헤어샵_예약_현황_조회_api_정상_호출() throws Exception {
         // given
@@ -154,4 +156,78 @@ class ReservationControllerValidationTest {
                 ));
     }
 
+    /**
+     * <pre style="font-size: 11px;">
+     * 헤어샵 예약 상세 조회 api 정상 호출
+     * Given
+     * - 예약 id
+     * - 사용자 정보
+     * When: 예약 상세 조회 api 호출
+     * Then:
+     * - 예약 상세 정보 리턴
+     * </pre>
+     */
+    @WithMockUser(username = "abc@gmail.com")
+    @Test
+    void 헤어샵_예약_상세_조회_api_정상_호출() throws Exception {
+        // given
+        Long reservationId = 1L;
+
+        // given - collaborator
+        HairShopResponse hairShopResponse = HairShopResponse.builder()
+                .shopId(3L)
+                .shopName("헤어샵3")
+                .longitude("10.0")
+                .latitude("20.0")
+                .images(List.of("url1", "url2"))
+                .build();
+        when(hairShopReservationService.getReservation(reservationId, "abc@gmail.com")).thenReturn(
+                HairShopReservationResponse.builder()
+                        .reservationId(reservationId)
+                        .status(HairShopReservation.Status.RESERVED)
+                        .reservationTime(LocalDateTime.of(2024, 10, 19, 10, 0))
+                        .username("abc@gmail.com")
+                        .hairShopResponse(hairShopResponse)
+                        .build()
+        );
+
+        // when, then
+        mockMvc.perform(get("/api/reservations/{reservationId}", reservationId)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.reservationId").value(1))
+                .andExpect(jsonPath("$.username").value("abc@gmail.com"))
+                .andExpect(jsonPath("$.hairShopResponse.shopId").value(3))
+                .andExpect(jsonPath("$.reservationTime").value("2024-10-19T10:00"))
+                .andExpect(jsonPath("$.status").value("RESERVED"));
+    }
+
+    /**
+     * <pre style="font-size: 11px;">
+     * 헤어샵 예약 상세 조회 api 비정상 호출 - 예약 id 포맷 이상
+     * Given
+     * - 예약 id
+     * - 사용자 정보
+     * When: 예약 상세 조회 api 호출
+     * Then:
+     * - 예약 상세 정보 리턴
+     * </pre>
+     */
+    @WithMockUser(username = "abc@gmail.com")
+    @Test
+    void 헤어샵_예약_상세_조회_api_비정상_호출() throws Exception {
+        // given
+        String reservationId = "strange";
+
+        // when, then
+        mockMvc.perform(get("/api/reservations/{reservationId}", reservationId)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("CMM_ARGUMENT_TYPE_MISMATCH"))
+                .andExpect(jsonPath("$.message").value("전달된 값의 타입이 맞지 않습니다."))
+                .andExpect(jsonPath("$.errors.value").value("strange"))
+                .andExpect(jsonPath("$.errors.requiredType").value("java.lang.Long"));
+    }
 }
