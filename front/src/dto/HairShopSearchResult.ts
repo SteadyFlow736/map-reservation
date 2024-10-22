@@ -1,1 +1,1 @@
-type HairShopSearchResult = Page<HairShopDto>
+type HairShopSearchResult = Page<HairShopResponse>

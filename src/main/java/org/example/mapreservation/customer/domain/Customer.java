@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class Customer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Email
@@ -26,7 +27,9 @@ public class Customer {
     @Column(nullable = false)
     private String password;
 
-    public Customer(String email, String password) {
+    @Builder
+    public Customer(Long id, String email, String password) {
+        this.id = id;
         this.email = email;
         this.password = password;
     }

@@ -1,58 +1,123 @@
 package org.example.mapreservation.reservation.domain;
 
-import org.assertj.core.api.Assertions;
 import org.example.mapreservation.common.Address;
 import org.example.mapreservation.customer.domain.Customer;
 import org.example.mapreservation.exception.CustomException;
-import org.example.mapreservation.exception.ErrorCode;
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.example.mapreservation.owner.domain.Owner;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class HairShopReservationTest {
 
-    @DisplayName("예약 시간 마진 이전에 예약 취소 시도 시 예약 취소 가능")
-    @Test
-    void givenBeforeMargin_thenCancellable() {
-        // given
-        Owner owner = new Owner("이준");
-        HairShop hairShop = new HairShop("이준 헤어", new Address("성남대로123", "301호"), owner);
-        Customer customer = new Customer("abc@gmail.com", "12345678");
+    Customer customer;
+    HairShop hairShop;
 
-        LocalDateTime reservationDateTime = LocalDateTime.now().withSecond(0).withNano(0);
-        HairShopReservation hairShopReservation = new HairShopReservation(customer, hairShop, reservationDateTime);
-
-        // when - 예약 시간에서 정확히 마진을 남겨둔 시간에 예약 취소 시도
-        LocalDateTime currentDateTime = reservationDateTime.minusMinutes(HairShopReservation.CANCEL_MARGIN_MINUTES);
-
-        // then - 예약 취소 가능
-        assertDoesNotThrow(() -> hairShopReservation.cancel(currentDateTime));
+    @BeforeEach
+    void setUp() {
+        customer = Customer.builder()
+                .id(1L)
+                .email("abc@gmail.com")
+                .password("Password1!")
+                .build();
+        Owner owner = new Owner(1L, "주인1");
+        hairShop = HairShop.builder()
+                .id(1L)
+                .name("헤어샵1")
+                .address(new Address("도로주소", "상세주소"))
+                .owner(owner)
+                .longitude("10.0")
+                .latitude("20.0")
+                .imageUrls(List.of("url1", "url2", "url3"))
+                .build();
     }
 
-    @DisplayName("예약 시간 마진 이내에 예약 취소 시도 시 예약 취소 불가")
+    /**
+     * <pre style="font-size: 11px;">
+     * 헤어샵 예약 객체는 생성 시 상태가 "예약"이 된다.
+     * Given
+     * When: 헤어샵 예약 객체 생성
+     * Then: 헤어샵 예약 객체의 상태 프로퍼티가 "예약"
+     * </pre>
+     */
     @Test
-    void givenWithinMargin_thenNotCancellable() {
+    void 헤어샵_예약_객체는_생성_시_예약_상태가_된다() {
+        // when
+        HairShopReservation hairShopReservation = HairShopReservation.builder()
+                .customer(customer)
+                .hairShop(hairShop)
+                .reservationTime(LocalDateTime.now())
+                .build();
+
+        // then
+        assertThat(hairShopReservation.getReservationStatus()).isEqualTo(HairShopReservation.Status.RESERVED);
+    }
+
+    /**
+     * <pre style="font-size: 11px;">
+     * 헤어샵 예약 객체는 예약 시간 30분전까지만 예약 취소가 가능하다
+     * Given
+     * - 예약 객체의 예약 시간이 2024.10.16 17:30
+     * When: 예약 취소 메소드 호출
+     * - 예약 신청 시간이 2024.10.16 17:00 (예약 시간 30분 전)
+     * Then: 예약 취소 성공
+     * - 예약 객체의 상태 프로퍼티가 "취소됨"으로 변경
+     * </pre>
+     */
+    @Test
+    void 헤어샵_예약_객체는_예약_시간_30분전까지만_예약_취소가_가능하다() {
         // given
-        Owner owner = new Owner("이준");
-        HairShop hairShop = new HairShop("이준 헤어", new Address("성남대로123", "301호"), owner);
-        Customer customer = new Customer("abc@gmail.com", "12345678");
+        LocalDateTime reservationDateTime = LocalDateTime.of(2024, 10, 16, 17, 30);
 
-        LocalDateTime reservationDateTime = LocalDateTime.now().withSecond(0).withNano(0);
-        HairShopReservation hairShopReservation = new HairShopReservation(customer, hairShop, reservationDateTime);
+        HairShopReservation hairShopReservation = HairShopReservation.builder()
+                .customer(customer)
+                .hairShop(hairShop)
+                .reservationTime(reservationDateTime)
+                .build();
 
-        // when - 예약 취소 가능 시간을 1분 넘겼을 때 취소 시도
-        LocalDateTime currentDateTime = reservationDateTime.minusMinutes(HairShopReservation.CANCEL_MARGIN_MINUTES - 1);
+        // when
+        LocalDateTime currentDateTime = LocalDateTime.of(2024, 10, 16, 17, 0);
+        hairShopReservation.cancel(currentDateTime);
 
-        // then - 예약 취소 불가 예외 발생
-        CustomException expectedException = new CustomException(ErrorCode.HSR_OLD_RESERVATION_TIME_CANNOT_CANCEL,
-                String.format("최소 %s분 전에 취소할 수 있습니다.", HairShopReservation.CANCEL_MARGIN_MINUTES));
-        Assertions.assertThatThrownBy(() -> hairShopReservation.cancel(currentDateTime))
+        // then
+        assertThat(hairShopReservation.getReservationStatus()).isEqualTo(HairShopReservation.Status.CANCELLED);
+    }
+
+    /**
+     * <pre style="font-size: 11px;">
+     * 헤어샵 예약 객체는 예약 시간 29분부터는 예약 취소가 불가능하다
+     * Given
+     * - 예약 객체의 예약 시간이 2024.10.16 17:30
+     * When: 예약 취소 메소드 호출
+     * - 예약 신청 시간이 2024.10.16 17:01 (예약 시간 29분 전)
+     * Then: 예약 취소 성공
+     * - 예약 객체의 상태 프로퍼티가 여전히 "예약됨"으로 유지
+     * </pre>
+     */
+    @Test
+    void 헤어샵_예약_객체는_예약_시간_29분부터는_예약_취소가_불가능하다() {
+        // given
+        LocalDateTime reservationDateTime = LocalDateTime.of(2024, 10, 16, 17, 30);
+
+        HairShopReservation hairShopReservation = HairShopReservation.builder()
+                .customer(customer)
+                .hairShop(hairShop)
+                .reservationTime(reservationDateTime)
+                .build();
+
+        // when
+        LocalDateTime currentDateTime = LocalDateTime.of(2024, 10, 16, 17, 1);
+        assertThatThrownBy(() -> hairShopReservation.cancel(reservationDateTime))
                 .isInstanceOf(CustomException.class)
-                .hasMessage(String.format(expectedException.getCombinedMessage()));
+                .hasMessage("이미 지나간 예약이므로 취소할 수 없습니다.: 최소 30분 전에 취소할 수 있습니다.");
+
+        // then
+        assertThat(hairShopReservation.getReservationStatus()).isEqualTo(HairShopReservation.Status.RESERVED);
     }
+
 }

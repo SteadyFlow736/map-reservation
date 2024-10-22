@@ -1,8 +1,8 @@
 package org.example.mapreservation.auth;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mapreservation.customer.application.repository.CustomerRepository;
 import org.example.mapreservation.customer.domain.Customer;
-import org.example.mapreservation.customer.repository.CustomerRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

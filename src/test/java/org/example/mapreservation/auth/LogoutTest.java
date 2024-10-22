@@ -1,6 +1,5 @@
 package org.example.mapreservation.auth;
 
-import org.example.mapreservation.customer.service.CustomerService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ public class LogoutTest {
 
     @Autowired
     MockMvc mockMvc;
-    @Autowired
-    CustomerService customerService;
 
     @DisplayName("고객은 로그아웃할 수 있다.")
     @WithMockUser(username = "abc@gmail.com")

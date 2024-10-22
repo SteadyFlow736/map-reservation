@@ -1,7 +1,7 @@
 import {useSetAtom} from "jotai";
 import {selectedHairShopAtom} from "@/atoms";
 
-function StoreSummaryCard({storeSummary}: { storeSummary: HairShopDto }) {
+function StoreSummaryCard({storeSummary}: { storeSummary: HairShopResponse }) {
     const setSelectedHairShop = useSetAtom(selectedHairShopAtom)
 
     const selectShop = () => {
