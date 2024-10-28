@@ -3,9 +3,11 @@
 import Button from "@/components/Button";
 import Link from "next/link";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {signup} from "@/api/auth";
 import {useRouter} from "next/navigation";
 import {MapPinIcon} from "@heroicons/react/16/solid";
+import useSignUp from "@/hooks/useSignUp";
+import {AxiosError} from "axios";
+import {toast} from "react-toastify";
 
 type Inputs = {
     email: string
@@ -16,15 +18,20 @@ type Inputs = {
 function RegisterPage() {
     const {register, handleSubmit, watch, formState: {errors}} = useForm<Inputs>()
     const router = useRouter()
+    const mutation = useSignUp()
 
     const requestRegistry: SubmitHandler<Inputs> = async (data) => {
-        try {
-            await signup(data.email, data.password)
-            router.push("/login?result=success")
-        } catch (e) {
-            console.log("가입이 실패했습니다.")
-            console.log(e)
-        }
+        mutation.mutate({email: data.email, password: data.password}, {
+            onSuccess: () => {
+                router.push("/login?result=success")
+            },
+            onError: (e) => {
+                if (e instanceof AxiosError) {
+                    const customErrorResponse: CustomErrorResponse<any> = e.response?.data
+                    toast.error(customErrorResponse.message, {position: "bottom-center"})
+                }
+            }
+        })
     }
 
     return (
