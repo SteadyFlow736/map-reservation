@@ -3,13 +3,16 @@
 import {ChangeEvent, Suspense, useState} from "react";
 import Link from "next/link";
 import {useRouter, useSearchParams} from "next/navigation";
-import {login} from "@/api/auth";
 import {MapPinIcon} from "@heroicons/react/16/solid";
+import useLogin from "@/hooks/useLogin";
+import {AxiosError} from "axios";
+import {toast} from "react-toastify";
 
 function LoginPage() {
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const router = useRouter()
+    const login = useLogin()
 
     const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
         setEmail(event.target.value)
@@ -20,13 +23,15 @@ function LoginPage() {
     }
 
     const tryLogin = async (email: string, password: string) => {
-        try {
-            const result = await login(email, password)
-            console.log("로그인 성공", result)
-            router.push("/")
-        } catch (e) {
-            console.log("로그인 실패", e)
-        }
+        login.mutate({email, password}, {
+            onSuccess: () => router.push("/"),
+            onError: (e) => {
+                if (e instanceof AxiosError) {
+                    const error: CustomErrorResponse<any> = e.response?.data
+                    toast.error(error.message, {position: "bottom-center"})
+                }
+            }
+        })
     }
 
     return (
