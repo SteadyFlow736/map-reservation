@@ -2,7 +2,6 @@
 
 import useAuth from "@/hooks/useAuth";
 import {useRouter} from "next/navigation";
-import {logout} from "@/api/auth";
 import {useEffect} from "react";
 import {MapIcon} from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -12,6 +11,9 @@ import React from "react";
 import Time from "@/utils/Time";
 import InfiniteScroll from "react-infinite-scroller";
 import Loader from "@/components/Loaders/Loader";
+import useLogout from "@/hooks/useLogout";
+import {AxiosError} from "axios";
+import {toast} from "react-toastify";
 
 function UserPage() {
     const router = useRouter()
@@ -38,16 +40,19 @@ function UserPage() {
 
 function Bar({user}: { user: CustomerInfo }) {
     const router = useRouter()
+    const logout = useLogout()
 
     const handleLogoutClick = async () => {
-        try {
+        logout.mutate(undefined, {
             // TODO: logout 이후 query cache invalidate 하기
-            await logout()
-            router.push('/')
-        } catch (e) {
-            console.log(e)
-            console.log('error')
-        }
+            onSuccess: () => router.push('/'),
+            onError: (e) => {
+                if (e instanceof AxiosError) {
+                    const customErrorResponse: CustomErrorResponse<any> = e.response?.data
+                    toast.error(customErrorResponse.message, {position: "bottom-center"})
+                }
+            }
+        })
     }
 
     return (
