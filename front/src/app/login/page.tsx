@@ -1,6 +1,6 @@
 'use client'
 
-import {ChangeEvent, Suspense, useState} from "react";
+import React, {ChangeEvent, Suspense, useState} from "react";
 import Link from "next/link";
 import {useRouter, useSearchParams} from "next/navigation";
 import {MapPinIcon} from "@heroicons/react/16/solid";
@@ -22,9 +22,12 @@ function LoginPage() {
         setPassword(event.target.value)
     }
 
-    const tryLogin = async (email: string, password: string) => {
+    const tryLogin = (email: string, password: string) => {
         login.mutate({email, password}, {
-            onSuccess: () => router.push("/"),
+            onSuccess: () => {
+                toast.success("로그인 성공", {position: "bottom-center", autoClose: 300})
+                router.push("/")
+            },
             onError: (e) => {
                 if (e instanceof AxiosError) {
                     const error: CustomErrorResponse<any> = e.response?.data
@@ -32,6 +35,11 @@ function LoginPage() {
                 }
             }
         })
+    }
+
+    const handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key !== 'Enter') return
+        tryLogin(email, password)
     }
 
     return (
@@ -61,8 +69,9 @@ function LoginPage() {
                         />
                         <input
                             className="border p-3"
-                            type="text" value={password} onChange={handlePasswordChange}
+                            type="password" value={password} onChange={handlePasswordChange}
                             placeholder="비밀번호"
+                            onKeyDown={handleOnKeyDown}
                         />
                     </div>
 
