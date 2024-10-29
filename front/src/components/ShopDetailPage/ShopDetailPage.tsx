@@ -7,28 +7,24 @@ import {useContext, useEffect, useState} from "react";
 import Button from "@/components/Button";
 import {useAtomValue} from "jotai";
 import {ShopSubPageContext, SubPage} from "@/components/ShopDetailPage/ShopDetailWrapperPage";
-import {fetchShopDetail} from "@/api/hairShop";
 import ContainerLoader from "@/components/Loaders/ContainerLoader";
+import useShopDetail from "@/hooks/useShopDetail";
+import CustomError from "@/components/Loaders/CustomError";
 
 /**
  * 샵의 상세 정보를 보여주는 컴포넌트
  */
 function ShopDetailPage() {
     const selectedHairShop = useAtomValue(selectedHairShopAtom)
-    const [shopDetail, setShopDetail] = useState<HairShopDetail>()
+    const {data, status} = useShopDetail(selectedHairShop?.shopId)
 
-    useEffect(() => {
-        if (selectedHairShop) {
-            fetchShopDetail(selectedHairShop.shopId).then(response => setShopDetail(response))
-        }
-    }, [selectedHairShop])
-
-    if (!shopDetail) return <ContainerLoader/>
+    if (status == 'pending') return <ContainerLoader/>
+    if (status == 'error') return <CustomError/>
 
     return (
         <>
             <StickyNavBar/>
-            <ShopHead shopDetail={shopDetail}/>
+            <ShopHead shopDetail={data}/>
             {/* key를 전달함으로써 shopId가 변경될 때마다(다른 샵을 선택) ShopSubPage의 서브 페이지 상태를 리셋(홈)하도록 했다.
             https://react.dev/learn/managing-state#preserving-and-resetting-state */}
             <ShopSubPage key={selectedHairShop?.shopId}/>

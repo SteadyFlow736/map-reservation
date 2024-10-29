@@ -10,9 +10,10 @@ import {ArrowLeftIcon} from "@heroicons/react/24/outline";
 import {CheckCircleIcon, XMarkIcon} from "@heroicons/react/16/solid";
 import Time from "@/utils/Time";
 import {useAtomValue} from "jotai/index";
-import {fetchShopDetail} from "@/api/hairShop";
 import ContainerLoader from "@/components/Loaders/ContainerLoader";
 import useCancelHairShopReservation from "@/hooks/useCancelHairShopReservation";
+import useShopDetail from "@/hooks/useShopDetail";
+import CustomError from "@/components/Loaders/CustomError";
 
 interface ReservationSuccessPageProps {
     reservationId: number
@@ -86,24 +87,19 @@ function Banner() {
  */
 function SuccessInfo() {
     const selectedHairShop = useAtomValue(selectedHairShopAtom)
-    const [selectShopDetail, setSelectShopDetail] = useState<HairShopDetail>()
     const {selectedTimeSlot} = useContext(TimeSlotContext)
-
-    useEffect(() => {
-        if (selectedHairShop?.shopId) {
-            fetchShopDetail(selectedHairShop.shopId).then(shopDetail => setSelectShopDetail(shopDetail))
-        }
-    }, [selectedHairShop]);
+    const {data, status} = useShopDetail(selectedHairShop?.shopId)
 
     if (!selectedTimeSlot) return null
-    if (!selectShopDetail) return <ContainerLoader/>
+    if (status == 'pending') return <ContainerLoader/>
+    if (status == 'error') return <CustomError/>
 
     return (
         <div className="p-3">
             <div className="rounded-xl border-2 border-black p-3 mt-3">
                 <div>
                     <span className="mr-3 text-gray-300">헤어샵</span>
-                    <span>{selectShopDetail.shopName}</span>
+                    <span>{data.shopName}</span>
                 </div>
                 <div>
                     <span className="mr-3 text-gray-300">일정</span>
