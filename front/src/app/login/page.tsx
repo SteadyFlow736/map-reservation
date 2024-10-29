@@ -37,7 +37,7 @@ function LoginPage() {
         })
     }
 
-    const handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleOnKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key !== 'Enter') return
         tryLogin(email, password)
     }

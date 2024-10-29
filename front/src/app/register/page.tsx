@@ -16,11 +16,11 @@ type Inputs = {
 }
 
 function RegisterPage() {
-    const {register, handleSubmit, watch, formState: {errors}} = useForm<Inputs>()
+    const {register, handleSubmit, watch, formState: {errors}} = useForm<Inputs>({mode: 'onTouched'})
     const router = useRouter()
     const mutation = useSignUp()
 
-    const requestRegistry: SubmitHandler<Inputs> = async (data) => {
+    const requestRegistry: SubmitHandler<Inputs> = (data) => {
         mutation.mutate({email: data.email, password: data.password}, {
             onSuccess: () => {
                 router.push("/login?result=success")
@@ -51,20 +51,44 @@ function RegisterPage() {
                     {/* email, password 입력 인풋*/}
                     <div className="grid grid-cols1 p-5">
                         <input
-                            {...register('email', {required: true})}
+                            {...register('email', {
+                                required: "이메일을 입력해 주세요.",
+                                pattern: {
+                                    value: /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/,
+                                    message: "올바른 형식의 이메일을 입력해 주세요."
+                                }
+                            })}
                             className="border border-b-0 p-3"
                             placeholder="이메일"
                         />
+                        {errors.email && <p className="text-red-600 mb-2">{errors.email.message}</p>}
+
                         <input
-                            {...register('password', {required: true})}
+                            {...register('password', {
+                                required: "비밀번호를 입력해 주세요.",
+                                pattern: {
+                                    value: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/,
+                                    message: "비밀번호: 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용해 주세요."
+                                }
+                            })}
                             className="border border-b-0 p-3"
                             placeholder="비밀번호"
+                            type="password"
                         />
+                        {errors.password && <p className="text-red-600 mb-2">{errors.password.message}</p>}
                         <input
-                            {...register('confirmPassword', {required: true})}
+                            {...register('confirmPassword', {
+                                required: '비밀번호와 동일하게 입력해 주세요.',
+                                validate: {
+                                    matching: value =>
+                                        value === watch('password') || '비밀번호와 동일하게 입력해 주세요.',
+                                },
+                            })}
                             className="border p-3"
                             placeholder="비밀번호 확인"
+                            type="password"
                         />
+                        {errors.confirmPassword && <p className="text-red-600">{errors.confirmPassword.message}</p>}
                     </div>
 
                     {/* 회원가입 버튼 */}
