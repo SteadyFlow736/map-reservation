@@ -5,6 +5,7 @@ import org.example.mapreservation.hairshop.application.repository.HairShopReposi
 import org.example.mapreservation.hairshop.domain.HairShop;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -21,5 +22,10 @@ public class HairShopRepositoryImpl implements HairShopRepository {
     @Override
     public Optional<HairShop> findById(Long hairShopId) {
         return hairShopJpaRepository.findById(hairShopId);
+    }
+
+    @Override
+    public List<HairShop> saveAll(List<HairShop> hairShops) {
+        return hairShopJpaRepository.saveAll(hairShops);
     }
 }
