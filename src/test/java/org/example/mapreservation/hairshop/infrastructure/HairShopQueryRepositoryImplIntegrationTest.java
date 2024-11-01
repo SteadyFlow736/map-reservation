@@ -49,7 +49,9 @@ class HairShopQueryRepositoryImplIntegrationTest {
         ));
 
         // given - 검색 조건 설정
-        HairShopSearchCondition condition = new HairShopSearchCondition("헤어");
+        HairShopSearchCondition condition = HairShopSearchCondition.builder()
+                .searchTerm("헤어")
+                .build();
         Pageable pageable = PageRequest.of(1, 3,
                 Sort.by(Sort.Direction.DESC, "name")
         );

@@ -4,17 +4,17 @@ import {instance} from "@/config/axios";
 /**
  * 헤어샵 검색 질의 API
  *
- * @param searchTerm 검색어
+ * @param searchCondition 검색 조건
  * @param pageable 페이지 설정
  */
 export async function fetchSearchResult(
-    searchTerm: string,
+    searchCondition: HairShopSearchCondition,
     pageable: Pageable = {size: 10, page: 0, sort: ['name,asc']}):
     Promise<HairShopSearchResult> {
 
     const {data} = await instance.get("/api/hairshop", {
         params: {
-            searchTerm,
+            ...searchCondition,
             ...pageable,
         }
     })

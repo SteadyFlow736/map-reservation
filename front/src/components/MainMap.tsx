@@ -1,11 +1,9 @@
 import Script from "next/script";
-import {useAtomValue} from "jotai";
-import {hairShopSearchResultAtom, selectedHairShopAtom} from "@/atoms";
+import {useAtomValue, useSetAtom} from "jotai";
+import {hairShopSearchResultAtom, MapBounds, mapBoundsAtom, selectedHairShopAtom} from "@/atoms";
 import {useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
 import {naver_map_client_id} from "@/envs";
-import ShopDetailColumn from "@/components/ShopDetailColumn";
-import SearchColumn from "@/components/SearchColumn";
 
 // 보존될 필요가 있는 상태지만, 그 변화가 화면 렌더링을 트리거 하지 않음
 const markerMap = new Map<number, naver.maps.Marker>()
@@ -22,6 +20,23 @@ function MainMap() {
     const [map, setMap] = useState<naver.maps.Map>()
     const hairShopSearchResult = useAtomValue(hairShopSearchResultAtom);
     const [selectedHairShop, setSelectedHairShop] = useAtom(selectedHairShopAtom)
+    const setMapBound = useSetAtom(mapBoundsAtom)
+
+    const mapBoundsFrom = (bounds: naver.maps.Bounds): MapBounds => {
+        return {
+            minLongitude: bounds.minX(),
+            maxLongitude: bounds.maxX(),
+            minLatitude: bounds.minY(),
+            maxLatitude: bounds.maxY()
+        }
+    }
+
+    // 지도의 bounds가 변경될 때마다 새로운 bounds를 atom에 업데이트 하도록 하는 이벤트 리스터 등록
+    const addBoundsChangeEventListener = (map: naver.maps.Map) => {
+        map.addListener("bounds_changed", (event: naver.maps.Bounds) => {
+            setMapBound(mapBoundsFrom(event))
+        })
+    }
 
     /**
      * shop의 마커 html 리턴
@@ -29,7 +44,7 @@ function MainMap() {
      * @param shopName 표시될 shop 이름
      */
     const getMarker = (shopName: string) => `
-    <svg width="50px" height="50px" viewBox="0 0 1024 1024" class="icon"  version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <svg width="50px" height="50px" viewBox="0 0 1024 1024" class="icon"  xmlns="http://www.w3.org/2000/svg">
         <path d="M512 85.333333c-164.949333 0-298.666667 133.738667-298.666667 298.666667 0 164.949333 298.666667 554.666667 298.666667 554.666667s298.666667-389.717333 298.666667-554.666667c0-164.928-133.717333-298.666667-298.666667-298.666667z m0 448a149.333333 149.333333 0 1 1 0-298.666666 149.333333 149.333333 0 0 1 0 298.666666z" fill="#FF3D00" />
     </svg>
     <p class="">${shopName}</p>
@@ -110,6 +125,8 @@ function MainMap() {
                         },
                     };
                     const map = new naver.maps.Map("map", mapOptions)
+                    addBoundsChangeEventListener(map)
+                    setMapBound(mapBoundsFrom(map.getBounds()))
                     setMap(map)
                 }}
             />

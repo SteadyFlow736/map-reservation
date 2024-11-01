@@ -117,7 +117,9 @@ public class HairShopServiceImplTest {
     void 헤어샵을_페이지_검색할_수_있다() {
         // given
         String searchTerm = "헤어샵";
-        HairShopSearchCondition searchCondition = new HairShopSearchCondition(searchTerm);
+        HairShopSearchCondition searchCondition = HairShopSearchCondition.builder()
+                .searchTerm(searchTerm)
+                .build();
 
         int pageNumber = 0;
         int pageSize = 2;

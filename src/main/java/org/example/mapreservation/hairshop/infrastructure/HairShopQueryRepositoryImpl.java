@@ -1,5 +1,6 @@
 package org.example.mapreservation.hairshop.infrastructure;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -35,11 +36,11 @@ public class HairShopQueryRepositoryImpl implements HairShopQueryRepository {
      * @return 페이징된 결과
      */
     public Page<HairShop> search(HairShopSearchCondition searchCondition, Pageable pageable) {
+        BooleanBuilder where = getWhere(searchCondition);
+
         JPAQuery<HairShop> query = queryFactory
                 .selectFrom(hairShop)
-                .where(
-                        hairShopNameLikeExpression(searchCondition.searchTerm())
-                )
+                .where(where)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
         for (Sort.Order o : pageable.getSort()) {
@@ -56,14 +57,39 @@ public class HairShopQueryRepositoryImpl implements HairShopQueryRepository {
         JPAQuery<Long> countQuery = queryFactory
                 .select(hairShop.count())
                 .from(hairShop)
-                .where(
-                        hairShopNameLikeExpression(searchCondition.searchTerm())
-                );
+                .where(where);
 
         return PageableExecutionUtils.getPage(hairShops, pageable, countQuery::fetchOne);
     }
 
-    private BooleanExpression hairShopNameLikeExpression(String hairShopName) {
+    private BooleanBuilder getWhere(HairShopSearchCondition searchCondition) {
+        BooleanBuilder builder = new BooleanBuilder();
+        builder
+                .and(hairShopNameLike(searchCondition.searchTerm()))
+                .and(minLongitude(searchCondition.minLongitude()))
+                .and(maxLongitude(searchCondition.maxLongitude()))
+                .and(minLatitude(searchCondition.minLatitude()))
+                .and(maxLatitude(searchCondition.maxLatitude()));
+        return builder;
+    }
+
+    private BooleanExpression hairShopNameLike(String hairShopName) {
         return isEmpty(hairShopName) ? null : hairShop.name.contains(hairShopName);
+    }
+
+    private BooleanExpression minLongitude(String longitude) {
+        return isEmpty(longitude) ? null : hairShop.longitude.goe(longitude);
+    }
+
+    private BooleanExpression maxLongitude(String longitude) {
+        return isEmpty(longitude) ? null : hairShop.longitude.loe(longitude);
+    }
+
+    private BooleanExpression minLatitude(String latitude) {
+        return isEmpty(latitude) ? null : hairShop.latitude.goe(latitude);
+    }
+
+    private BooleanExpression maxLatitude(String latitude) {
+        return isEmpty(latitude) ? null : hairShop.latitude.loe(latitude);
     }
 }

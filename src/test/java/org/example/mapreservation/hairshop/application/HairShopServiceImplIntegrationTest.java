@@ -103,7 +103,9 @@ class HairShopServiceImplIntegrationTest {
         hairShopRepository.saveAll(contents);
 
         String searchTerm = "헤어샵";
-        HairShopSearchCondition searchCondition = new HairShopSearchCondition(searchTerm);
+        HairShopSearchCondition searchCondition = HairShopSearchCondition.builder()
+                .searchTerm(searchTerm)
+                .build();
 
         int pageNumber = 0;
         int pageSize = 2;
