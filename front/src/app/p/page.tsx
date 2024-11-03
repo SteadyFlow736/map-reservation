@@ -1,6 +1,6 @@
 'use client'
 
-import SearchColumn from "@/components/SearchColumn";
+import SearchColumn from "@/components/SearchColumn/SearchColumn";
 import MainMap from "@/components/MainMap";
 import ShopDetailColumn from "@/components/ShopDetailColumn";
 import MainNav from "@/components/MainNav";
