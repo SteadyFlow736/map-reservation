@@ -3,6 +3,7 @@ import SearchResultList from "@/components/SearchColumn/SearchResultList";
 import SearchPagination from "@/components/SearchColumn/SearchPagination";
 
 function SearchColumn() {
+
     return (
         <div className="
         w-96 z-20
