@@ -1,6 +1,6 @@
 import Script from "next/script";
 import {useAtomValue, useSetAtom} from "jotai";
-import {hairShopSearchResultAtom, MapBounds, mapBoundsAtom, selectedHairShopAtom} from "@/atoms";
+import {hairShopSearchResponseAtom, MapBounds, mapBoundsAtom, selectedHairShopAtom} from "@/atoms";
 import {useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
 import {naver_map_client_id} from "@/envs";
@@ -18,7 +18,7 @@ function getCoordMovedBy(position: naver.maps.Coord, xPixel: number, yPixel: num
 
 function MainMap() {
     const [map, setMap] = useState<naver.maps.Map>()
-    const hairShopSearchResult = useAtomValue(hairShopSearchResultAtom);
+    const hairShopSearchResponse = useAtomValue(hairShopSearchResponseAtom);
     const [selectedHairShop, setSelectedHairShop] = useAtom(selectedHairShopAtom)
     const setMapBound = useSetAtom(mapBoundsAtom)
 
@@ -54,8 +54,8 @@ function MainMap() {
     useEffect(() => {
         markerMap.forEach(m => m.setMap(null))
         markerMap.clear()
-        if (map && hairShopSearchResult) {
-            hairShopSearchResult.content.forEach(dto => {
+        if (map && hairShopSearchResponse) {
+            hairShopSearchResponse.page.content.forEach(dto => {
                 const latitude = parseFloat(dto.latitude)
                 const longitude = parseFloat(dto.longitude)
                 const marker = new naver.maps.Marker({
@@ -75,7 +75,7 @@ function MainMap() {
                 markerMap.set(dto.shopId, marker)
             })
         }
-    }, [map, hairShopSearchResult, setSelectedHairShop])
+    }, [map, hairShopSearchResponse, setSelectedHairShop])
 
     // 지도 중심 변경을 위한 useEffect: 선택된 marker로 지도 중심 변경
     useEffect(() => {

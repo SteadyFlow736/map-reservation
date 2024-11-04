@@ -1,6 +1,6 @@
 import {atom} from "jotai";
 
-export const hairShopSearchResultAtom = atom<HairShopSearchResult>()
+export const hairShopSearchResponseAtom = atom<HairShopSearchResponse>()
 export const selectedHairShopAtom = atom<SelectedHairShopIdAtom>()
 export const mapBoundsAtom = atom<MapBounds>()
 

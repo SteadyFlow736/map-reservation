@@ -1,10 +1,10 @@
 import StoreSummaryCard from "@/components/StoreSummaryCard";
-import {hairShopSearchResultAtom} from "@/atoms";
+import {hairShopSearchResponseAtom} from "@/atoms";
 import {useAtomValue} from "jotai";
 
 function SearchResultList() {
-    const searchResult = useAtomValue(hairShopSearchResultAtom)
-    const data = searchResult?.content
+    const hairShopSearchResponse = useAtomValue(hairShopSearchResponseAtom)
+    const data = hairShopSearchResponse?.page.content
 
     return (
         <div className="overflow-y-auto divide-y">

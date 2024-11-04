@@ -1,11 +1,11 @@
 import React, {useState} from "react";
-import {hairShopSearchResultAtom, mapBoundsAtom} from "@/atoms";
+import {hairShopSearchResponseAtom, mapBoundsAtom} from "@/atoms";
 import {fetchSearchResult} from "@/api/hairShop";
 import {useAtomValue, useSetAtom} from "jotai";
 
 function SearchBar() {
     const [searchTerm, setSearchTerm] = useState("");
-    const setSearchResult = useSetAtom(hairShopSearchResultAtom)
+    const setHairShopSearchResponse = useSetAtom(hairShopSearchResponseAtom)
     const mapBounds = useAtomValue(mapBoundsAtom)
 
     const handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -22,7 +22,7 @@ function SearchBar() {
             maxLatitude: mapBounds?.maxLatitude.toString()
         }
         const data = await fetchSearchResult(searchCondition)
-        setSearchResult(data)
+        setHairShopSearchResponse(data)
     }
 
     return (
