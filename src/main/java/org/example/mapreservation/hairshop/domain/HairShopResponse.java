@@ -10,7 +10,9 @@ public record HairShopResponse(
         String shopName,
         String latitude,
         String longitude,
-        List<String> images
+        List<String> images,
+        String roadAddress,
+        String detailAddress
 ) {
     public static HairShopResponse from(HairShop hairShop) {
         return new HairShopResponse(
@@ -18,6 +20,9 @@ public record HairShopResponse(
                 hairShop.getName(),
                 hairShop.getLatitude(),
                 hairShop.getLongitude(),
-                hairShop.getImageUrls());
+                hairShop.getImageUrls(),
+                hairShop.getAddress().getRoadAddress(),
+                hairShop.getAddress().getDetailAddress()
+        );
     }
 }

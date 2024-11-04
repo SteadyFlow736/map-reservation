@@ -86,11 +86,12 @@ function MainMap() {
                 const position = marker.getPosition()
                 const xPixelsFromLeftToCenter = window.innerWidth / 2
                 // "app/p/page.tsx"에서 아래 pixel 확인 가능
-                const widthShopDetailColumnInPixel = 384
+                const widthMainNavInPixel = 56
                 const widthSearchColumnInPixel = 384
+                const widthShopDetailColumnInPixel = 384
                 const widthGapInPixel = 12
                 const xPixelsFromLeftToRemainingCenter =
-                    (window.innerWidth - (widthSearchColumnInPixel + widthShopDetailColumnInPixel + widthGapInPixel)) / 2
+                    (window.innerWidth - (widthMainNavInPixel + widthSearchColumnInPixel + widthShopDetailColumnInPixel + widthGapInPixel)) / 2
                 const xDiff = xPixelsFromLeftToRemainingCenter - xPixelsFromLeftToCenter
                 const newPosition = getCoordMovedBy(position, xDiff, 0, map)
                 map.panTo(newPosition)
