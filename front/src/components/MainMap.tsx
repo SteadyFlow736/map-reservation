@@ -1,6 +1,6 @@
 import Script from "next/script";
 import {useAtomValue, useSetAtom} from "jotai";
-import {hairShopSearchResultAtom, MapBounds, mapBoundsAtom, selectedHairShopAtom} from "@/atoms";
+import {hairShopSearchResponseAtom, MapBounds, mapBoundsAtom, selectedHairShopAtom} from "@/atoms";
 import {useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
 import {naver_map_client_id} from "@/envs";
@@ -10,15 +10,28 @@ const markerMap = new Map<number, naver.maps.Marker>()
 let prevMarker: naver.maps.Marker | undefined = undefined
 
 // Coord를 x, y 픽셀만큼 옮긴 Coord를 리턴
-function getCoordMovedBy(position: naver.maps.Coord, xPixel: number, yPixel: number, map: naver.maps.Map) {
-    const offset = map.getProjection().fromCoordToOffset(position)
-    const newPoint = new naver.maps.Point(offset.x + xPixel, offset.y + yPixel)
-    return map.getProjection().fromOffsetToCoord(newPoint)
-}
+const getCoordMovedBy =
+    (position: naver.maps.Coord, xPixel: number, yPixel: number, map: naver.maps.Map) => {
+        const offset = map.getProjection().fromCoordToOffset(position)
+        const newPoint = new naver.maps.Point(offset.x + xPixel, offset.y + yPixel)
+        return map.getProjection().fromOffsetToCoord(newPoint)
+    }
+
+/**
+ * shop의 마커 html 리턴
+ * svg 출처: https://www.svgrepo.com/svg/476893/marker
+ * @param shopName 표시될 shop 이름
+ */
+const getMarker = (shopName: string) => `
+    <svg width="50px" height="50px" viewBox="0 0 1024 1024" class="icon"  xmlns="http://www.w3.org/2000/svg">
+        <path d="M512 85.333333c-164.949333 0-298.666667 133.738667-298.666667 298.666667 0 164.949333 298.666667 554.666667 298.666667 554.666667s298.666667-389.717333 298.666667-554.666667c0-164.928-133.717333-298.666667-298.666667-298.666667z m0 448a149.333333 149.333333 0 1 1 0-298.666666 149.333333 149.333333 0 0 1 0 298.666666z" fill="#FF3D00" />
+    </svg>
+    <p class="">${shopName}</p>
+    `
 
 function MainMap() {
     const [map, setMap] = useState<naver.maps.Map>()
-    const hairShopSearchResult = useAtomValue(hairShopSearchResultAtom);
+    const hairShopSearchResponse = useAtomValue(hairShopSearchResponseAtom);
     const [selectedHairShop, setSelectedHairShop] = useAtom(selectedHairShopAtom)
     const setMapBound = useSetAtom(mapBoundsAtom)
 
@@ -38,33 +51,21 @@ function MainMap() {
         })
     }
 
-    /**
-     * shop의 마커 html 리턴
-     * svg 출처: https://www.svgrepo.com/svg/476893/marker
-     * @param shopName 표시될 shop 이름
-     */
-    const getMarker = (shopName: string) => `
-    <svg width="50px" height="50px" viewBox="0 0 1024 1024" class="icon"  xmlns="http://www.w3.org/2000/svg">
-        <path d="M512 85.333333c-164.949333 0-298.666667 133.738667-298.666667 298.666667 0 164.949333 298.666667 554.666667 298.666667 554.666667s298.666667-389.717333 298.666667-554.666667c0-164.928-133.717333-298.666667-298.666667-298.666667z m0 448a149.333333 149.333333 0 1 1 0-298.666666 149.333333 149.333333 0 0 1 0 298.666666z" fill="#FF3D00" />
-    </svg>
-    <p class="">${shopName}</p>
-    `
-
     // marker 생성을 위한 useEffect: 검색된 헤어샵 리스트의 marker 생성
     useEffect(() => {
         markerMap.forEach(m => m.setMap(null))
         markerMap.clear()
-        if (map && hairShopSearchResult) {
-            hairShopSearchResult.content.forEach(dto => {
+        if (map && hairShopSearchResponse) {
+            hairShopSearchResponse.page.content.forEach(dto => {
                 const latitude = parseFloat(dto.latitude)
                 const longitude = parseFloat(dto.longitude)
                 const marker = new naver.maps.Marker({
                     position: new naver.maps.LatLng(latitude, longitude),
                     clickable: true,
                     map,
-                    icon: {
-                        content: getMarker(dto.shopName)
-                    }
+                    // icon: {
+                    //     content: getMarker(dto.shopName)
+                    // }
                 })
                 naver.maps.Event.addListener(marker, 'click', (_) => {
                     setSelectedHairShop({
@@ -75,7 +76,7 @@ function MainMap() {
                 markerMap.set(dto.shopId, marker)
             })
         }
-    }, [map, hairShopSearchResult, setSelectedHairShop])
+    }, [map, hairShopSearchResponse, setSelectedHairShop])
 
     // 지도 중심 변경을 위한 useEffect: 선택된 marker로 지도 중심 변경
     useEffect(() => {
@@ -85,11 +86,12 @@ function MainMap() {
                 const position = marker.getPosition()
                 const xPixelsFromLeftToCenter = window.innerWidth / 2
                 // "app/p/page.tsx"에서 아래 pixel 확인 가능
-                const widthShopDetailColumnInPixel = 384
+                const widthMainNavInPixel = 56
                 const widthSearchColumnInPixel = 384
+                const widthShopDetailColumnInPixel = 384
                 const widthGapInPixel = 12
                 const xPixelsFromLeftToRemainingCenter =
-                    (window.innerWidth - (widthSearchColumnInPixel + widthShopDetailColumnInPixel + widthGapInPixel)) / 2
+                    (window.innerWidth - (widthMainNavInPixel + widthSearchColumnInPixel + widthShopDetailColumnInPixel + widthGapInPixel)) / 2
                 const xDiff = xPixelsFromLeftToRemainingCenter - xPixelsFromLeftToCenter
                 const newPosition = getCoordMovedBy(position, xDiff, 0, map)
                 map.panTo(newPosition)

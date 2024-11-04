@@ -25,7 +25,7 @@ function LoginPage() {
     const tryLogin = (email: string, password: string) => {
         login.mutate({email, password}, {
             onSuccess: () => {
-                toast.success("로그인 성공", {position: "bottom-center", autoClose: 300})
+                toast.success("로그인 성공", {position: "bottom-center", autoClose: 1000})
                 router.push("/")
             },
             onError: (e) => {

@@ -16,7 +16,8 @@ function StoreSummaryCard({storeSummary}: { storeSummary: HairShopResponse }) {
             className="p-4 hover:cursor-pointer hover:bg-gray-200"
             onClick={selectShop}
         >
-            <p>{storeSummary.shopName}</p>
+            <p className="text-blue-500">{storeSummary.shopName}</p>
+            <p>{storeSummary.roadAddress}</p>
         </div>
     )
 }

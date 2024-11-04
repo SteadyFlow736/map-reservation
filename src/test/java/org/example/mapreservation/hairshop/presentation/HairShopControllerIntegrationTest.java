@@ -60,13 +60,14 @@ class HairShopControllerIntegrationTest {
                         .with(csrf())
                 )
                 .andDo(print())
-                .andExpect(jsonPath("$.totalElements").value(5))
-                .andExpect(jsonPath("$.totalPages").value(2))
-                .andExpect(jsonPath("$.size").value(3))
-                .andExpect(jsonPath("$.numberOfElements").value(2))
-                .andExpect(jsonPath("$.content.size()").value(2))
-                .andExpect(jsonPath("$.content[0].shopName").value("헤어샵2"))
-                .andExpect(jsonPath("$.content[1].shopName").value("헤어샵1"));
+                .andExpect(jsonPath("$.page.totalElements").value(5))
+                .andExpect(jsonPath("$.page.totalPages").value(2))
+                .andExpect(jsonPath("$.page.size").value(3))
+                .andExpect(jsonPath("$.page.numberOfElements").value(2))
+                .andExpect(jsonPath("$.page.content.size()").value(2))
+                .andExpect(jsonPath("$.page.content[0].shopName").value("헤어샵2"))
+                .andExpect(jsonPath("$.page.content[1].shopName").value("헤어샵1"))
+                .andExpect(jsonPath("$.searchCondition.searchTerm").value("헤어"));
     }
 
     @Test

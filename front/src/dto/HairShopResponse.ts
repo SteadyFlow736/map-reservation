@@ -4,4 +4,6 @@ type HairShopResponse = {
     latitude: string
     longitude: string
     imageUrls: string[]
+    roadAddress: string
+    detailAddress: string
 }

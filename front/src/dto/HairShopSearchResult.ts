@@ -1,1 +1,0 @@
-type HairShopSearchResult = Page<HairShopResponse>
