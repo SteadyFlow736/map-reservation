@@ -10,11 +10,24 @@ const markerMap = new Map<number, naver.maps.Marker>()
 let prevMarker: naver.maps.Marker | undefined = undefined
 
 // Coord를 x, y 픽셀만큼 옮긴 Coord를 리턴
-function getCoordMovedBy(position: naver.maps.Coord, xPixel: number, yPixel: number, map: naver.maps.Map) {
-    const offset = map.getProjection().fromCoordToOffset(position)
-    const newPoint = new naver.maps.Point(offset.x + xPixel, offset.y + yPixel)
-    return map.getProjection().fromOffsetToCoord(newPoint)
-}
+const getCoordMovedBy =
+    (position: naver.maps.Coord, xPixel: number, yPixel: number, map: naver.maps.Map) => {
+        const offset = map.getProjection().fromCoordToOffset(position)
+        const newPoint = new naver.maps.Point(offset.x + xPixel, offset.y + yPixel)
+        return map.getProjection().fromOffsetToCoord(newPoint)
+    }
+
+/**
+ * shop의 마커 html 리턴
+ * svg 출처: https://www.svgrepo.com/svg/476893/marker
+ * @param shopName 표시될 shop 이름
+ */
+const getMarker = (shopName: string) => `
+    <svg width="50px" height="50px" viewBox="0 0 1024 1024" class="icon"  xmlns="http://www.w3.org/2000/svg">
+        <path d="M512 85.333333c-164.949333 0-298.666667 133.738667-298.666667 298.666667 0 164.949333 298.666667 554.666667 298.666667 554.666667s298.666667-389.717333 298.666667-554.666667c0-164.928-133.717333-298.666667-298.666667-298.666667z m0 448a149.333333 149.333333 0 1 1 0-298.666666 149.333333 149.333333 0 0 1 0 298.666666z" fill="#FF3D00" />
+    </svg>
+    <p class="">${shopName}</p>
+    `
 
 function MainMap() {
     const [map, setMap] = useState<naver.maps.Map>()
@@ -38,18 +51,6 @@ function MainMap() {
         })
     }
 
-    /**
-     * shop의 마커 html 리턴
-     * svg 출처: https://www.svgrepo.com/svg/476893/marker
-     * @param shopName 표시될 shop 이름
-     */
-    const getMarker = (shopName: string) => `
-    <svg width="50px" height="50px" viewBox="0 0 1024 1024" class="icon"  xmlns="http://www.w3.org/2000/svg">
-        <path d="M512 85.333333c-164.949333 0-298.666667 133.738667-298.666667 298.666667 0 164.949333 298.666667 554.666667 298.666667 554.666667s298.666667-389.717333 298.666667-554.666667c0-164.928-133.717333-298.666667-298.666667-298.666667z m0 448a149.333333 149.333333 0 1 1 0-298.666666 149.333333 149.333333 0 0 1 0 298.666666z" fill="#FF3D00" />
-    </svg>
-    <p class="">${shopName}</p>
-    `
-
     // marker 생성을 위한 useEffect: 검색된 헤어샵 리스트의 marker 생성
     useEffect(() => {
         markerMap.forEach(m => m.setMap(null))
@@ -62,9 +63,9 @@ function MainMap() {
                     position: new naver.maps.LatLng(latitude, longitude),
                     clickable: true,
                     map,
-                    icon: {
-                        content: getMarker(dto.shopName)
-                    }
+                    // icon: {
+                    //     content: getMarker(dto.shopName)
+                    // }
                 })
                 naver.maps.Event.addListener(marker, 'click', (_) => {
                     setSelectedHairShop({

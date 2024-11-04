@@ -8,7 +8,7 @@ function SearchResultList() {
 
     return (
         <div className="overflow-y-auto divide-y">
-            {data?.map(s => <StoreSummaryCard key={s.shopName} storeSummary={s}/>)}
+            {data?.map(s => <StoreSummaryCard key={s.shopId} storeSummary={s}/>)}
         </div>
     )
 }

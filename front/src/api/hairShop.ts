@@ -9,8 +9,8 @@ import {instance} from "@/config/axios";
  */
 export async function fetchSearchResult(
     searchCondition: HairShopSearchCondition,
-    pageable: Pageable = {size: 10, page: 0, sort: ['name,asc']}):
-    Promise<HairShopSearchResult> {
+    pageable: Pageable = {size: 100, page: 0, sort: ['name,asc']}):
+    Promise<HairShopSearchResponse> {
 
     const {data} = await instance.get("/api/hairshop", {
         params: {
