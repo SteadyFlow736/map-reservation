@@ -1,21 +1,14 @@
 services:
-  db:
-    image: mysql:8.0.39
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: map-reservation
-    ports:
-      - "3306:3306"
   api-server:
     image: ${API_SERVER_IMAGE_NAME}
-    depends_on:
-      - db
     ports:
       - "8080:8080"
     environment:
-      # docker network 내의 db 호스트로 연결
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/map-reservation
+      SPRING_PROFILES_ACTIVE: prod
+      # datasource properties
+      SPRING_DATASOURCE_URL: ${DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       # naver maps properties
       NAVER-MAPS_API-KEY-ID: ${NAVER_MAPS_API_KEY_ID}
       NAVER-MAPS_API-KEY: ${NAVER_MAPS_API_KEY}

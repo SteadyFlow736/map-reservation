@@ -1,7 +1,18 @@
+#  messages:
+#    basename: validation
+#logging:
+#  level:
+#    org.hibernate:
+#        SQL: DEBUG
+#        type:
+#          descriptor:
+#            sql:
+#              BasicBinder: TRACE
+---
 spring:
-  profiles:
-    active: local
   config:
+    activate:
+      on-profile: local
     import:
       - optional:classpath:application-naver-maps.yml
       - optional:classpath:application-cors.yml
@@ -21,13 +32,13 @@ spring:
     redis:
       host: localhost
       port: 6380
-#  messages:
-#    basename: validation
-#logging:
-#  level:
-#    org.hibernate:
-#        SQL: DEBUG
-#        type:
-#          descriptor:
-#            sql:
-#              BasicBinder: TRACE
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
