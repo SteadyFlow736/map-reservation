@@ -40,6 +40,9 @@ public class HairShopReservationServiceImpl implements HairShopReservationServic
     private final TransactionTemplate transactionTemplate;
     private final TimeProvider timeProvider;
 
+    /**
+     * 분산락 적용으로 동시에 같은 헤어샵, 같은 시간에 예약이 되지 않도록 처리.
+     */
     @Override
     public HairShopReservationCreateResponse createReservation(
             Long shopId, String username, HairShopReservationCreateRequest request) {
@@ -103,15 +106,20 @@ public class HairShopReservationServiceImpl implements HairShopReservationServic
     @Transactional
     @Override
     public void cancelReservation(Long reservationId, String username, LocalDateTime currentDateTime) {
+        // TODO: currentDateTime을 TimeProvider로 처리하기
         HairShopReservation hairShopReservation = hairShopReservationRepository.findByIdAndCustomerEmail(reservationId, username)
                 .orElseThrow(() -> new CustomException(ErrorCode.HSR_NOT_FOUND));
 
         hairShopReservation.cancel(currentDateTime);
     }
 
+    /**
+     * 헤어샵 시술 예약 셍성 내부 메소드
+     */
     private Long createReservationInternal(
             Long shopId, String username, LocalDateTime currentDateTime, HairShopReservationCreateRequest request) {
 
+        // TODO: currentDateTime을 TimeProvider로 처리하기
         isValidReservationTime(currentDateTime, request.reservationTime());
 
         Customer customer = customerRepository.findByEmail(username)

@@ -10,6 +10,9 @@ import org.springframework.data.domain.Slice;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * 헤어샵 예약 서비스 인터페이스
+ */
 public interface HairShopReservationService {
 
     /**
@@ -34,9 +37,10 @@ public interface HairShopReservationService {
 
     /**
      * 헤어샵 예약 상세 조회
+     * 헤어샵 예약한 당사자만 조회 가능하다.
      *
      * @param reservationId 헤어샵 예약 id
-     * @param username      조회 요청 유저
+     * @param username      헤어샵 예약 당사자
      * @return 헤어샵 예약 정보
      */
     HairShopReservationResponse getReservation(Long reservationId, String username);
