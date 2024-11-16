@@ -1,8 +1,6 @@
 'use client'
 
-import useAuth from "@/hooks/useAuth";
 import {useRouter} from "next/navigation";
-import {useEffect} from "react";
 import {MapIcon} from "@heroicons/react/24/outline";
 import Link from "next/link";
 import PageLoader from "@/components/Loaders/PageLoader";
@@ -14,21 +12,12 @@ import Loader from "@/components/Loaders/Loader";
 import useLogout from "@/hooks/useLogout";
 import {AxiosError} from "axios";
 import {toast} from "react-toastify";
+import useAuthGuard from "@/hooks/useAuthGuard";
 
 function UserPage() {
-    const router = useRouter()
-    const {status, user} = useAuth()
+    const {status, user} = useAuthGuard()
 
-    useEffect(() => {
-        if (status === 'unauthenticated') {
-            // 페이지 히스토리 최상단을 user에서 login으로 변경하고 login으로 이동.
-            // login 페이지에서 로그인 포기하고 뒤로 가기 누르면 user 페이지가 아니라 전 화면(대표적으로 메인 화면)으로 돌아가기 위해서임
-            router.replace('/login')
-            return
-        }
-    }, [router, status]);
-
-    if (status === 'loading' || status === 'unauthenticated') return <PageLoader/>
+    if (status === 'loading') return <PageLoader/>
 
     return (
         <div className="h-screen grid grid-rows-[auto_1fr]">

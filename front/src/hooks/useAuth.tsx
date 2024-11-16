@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {fetchSession} from "@/api/auth";
 
-type AuthState = {
+export type AuthState = {
     status: 'loading'
     user: null
 } | {
@@ -13,7 +13,7 @@ type AuthState = {
 }
 
 /**
- * 인증 상태 관리 custom hook
+ * 인증 상태 관리 hook
  */
 function useAuth() {
     const [authState, setAuthState] = useState<AuthState>({
