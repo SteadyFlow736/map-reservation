@@ -4,6 +4,7 @@ export const hairShopSearchResponseAtom = atom<HairShopSearchResponse>()
 export const selectedHairShopAtom = atom<SelectedHairShopIdAtom>()
 export const mapBoundsAtom = atom<MapBounds>()
 export const naverMapAtom = atom<naver.maps.Map>()
+export const emptySearchOnAtom = atom(true)
 
 export type SelectedHairShopIdAtom = {
     shopId: number,

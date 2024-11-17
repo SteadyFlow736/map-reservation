@@ -34,15 +34,6 @@ function MainMap() {
     const hairShopSearchResponse = useAtomValue(hairShopSearchResponseAtom)
     const [selectedHairShop, setSelectedHairShop] = useAtom(selectedHairShopAtom)
 
-    const mapBoundsFrom = (bounds: naver.maps.Bounds): MapBounds => {
-        return {
-            minLongitude: bounds.minX(),
-            maxLongitude: bounds.maxX(),
-            minLatitude: bounds.minY(),
-            maxLatitude: bounds.maxY()
-        }
-    }
-
     // marker 생성을 위한 useEffect: 검색된 헤어샵 리스트의 marker 생성
     useEffect(() => {
         markerMap.forEach(m => m.setMap(null))

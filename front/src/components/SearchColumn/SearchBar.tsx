@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {hairShopSearchResponseAtom, mapBoundsAtom, naverMapAtom} from "@/atoms";
+import {emptySearchOnAtom, hairShopSearchResponseAtom, mapBoundsAtom, naverMapAtom} from "@/atoms";
 import {fetchSearchResult} from "@/api/hairShop";
 import {useAtomValue, useSetAtom} from "jotai";
+import {useAtom} from "jotai/index";
 
 function SearchBar() {
     const [searchTerm, setSearchTerm] = useState("");
     const map = useAtomValue(naverMapAtom)
     const setHairShopSearchResponse = useSetAtom(hairShopSearchResponseAtom)
+    const [emptySearchOn, setEmptySearchOn] = useAtom(emptySearchOnAtom)
 
     const handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key !== 'Enter') return
@@ -28,10 +30,11 @@ function SearchBar() {
     }
 
     useEffect(() => {
-        if (map) {
+        if (map && emptySearchOn) {
             search()
+            setEmptySearchOn(false)
         }
-    }, [map]);
+    }, [emptySearchOn, map, setEmptySearchOn]);
 
     return (
         <input
