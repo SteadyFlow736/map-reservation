@@ -1,6 +1,6 @@
 import Script from "next/script";
 import {useAtomValue, useSetAtom} from "jotai";
-import {hairShopSearchResponseAtom, MapBounds, mapBoundsAtom, selectedHairShopAtom} from "@/atoms";
+import {hairShopSearchResponseAtom, MapBounds, naverMapAtom, selectedHairShopAtom} from "@/atoms";
 import {useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
 import {naver_map_client_id} from "@/envs";
@@ -30,10 +30,9 @@ const getMarker = (shopName: string) => `
     `
 
 function MainMap() {
-    const [map, setMap] = useState<naver.maps.Map>()
-    const hairShopSearchResponse = useAtomValue(hairShopSearchResponseAtom);
+    const [map, setMap] = useAtom(naverMapAtom)
+    const hairShopSearchResponse = useAtomValue(hairShopSearchResponseAtom)
     const [selectedHairShop, setSelectedHairShop] = useAtom(selectedHairShopAtom)
-    const setMapBound = useSetAtom(mapBoundsAtom)
 
     const mapBoundsFrom = (bounds: naver.maps.Bounds): MapBounds => {
         return {
@@ -42,13 +41,6 @@ function MainMap() {
             minLatitude: bounds.minY(),
             maxLatitude: bounds.maxY()
         }
-    }
-
-    // 지도의 bounds가 변경될 때마다 새로운 bounds를 atom에 업데이트 하도록 하는 이벤트 리스터 등록
-    const addBoundsChangeEventListener = (map: naver.maps.Map) => {
-        map.addListener("bounds_changed", (event: naver.maps.Bounds) => {
-            setMapBound(mapBoundsFrom(event))
-        })
     }
 
     // marker 생성을 위한 useEffect: 검색된 헤어샵 리스트의 marker 생성
@@ -120,15 +112,13 @@ function MainMap() {
                     const location = new naver.maps.LatLng(37.5656, 126.9769);
                     const mapOptions: naver.maps.MapOptions = {
                         center: location,
-                        zoom: 17,
+                        zoom: 16,
                         zoomControl: true,
                         zoomControlOptions: {
                             position: naver.maps.Position.TOP_RIGHT,
                         },
                     };
                     const map = new naver.maps.Map("map", mapOptions)
-                    addBoundsChangeEventListener(map)
-                    setMapBound(mapBoundsFrom(map.getBounds()))
                     setMap(map)
                 }}
             />

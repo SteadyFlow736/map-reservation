@@ -1,12 +1,12 @@
-import React, {useState} from "react";
-import {hairShopSearchResponseAtom, mapBoundsAtom} from "@/atoms";
+import React, {useEffect, useState} from "react";
+import {hairShopSearchResponseAtom, mapBoundsAtom, naverMapAtom} from "@/atoms";
 import {fetchSearchResult} from "@/api/hairShop";
 import {useAtomValue, useSetAtom} from "jotai";
 
 function SearchBar() {
     const [searchTerm, setSearchTerm] = useState("");
+    const map = useAtomValue(naverMapAtom)
     const setHairShopSearchResponse = useSetAtom(hairShopSearchResponseAtom)
-    const mapBounds = useAtomValue(mapBoundsAtom)
 
     const handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key !== 'Enter') return
@@ -14,22 +14,31 @@ function SearchBar() {
     }
 
     const search = async () => {
+        if (!map) return
+        const bounds = map.getBounds()
         const searchCondition: HairShopSearchCondition = {
             searchTerm,
-            minLongitude: mapBounds?.minLongitude.toString(),
-            maxLongitude: mapBounds?.maxLongitude.toString(),
-            minLatitude: mapBounds?.minLatitude.toString(),
-            maxLatitude: mapBounds?.maxLatitude.toString()
+            minLongitude: bounds.minX().toString(),
+            maxLongitude: bounds.maxX().toString(),
+            minLatitude: bounds.minY().toString(),
+            maxLatitude: bounds.maxY().toString()
         }
         const data = await fetchSearchResult(searchCondition)
         setHairShopSearchResponse(data)
     }
+
+    useEffect(() => {
+        if (map) {
+            search()
+        }
+    }, [map]);
 
     return (
         <input
             className="m-4 p-3 border-2 border-lime-400 rounded"
             type="text"
             value={searchTerm}
+            placeholder={"헤어샵 이름을 검색해 보세요."}
             onChange={e => setSearchTerm(e.target.value)}
             onKeyDown={handleOnKeyDown}
         />
