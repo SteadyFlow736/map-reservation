@@ -98,8 +98,6 @@ public class HairShopReservationServiceImpl implements HairShopReservationServic
     @Override
     public Slice<HairShopReservationResponse> getReservations(String username, Pageable pageable) {
         Slice<HairShopReservation> slice = hairShopReservationRepository.findByCustomerEmail(username, pageable);
-        // TODO: HairShopReservation -> HairShopReservationResponse 변경 시 HairShop, Customer 엔티티 조회 추가로 일어나는 N + 1 문제 해결
-        // ReesrvationServiceTest::getHairShopReservations 테스트에서 N + 1 문제 확인 가능
         return slice.map(HairShopReservationResponse::from);
     }
 

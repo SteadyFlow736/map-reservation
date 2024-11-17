@@ -1,6 +1,6 @@
 @localhost = localhost:8080
 @awshost = {{AWS_HOST}}
-@host = {{awshost}}
+@host = {{localhost}}
 
 ### CSRF Token 발급
 GET http://{{host}}/api/csrf-token
@@ -32,3 +32,6 @@ password = Password1!
 ### 로그아웃
 POST http://{{host}}/api/logout
 X-CSRF-TOKEN: {{csrfToken}}
+
+### 예약 히스토리(slice)
+GET http://{{host}}/api/reservations
