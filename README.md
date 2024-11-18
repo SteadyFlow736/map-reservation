@@ -8,7 +8,7 @@
 - TypeScript, Nextjs, TanStack Query, Jotai
 - EC2, GitHub Actions, AWS Amplify
 - 배포: https://map-reservation.oldrabbit.info
-- API: https://api.map-reservation.oldrabbit.info/swagger-ui/index.html
 ## 전체적인 구조
-![서버구조.drawio.svg](서버구조.drawio.svg)
-## 중점 사항
+![structure.drawio.png](structure.drawio.png)
+## ERD
+![erd.png](erd.png)
