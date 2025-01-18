@@ -35,3 +35,10 @@ X-CSRF-TOKEN: {{csrfToken}}
 
 ### 예약 히스토리(slice)
 GET http://{{host}}/api/reservations
+
+### 헤어샵 검색 (검색어: '헤어', 범위: 보통 줌 레벨, 즉, 인덱스 튜닝 테스트했던 그 쿼리) (%ED%97%A4%EC%96%B4 = 헤어 url 인코딩)
+GET http://{{host}}/api/hairshop?searchTerm=%ED%97%A4%EC%96%B4
+    &minLongitude=120.569682&maxLongitude=130.4573773
+    &minLatitude=31.5464907&maxLatitude=40.526968
+    &size=100&page=0&sort=name,asc
+Accept: application/json
