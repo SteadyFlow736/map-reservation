@@ -17,6 +17,9 @@ services:
       # redis
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
+    restart: always
+    depends_on:
+      - redis
   redis:
     image: redis:7.4.0
     restart: always
