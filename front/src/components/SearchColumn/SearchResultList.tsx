@@ -8,16 +8,21 @@ function NoSearchResult() {
     );
 }
 
+function InitResult() {
+    return (
+        <div className="p-4"></div>
+    )
+}
+
 function SearchResultList() {
     const hairShopSearchResponse = useAtomValue(hairShopSearchResponseAtom)
     const data = hairShopSearchResponse?.page.content
-    const dataExist = data !== undefined && data.length > 0;
 
     return (
         <div className="overflow-y-auto divide-y">
-            {dataExist ?
-                data.map(s => <StoreSummaryCard key={s.shopId} storeSummary={s}/>) :
-                <NoSearchResult/>
+            {data === undefined ?
+                <InitResult/> : data.length === 0 ?
+                    <NoSearchResult/> : data.map(s => <StoreSummaryCard key={s.shopId} storeSummary={s}/>)
             }
         </div>
     )
