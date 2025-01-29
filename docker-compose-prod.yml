@@ -15,13 +15,13 @@ services:
       # cors
       CORS_ALLOWED-ORIGINS: ${CORS_ALLOWED_ORIGINS}
       # redis
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_HOST: ${REDIS_HOST}
+      SPRING_DATA_REDIS_PORT: ${REDIS_PORT}
     restart: always
-    depends_on:
-      - redis
-  redis:
-    image: redis:7.4.0
-    restart: always
-    ports:
-      - "6379:6379"
+#    depends_on:
+#      - redis
+#  redis:
+#    image: redis:7.4.0
+#    restart: always
+#    ports:
+#      - "6379:6379"

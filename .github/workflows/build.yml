@@ -71,12 +71,14 @@ jobs:
           NAVER_MAPS_API_KEY_ID: ${{ secrets.NAVER_MAPS_API_KEY_ID }}
           NAVER_MAPS_API_KEY: ${{ secrets.NAVER_MAPS_API_KEY }}
           CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }
         with:
           host: ${{ secrets.SERVER_HOST }}
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_KEY }}
-          envs: API_SERVER_IMAGE_NAME,DB_URL,DB_USERNAME,DB_PASSWORD,NAVER_MAPS_API_KEY_ID,NAVER_MAPS_API_KEY,CORS_ALLOWED_ORIGINS
+          envs: API_SERVER_IMAGE_NAME,DB_URL,DB_USERNAME,DB_PASSWORD,NAVER_MAPS_API_KEY_ID,NAVER_MAPS_API_KEY,CORS_ALLOWED_ORIGINS,REDIS_HOST,REDIS_PORT
           script: |
             cd map-reservation
             sh scripts/prod.sh
